@@ -1,5 +1,61 @@
 import Foundation
 
+// MARK: - Difficulty Level
+
+enum DifficultyLevel: String, CaseIterable, Identifiable, Sendable {
+    case expert
+    case layperson
+    case children
+
+    var id: String { rawValue }
+}
+
+// MARK: - Abstract Translations (3 difficulty levels)
+
+struct AbstractTranslations: Codable, Sendable {
+    let expert: String?
+    let layperson: String?
+    let children: String?
+
+    func text(for level: DifficultyLevel) -> String? {
+        switch level {
+        case .expert: return expert
+        case .layperson: return layperson
+        case .children: return children
+        }
+    }
+}
+
+// MARK: - Fulltext Translation Models
+
+struct FulltextSection: Codable, Identifiable, Sendable {
+    var id: String { sectionName }
+
+    let sectionName: String
+    let original: String
+    let translated: String
+
+    enum CodingKeys: String, CodingKey {
+        case sectionName = "section_name"
+        case original, translated
+    }
+}
+
+struct FulltextTranslationResponse: Codable, Sendable {
+    let paperId: String
+    let language: String
+    let difficulty: String
+    let sections: [FulltextSection]
+    let cached: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case paperId = "paper_id"
+        case language, difficulty, sections, cached
+    }
+}
+
+// MARK: - Summary Models
+
 struct PaperSummaryResponse: Codable, Sendable {
     let paperId: String
     let language: String
@@ -56,6 +112,7 @@ struct PaperDetailResponse: Codable, Identifiable, Sendable {
     let doi: String?
     let abstractOriginal: String?
     let abstractTranslated: String?
+    let abstractTranslations: AbstractTranslations?
     let summary: String?
     let keyFindings: [String]
     let citationCount: Int
@@ -72,6 +129,7 @@ struct PaperDetailResponse: Codable, Identifiable, Sendable {
         case authors, journal, year, doi
         case abstractOriginal = "abstract_original"
         case abstractTranslated = "abstract_translated"
+        case abstractTranslations = "abstract_translations"
         case summary
         case keyFindings = "key_findings"
         case citationCount = "citation_count"

@@ -96,6 +96,12 @@ class AuthorDetail(BaseModel):
     affiliation: str | None = None
 
 
+class AbstractTranslations(BaseModel):
+    expert: str | None = None
+    layperson: str | None = None
+    children: str | None = None
+
+
 class PaperDetailResponse(BaseModel):
     paper_id: str
     title_original: str
@@ -106,6 +112,7 @@ class PaperDetailResponse(BaseModel):
     doi: str | None = None
     abstract_original: str | None = None
     abstract_translated: str | None = None
+    abstract_translations: AbstractTranslations | None = None
     summary: str | None = None
     key_findings: list[str] = Field(default_factory=list)
     citation_count: int = 0
@@ -137,6 +144,20 @@ class RankedPaper(BaseModel):
 
 class RankingResult(BaseModel):
     rankings: list[RankedPaper]
+
+
+class FulltextSection(BaseModel):
+    section_name: str
+    original: str
+    translated: str
+
+
+class FulltextTranslationResponse(BaseModel):
+    paper_id: str
+    language: str
+    difficulty: str
+    sections: list[FulltextSection]
+    cached: bool = False
 
 
 class UnifiedPaper(BaseModel):

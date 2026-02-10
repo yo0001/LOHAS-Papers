@@ -61,6 +61,13 @@ final class APIClient: Sendable {
         return try await get(path: "/paper/\(encodedId)/detail?language=\(language)")
     }
 
+    // MARK: - Fulltext Translation
+
+    func getFulltextTranslation(paperId: String, language: String, difficulty: String) async throws -> FulltextTranslationResponse {
+        let encodedId = paperId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? paperId
+        return try await get(path: "/paper/\(encodedId)/fulltext?language=\(language)&difficulty=\(difficulty)", timeout: 180)
+    }
+
     // MARK: - Batch Summary
 
     func batchSummaries(paperIds: [String], language: String) async throws -> BatchSummaryResponse {
@@ -70,13 +77,16 @@ final class APIClient: Sendable {
 
     // MARK: - HTTP helpers
 
-    private func get<T: Decodable>(path: String) async throws -> T {
+    private func get<T: Decodable>(path: String, timeout: TimeInterval? = nil) async throws -> T {
         guard let url = URL(string: baseURL + path) else {
             throw APIError.invalidURL
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        if let timeout = timeout {
+            request.timeoutInterval = timeout
+        }
 
         return try await execute(request)
     }

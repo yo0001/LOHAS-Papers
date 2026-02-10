@@ -123,3 +123,45 @@ async def set_cached_summary(paper_id: str, language: str, summary: str) -> None
         _set(key, summary)  # No TTL — summaries don't change
     except Exception:
         logger.warning("Cache set failed for summary", exc_info=True)
+
+
+# ── Abstract translation cache ──
+
+
+async def get_cached_translation(paper_id: str, language: str, difficulty: str) -> str | None:
+    key = f"translation:{paper_id}:{language}:{difficulty}"
+    try:
+        return _get(key)
+    except Exception:
+        return None
+
+
+async def set_cached_translation(
+    paper_id: str, language: str, difficulty: str, text: str
+) -> None:
+    key = f"translation:{paper_id}:{language}:{difficulty}"
+    try:
+        _set(key, text)  # No TTL — translations don't change
+    except Exception:
+        logger.warning("Cache set failed for translation", exc_info=True)
+
+
+# ── Fulltext translation cache ──
+
+
+async def get_cached_fulltext(paper_id: str, language: str, difficulty: str) -> str | None:
+    key = f"fulltext:{paper_id}:{language}:{difficulty}"
+    try:
+        return _get(key)
+    except Exception:
+        return None
+
+
+async def set_cached_fulltext(
+    paper_id: str, language: str, difficulty: str, data: str
+) -> None:
+    key = f"fulltext:{paper_id}:{language}:{difficulty}"
+    try:
+        _set(key, data)  # No TTL — fulltext translations don't change
+    except Exception:
+        logger.warning("Cache set failed for fulltext", exc_info=True)

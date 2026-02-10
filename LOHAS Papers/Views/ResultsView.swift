@@ -9,7 +9,7 @@ struct ResultsView: View {
     var body: some View {
         Group {
             if searchVM.isSearching {
-                LoadingView(message: lang.loadingSummary)
+                SearchProgressView(language: lang)
             } else if let error = searchVM.errorMessage {
                 errorView(error)
             } else if let result = searchVM.searchResult {

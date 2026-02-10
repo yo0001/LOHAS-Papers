@@ -169,6 +169,44 @@ final class LanguageManager {
             }
         }
 
+        // MARK: - Search Progress Phases
+
+        var searchPhase1: String {
+            switch self {
+            case .ja: return "論文を検索中..."
+            case .en: return "Searching papers..."
+            case .zhHans: return "正在搜索论文..."
+            case .ko: return "논문 검색 중..."
+            }
+        }
+
+        var searchPhase2: String {
+            switch self {
+            case .ja: return "関連度を分析中..."
+            case .en: return "Analyzing relevance..."
+            case .zhHans: return "正在分析相关性..."
+            case .ko: return "관련도 분석 중..."
+            }
+        }
+
+        var searchPhase3: String {
+            switch self {
+            case .ja: return "要約を生成中..."
+            case .en: return "Generating summaries..."
+            case .zhHans: return "正在生成摘要..."
+            case .ko: return "요약 생성 중..."
+            }
+        }
+
+        var searchPhase4: String {
+            switch self {
+            case .ja: return "結果を準備中..."
+            case .en: return "Preparing results..."
+            case .zhHans: return "正在准备结果..."
+            case .ko: return "결과 준비 중..."
+            }
+        }
+
         var noResults: String {
             switch self {
             case .ja: return "検索結果が見つかりませんでした"
@@ -191,19 +229,62 @@ final class LanguageManager {
 
         var abstractOriginal: String {
             switch self {
-            case .ja: return "原文"
-            case .en: return "Original"
-            case .zhHans: return "原文"
-            case .ko: return "원문"
+            case .ja: return "原文を表示"
+            case .en: return "Show Original"
+            case .zhHans: return "显示原文"
+            case .ko: return "원문 보기"
             }
         }
 
         var abstractTranslated: String {
             switch self {
-            case .ja: return "翻訳"
-            case .en: return "Translated"
-            case .zhHans: return "翻译"
-            case .ko: return "번역"
+            case .ja: return "翻訳アブストラクト"
+            case .en: return "Translated Abstract"
+            case .zhHans: return "翻译摘要"
+            case .ko: return "번역 초록"
+            }
+        }
+
+        var difficultyExpert: String {
+            switch self {
+            case .ja: return "専門家"
+            case .en: return "Expert"
+            case .zhHans: return "专家"
+            case .ko: return "전문가"
+            }
+        }
+
+        var difficultyLayperson: String {
+            switch self {
+            case .ja: return "一般向け"
+            case .en: return "Simple"
+            case .zhHans: return "通俗"
+            case .ko: return "일반인"
+            }
+        }
+
+        var difficultyChildren: String {
+            switch self {
+            case .ja: return "こども"
+            case .en: return "Kids"
+            case .zhHans: return "儿童"
+            case .ko: return "어린이"
+            }
+        }
+
+        func difficultyName(_ level: DifficultyLevel) -> String {
+            switch level {
+            case .expert: return difficultyExpert
+            case .layperson: return difficultyLayperson
+            case .children: return difficultyChildren
+            }
+        }
+
+        func difficultyIcon(_ level: DifficultyLevel) -> String {
+            switch level {
+            case .expert: return "graduationcap.fill"
+            case .layperson: return "person.fill"
+            case .children: return "face.smiling.fill"
             }
         }
 
@@ -249,6 +330,53 @@ final class LanguageManager {
             case .en: return "View on PubMed"
             case .zhHans: return "在PubMed查看"
             case .ko: return "PubMed에서 보기"
+            }
+        }
+
+        // MARK: - Fulltext Translation
+
+        var fulltextTranslation: String {
+            switch self {
+            case .ja: return "全文を翻訳する"
+            case .en: return "Translate Full Text"
+            case .zhHans: return "翻译全文"
+            case .ko: return "전문 번역"
+            }
+        }
+
+        var fulltextNotAvailable: String {
+            switch self {
+            case .ja: return "この論文はオープンアクセスではないため全文翻訳できません"
+            case .en: return "Full text translation is not available (not open access)"
+            case .zhHans: return "此论文非开放获取，无法翻译全文"
+            case .ko: return "이 논문은 오픈 액세스가 아니므로 전문 번역이 불가합니다"
+            }
+        }
+
+        var fulltextPdfError: String {
+            switch self {
+            case .ja: return "PDFからテキストを抽出できませんでした"
+            case .en: return "Could not extract text from PDF"
+            case .zhHans: return "无法从PDF中提取文本"
+            case .ko: return "PDF에서 텍스트를 추출할 수 없습니다"
+            }
+        }
+
+        var fulltextLoading: String {
+            switch self {
+            case .ja: return "全文を翻訳中...（初回は30秒ほどかかります）"
+            case .en: return "Translating full text... (first time may take ~30s)"
+            case .zhHans: return "正在翻译全文...（首次约需30秒）"
+            case .ko: return "전문 번역 중... (최초 약 30초 소요)"
+            }
+        }
+
+        var fulltextShowOriginal: String {
+            switch self {
+            case .ja: return "原文を表示"
+            case .en: return "Show Original"
+            case .zhHans: return "显示原文"
+            case .ko: return "원문 보기"
             }
         }
 
