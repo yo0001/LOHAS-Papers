@@ -59,18 +59,16 @@ async def rank_papers(
         return citation_score * 0.6 + recency_score * 0.4
 
     sorted_by_hybrid = sorted(papers, key=hybrid_score, reverse=True)
-    candidates = sorted_by_hybrid[:30]
+    candidates = sorted_by_hybrid[:20]
 
-    # Build paper list for LLM
+    # Build compact paper list for LLM (minimize tokens for speed)
     paper_list_text = ""
     for p in candidates:
-        abstract_preview = (p.abstract or "")[:200]
+        abstract_preview = (p.abstract or "")[:100]
         paper_list_text += (
-            f"- ID: {p.id}\n"
-            f"  Title: {p.title}\n"
-            f"  Year: {p.year or 'unknown'}\n"
-            f"  Citations: {p.citation_count}\n"
-            f"  Abstract: {abstract_preview}\n\n"
+            f"- ID: {p.id} | {p.year or '?'} | cite:{p.citation_count}\n"
+            f"  {p.title}\n"
+            f"  {abstract_preview}\n"
         )
 
     user_message = (

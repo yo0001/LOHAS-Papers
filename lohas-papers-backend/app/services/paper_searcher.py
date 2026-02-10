@@ -20,28 +20,29 @@ async def search_all_sources(
 
     queries = transform_result.academic_queries
 
-    # Search queries sequentially to avoid rate limits (429),
-    # but search both sources in parallel for each query.
-    all_papers: list[UnifiedPaper] = []
-    for i, query in enumerate(queries):
-        if i > 0:
-            await asyncio.sleep(1.0)  # Delay between queries to avoid 429
-
-        tasks = [
+    # Fire all queries to both sources in parallel.
+    # Retry with exponential backoff (already in each client) handles 429.
+    tasks = []
+    for query in queries:
+        tasks.append(
             semantic_scholar.search_papers(
                 query, limit=limit_per_query, year_from=year_from, year_to=year_to
-            ),
+            )
+        )
+        tasks.append(
             pubmed.search_papers(
                 query, limit=limit_per_query, year_from=year_from, year_to=year_to
-            ),
-        ]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+            )
+        )
 
-        for j, result in enumerate(results):
-            if isinstance(result, Exception):
-                logger.warning("Search query %d source %d failed: %s", i, j, result)
-                continue
-            all_papers.extend(result)
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    all_papers: list[UnifiedPaper] = []
+    for i, result in enumerate(results):
+        if isinstance(result, Exception):
+            logger.warning("Search task %d failed: %s", i, result)
+            continue
+        all_papers.extend(result)
 
     logger.info("Total papers before dedup: %d", len(all_papers))
 

@@ -12,6 +12,9 @@ BASE_URL = "https://api.semanticscholar.org/graph/v1"
 FIELDS = "title,abstract,authors,year,citationCount,journal,isOpenAccess,openAccessPdf,externalIds,publicationTypes,tldr"
 TIMEOUT = 10.0
 
+# Limit concurrent requests to avoid 429
+_semaphore = asyncio.Semaphore(2)
+
 
 async def search_papers(
     query: str,
@@ -40,31 +43,32 @@ async def search_papers(
 
     max_retries = 3
     data = None
-    for attempt in range(max_retries):
-        try:
-            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-                resp = await client.get(
-                    f"{BASE_URL}/paper/search",
-                    params=params,
-                    headers=headers,
-                )
-                resp.raise_for_status()
-                data = resp.json()
-                break
-        except httpx.HTTPStatusError as e:
-            if e.response.status_code == 429 and attempt < max_retries - 1:
-                wait = 2 ** attempt + 1
-                logger.info("Semantic Scholar 429, retrying in %ds: %s", wait, query)
-                await asyncio.sleep(wait)
-                continue
-            logger.warning("Semantic Scholar HTTP error %s: %s", e.response.status_code, query)
-            return []
-        except httpx.TimeoutException:
-            logger.warning("Semantic Scholar timeout for query: %s", query)
-            return []
-        except Exception:
-            logger.exception("Semantic Scholar unexpected error for query: %s", query)
-            return []
+    async with _semaphore:
+        for attempt in range(max_retries):
+            try:
+                async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                    resp = await client.get(
+                        f"{BASE_URL}/paper/search",
+                        params=params,
+                        headers=headers,
+                    )
+                    resp.raise_for_status()
+                    data = resp.json()
+                    break
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and attempt < max_retries - 1:
+                    wait = 2 ** attempt + 1
+                    logger.info("Semantic Scholar 429, retrying in %ds: %s", wait, query)
+                    await asyncio.sleep(wait)
+                    continue
+                logger.warning("Semantic Scholar HTTP error %s: %s", e.response.status_code, query)
+                return []
+            except httpx.TimeoutException:
+                logger.warning("Semantic Scholar timeout for query: %s", query)
+                return []
+            except Exception:
+                logger.exception("Semantic Scholar unexpected error for query: %s", query)
+                return []
 
     if data is None:
         return []

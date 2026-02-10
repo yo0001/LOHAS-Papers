@@ -13,6 +13,9 @@ ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 TIMEOUT = 10.0
 
+# Limit concurrent requests to avoid 429
+_semaphore = asyncio.Semaphore(2)
+
 
 async def search_papers(
     query: str,
@@ -43,45 +46,46 @@ async def search_papers(
 
     xml_text = None
     max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-                # Step 1: ESearch to get PMIDs
-                resp = await client.get(ESEARCH_URL, params=search_params)
-                resp.raise_for_status()
-                search_data = resp.json()
+    async with _semaphore:
+        for attempt in range(max_retries):
+            try:
+                async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                    # Step 1: ESearch to get PMIDs
+                    resp = await client.get(ESEARCH_URL, params=search_params)
+                    resp.raise_for_status()
+                    search_data = resp.json()
 
-                id_list = search_data.get("esearchresult", {}).get("idlist", [])
-                if not id_list:
-                    return []
+                    id_list = search_data.get("esearchresult", {}).get("idlist", [])
+                    if not id_list:
+                        return []
 
-                # Step 2: EFetch to get full records
-                fetch_params: dict = {
-                    "db": "pubmed",
-                    "id": ",".join(id_list),
-                    "retmode": "xml",
-                }
-                if settings.pubmed_api_key:
-                    fetch_params["api_key"] = settings.pubmed_api_key
+                    # Step 2: EFetch to get full records
+                    fetch_params: dict = {
+                        "db": "pubmed",
+                        "id": ",".join(id_list),
+                        "retmode": "xml",
+                    }
+                    if settings.pubmed_api_key:
+                        fetch_params["api_key"] = settings.pubmed_api_key
 
-                resp = await client.get(EFETCH_URL, params=fetch_params)
-                resp.raise_for_status()
-                xml_text = resp.text
-                break
-        except httpx.HTTPStatusError as e:
-            if e.response.status_code == 429 and attempt < max_retries - 1:
-                wait = 2 ** attempt + 1
-                logger.info("PubMed 429, retrying in %ds: %s", wait, query)
-                await asyncio.sleep(wait)
-                continue
-            logger.warning("PubMed HTTP error %s: %s", e.response.status_code, query)
-            return []
-        except httpx.TimeoutException:
-            logger.warning("PubMed timeout for query: %s", query)
-            return []
-        except Exception:
-            logger.exception("PubMed unexpected error for query: %s", query)
-            return []
+                    resp = await client.get(EFETCH_URL, params=fetch_params)
+                    resp.raise_for_status()
+                    xml_text = resp.text
+                    break
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and attempt < max_retries - 1:
+                    wait = 2 ** attempt + 1
+                    logger.info("PubMed 429, retrying in %ds: %s", wait, query)
+                    await asyncio.sleep(wait)
+                    continue
+                logger.warning("PubMed HTTP error %s: %s", e.response.status_code, query)
+                return []
+            except httpx.TimeoutException:
+                logger.warning("PubMed timeout for query: %s", query)
+                return []
+            except Exception:
+                logger.exception("PubMed unexpected error for query: %s", query)
+                return []
 
     if xml_text is None:
         return []

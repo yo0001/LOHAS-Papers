@@ -19,6 +19,9 @@ from app.services import paper_searcher, query_transformer, relevance_ranker, su
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
+# Timeout per individual summary/overview task (seconds)
+_SUMMARY_TIMEOUT = 15.0
+
 
 @router.post("/search", response_model=SearchResponse)
 async def search(request: SearchRequest) -> SearchResponse:
@@ -35,7 +38,7 @@ async def search(request: SearchRequest) -> SearchResponse:
     # 2. Transform query (with cache)
     transform_result = await _get_or_transform_query(request.query, request.language)
 
-    # 3. Search all sources in parallel
+    # 3. Search all sources in parallel (no sleep, fully parallel)
     all_papers = await paper_searcher.search_all_sources(
         transform_result,
         year_from=request.filters.year_from,
@@ -55,10 +58,26 @@ async def search(request: SearchRequest) -> SearchResponse:
             per_page=request.per_page,
         )
 
-    # 4. Rank by relevance using LLM
-    rankings = await relevance_ranker.rank_papers(
+    # 4. Run ranking + title translation in parallel
+    #    (both only need the paper list, not each other's results)
+    ranking_task = relevance_ranker.rank_papers(
         request.query, transform_result.interpreted_intent, all_papers
     )
+    title_translation_task = summarizer.translate_titles_batch(
+        [p.title for p in all_papers], request.language
+    )
+    ranking_result, translation_result = await asyncio.gather(
+        ranking_task, title_translation_task, return_exceptions=True
+    )
+
+    rankings = ranking_result if not isinstance(ranking_result, Exception) else []
+    all_translated_titles = translation_result if not isinstance(translation_result, Exception) else [p.title for p in all_papers]
+
+    # Build title translation lookup
+    title_translation_map: dict[str, str] = {}
+    for i, paper in enumerate(all_papers):
+        if i < len(all_translated_titles) and all_translated_titles[i] != paper.title:
+            title_translation_map[paper.id] = all_translated_titles[i]
 
     # 5. Build ranked paper lookup
     ranking_map: dict[str, RankedPaper] = {r.paper_id: r for r in rankings}
@@ -77,37 +96,33 @@ async def search(request: SearchRequest) -> SearchResponse:
     start = (request.page - 1) * request.per_page
     end = start + request.per_page
     page_ids = ranked_ids[start:end]
-
-    # 7. Generate summaries for current page papers + AI overview in parallel
     page_papers = [paper_map[pid] for pid in page_ids if pid in paper_map]
 
+    # 7. Generate summaries + AI overview in parallel (with per-task timeout)
     summary_tasks = []
     for paper in page_papers:
         if paper.abstract:
             summary_tasks.append(
-                _get_or_generate_summary(paper.id, paper.abstract, request.language, paper.title)
+                _with_timeout(
+                    _get_or_generate_summary(paper.id, paper.abstract, request.language, paper.title),
+                    _SUMMARY_TIMEOUT,
+                )
             )
         else:
             summary_tasks.append(_return_empty())
 
-    # Build context for AI overview from top papers
     papers_context = _build_papers_context(page_papers[:5])
-    ai_overview_task = summarizer.generate_ai_overview(
-        request.query, request.language, papers_context
-    )
-
-    # Title translation task (parallel with summaries)
-    title_translation_task = summarizer.translate_titles_batch(
-        [p.title for p in page_papers], request.language
+    ai_overview_task = _with_timeout(
+        summarizer.generate_ai_overview(request.query, request.language, papers_context),
+        _SUMMARY_TIMEOUT,
     )
 
     # Run all in parallel
-    all_tasks = [ai_overview_task, title_translation_task] + summary_tasks
+    all_tasks = [ai_overview_task] + summary_tasks
     results = await asyncio.gather(*all_tasks, return_exceptions=True)
 
     ai_overview_text = results[0] if not isinstance(results[0], Exception) else ""
-    translated_titles = results[1] if not isinstance(results[1], Exception) else [p.title for p in page_papers]
-    paper_summaries = results[2:]
+    paper_summaries = results[1:]
 
     # 8. Build response
     paper_results: list[PaperResult] = []
@@ -131,7 +146,7 @@ async def search(request: SearchRequest) -> SearchResponse:
             PaperResult(
                 id=paper.id,
                 title=paper.title,
-                title_translated=translated_titles[i] if i < len(translated_titles) and translated_titles[i] != paper.title else None,
+                title_translated=title_translation_map.get(paper.id),
                 authors=paper.authors,
                 journal=paper.journal,
                 year=paper.year,
@@ -173,6 +188,15 @@ async def search(request: SearchRequest) -> SearchResponse:
     asyncio.create_task(_precache_top_papers(page_papers[:5]))
 
     return response
+
+
+async def _with_timeout(coro, timeout: float):
+    """Wrap a coroutine with a timeout. Returns empty string on timeout."""
+    try:
+        return await asyncio.wait_for(coro, timeout=timeout)
+    except asyncio.TimeoutError:
+        logger.warning("Task timed out after %.1fs", timeout)
+        return ""
 
 
 async def _get_or_transform_query(query: str, language: str) -> QueryTransformResult:
