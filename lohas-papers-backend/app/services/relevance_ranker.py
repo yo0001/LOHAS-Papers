@@ -47,9 +47,19 @@ async def rank_papers(
     if not papers:
         return []
 
-    # Pre-filter: take top 30 by citation count to limit LLM input size
-    sorted_by_citations = sorted(papers, key=lambda p: p.citation_count, reverse=True)
-    candidates = sorted_by_citations[:30]
+    # Pre-filter: take top 50 using hybrid score (citations + recency)
+    # This ensures recent important papers with few citations aren't excluded
+    import datetime
+    current_year = datetime.date.today().year
+    max_citations = max((p.citation_count for p in papers), default=1) or 1
+
+    def hybrid_score(p: UnifiedPaper) -> float:
+        citation_score = p.citation_count / max_citations  # 0-1
+        recency_score = max(0, 1 - (current_year - (p.year or 2000)) / 20)  # 0-1, last 20 years
+        return citation_score * 0.6 + recency_score * 0.4
+
+    sorted_by_hybrid = sorted(papers, key=hybrid_score, reverse=True)
+    candidates = sorted_by_hybrid[:30]
 
     # Build paper list for LLM
     paper_list_text = ""
