@@ -1,0 +1,18 @@
+# Backend
+.env
+__pycache__/
+*.pyc
+.venv/
+cache.db
+cache.db-wal
+cache.db-shm
+
+# macOS
+.DS_Store
+*.xcuserstate
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.ipa
+*.dSYM.zip
