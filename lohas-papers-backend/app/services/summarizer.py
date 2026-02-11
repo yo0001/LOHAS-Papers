@@ -45,7 +45,11 @@ AI_SUMMARY_SYSTEM_PROMPT = """あなたは医学・科学情報を一般市民�
 - ja: 日本語で回答
 - en: 平易な英語で回答
 - zh-Hans: 简体中文で回答
-- ko: 한국어で回答"""
+- ko: 한국어で回答
+- es: Español（スペイン語）で回答
+- pt-BR: Português do Brasil（ブラジルポルトガル語）で回答
+- th: ภาษาไทย（タイ語）で回答
+- vi: Tiếng Việt（ベトナム語）で回答"""
 
 TITLE_TRANSLATION_SYSTEM_PROMPT = """あなたは学術論文タイトルの翻訳エンジンです。
 
@@ -117,6 +121,9 @@ CHILDREN_TRANSLATION_PROMPT = """あなたは難しい科学の話を子供に�
 6. 怖い表現は避け、ポジティブな伝え方を心がけること
 7. 英語の場合は simple English を使い、friendly tone で書くこと
 8. 中国語・韓国語の場合もそれぞれの言語でやさしい口調にすること
+9. スペイン語・ポルトガル語の場合はtono informal（tú/você形式）でやさしく書くこと
+10. タイ語の場合はครับ/ค่ะを使いやさしい口調にすること
+11. ベトナム語の場合は親しみやすい口調で書くこと
 
 ## 出力形式
 
@@ -127,6 +134,10 @@ LANGUAGE_NAMES = {
     "en": "English",
     "zh-Hans": "简体中文",
     "ko": "한국어",
+    "es": "Español",
+    "pt-BR": "Português (Brasil)",
+    "th": "ภาษาไทย",
+    "vi": "Tiếng Việt",
 }
 
 

@@ -3,6 +3,7 @@ import logging
 
 import httpx
 
+from app.cache import sqlite_cache
 from app.config import get_settings
 from app.models.schemas import UnifiedPaper
 
@@ -115,6 +116,11 @@ async def search_papers(
                 source="semantic_scholar",
             )
         )
+
+        # Pre-cache paper metadata so detail pages don't need to re-fetch
+        await sqlite_cache.set_cached_paper_metadata(paper_id, item)
+        if pmid:
+            await sqlite_cache.set_cached_paper_metadata(f"pmid:{pmid}", item)
 
     logger.info("Semantic Scholar returned %d papers for: %s", len(papers), query)
     return papers

@@ -268,7 +268,12 @@ async def _get_abstract_translations(
 
 
 async def _fetch_paper_from_semantic_scholar(paper_id: str) -> dict | None:
-    """Fetch a single paper from Semantic Scholar by ID."""
+    """Fetch a single paper from Semantic Scholar by ID with cache and retry."""
+    # Check cache first
+    cached = await redis_client.get_cached_paper_metadata(paper_id)
+    if cached:
+        return cached
+
     settings = get_settings()
     fields = "title,abstract,authors,year,citationCount,referenceCount,journal,isOpenAccess,openAccessPdf,externalIds"
     url = f"https://api.semanticscholar.org/graph/v1/paper/{paper_id}"
@@ -277,13 +282,27 @@ async def _fetch_paper_from_semantic_scholar(paper_id: str) -> dict | None:
     if settings.semantic_scholar_api_key:
         headers["x-api-key"] = settings.semantic_scholar_api_key
 
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.get(url, params={"fields": fields}, headers=headers)
-            if resp.status_code == 404:
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.get(url, params={"fields": fields}, headers=headers)
+                if resp.status_code == 404:
+                    return None
+                if resp.status_code == 429:
+                    wait = 1.0 * (attempt + 1)
+                    logger.warning("Semantic Scholar rate limited (429), retrying in %.1fs (attempt %d/%d)", wait, attempt + 1, max_retries)
+                    await asyncio.sleep(wait)
+                    continue
+                resp.raise_for_status()
+                data = resp.json()
+                # Cache paper metadata for 24 hours
+                await redis_client.set_cached_paper_metadata(paper_id, data)
+                return data
+        except Exception:
+            logger.exception("Failed to fetch paper %s from Semantic Scholar (attempt %d/%d)", paper_id, attempt + 1, max_retries)
+            if attempt < max_retries - 1:
+                await asyncio.sleep(1.0 * (attempt + 1))
+            else:
                 return None
-            resp.raise_for_status()
-            return resp.json()
-    except Exception:
-        logger.exception("Failed to fetch paper %s from Semantic Scholar", paper_id)
-        return None
+    return None

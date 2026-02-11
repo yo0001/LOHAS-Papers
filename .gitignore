@@ -7,6 +7,11 @@ cache.db
 cache.db-wal
 cache.db-shm
 
+# Frontend
+lohas-papers-web/node_modules/
+lohas-papers-web/.next/
+lohas-papers-web/.env.local
+
 # macOS
 .DS_Store
 *.xcuserstate

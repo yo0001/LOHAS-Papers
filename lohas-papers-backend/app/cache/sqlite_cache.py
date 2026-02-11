@@ -146,6 +146,26 @@ async def set_cached_translation(
         logger.warning("Cache set failed for translation", exc_info=True)
 
 
+# ── Paper metadata cache (Semantic Scholar) ──
+
+
+async def get_cached_paper_metadata(paper_id: str) -> dict | None:
+    key = f"paper_meta:{paper_id}"
+    try:
+        data = _get(key)
+        return json.loads(data) if data else None
+    except Exception:
+        return None
+
+
+async def set_cached_paper_metadata(paper_id: str, data: dict, ttl: int = 86400) -> None:
+    key = f"paper_meta:{paper_id}"
+    try:
+        _set(key, json.dumps(data, ensure_ascii=False), ttl)
+    except Exception:
+        logger.warning("Cache set failed for paper metadata", exc_info=True)
+
+
 # ── Fulltext translation cache ──
 
 

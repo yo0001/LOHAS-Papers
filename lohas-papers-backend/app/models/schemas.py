@@ -35,6 +35,10 @@ class PaperSummaryMap(BaseModel):
     en: str | None = None
     zh_Hans: str | None = Field(None, alias="zh-Hans")
     ko: str | None = None
+    es: str | None = None
+    pt_BR: str | None = Field(None, alias="pt-BR")
+    th: str | None = None
+    vi: str | None = None
 
     model_config = {"populate_by_name": True}
 

@@ -141,6 +141,14 @@ async def search(request: SearchRequest) -> SearchResponse:
                 summary_map.zh_Hans = summary_text
             elif lang == "ko":
                 summary_map.ko = summary_text
+            elif lang == "es":
+                summary_map.es = summary_text
+            elif lang == "pt-BR":
+                summary_map.pt_BR = summary_text
+            elif lang == "th":
+                summary_map.th = summary_text
+            elif lang == "vi":
+                summary_map.vi = summary_text
 
         paper_results.append(
             PaperResult(
@@ -243,7 +251,7 @@ def _build_papers_context(papers: list[UnifiedPaper]) -> str:
 
 async def _precache_top_papers(papers: list[UnifiedPaper]) -> None:
     """Background task to precache summaries for top papers in all 4 languages."""
-    all_languages = ["ja", "en", "zh-Hans", "ko"]
+    all_languages = ["ja", "en", "zh-Hans", "ko", "es", "pt-BR", "th", "vi"]
     for paper in papers:
         if not paper.abstract:
             continue
