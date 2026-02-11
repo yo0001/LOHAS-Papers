@@ -6,8 +6,8 @@ export default function LegalPage() {
       <table className="w-full text-sm border-collapse">
         <tbody>
           {[
-            ["販売業者", "上原 吉敬"],
-            ["運営統括責任者", "上原 吉敬"],
+            ["販売業者", "上原 達明"],
+            ["運営統括責任者", "上原 達明"],
             ["所在地", "〒951-8520 新潟県新潟市中央区旭町通一番町754番地（新潟大学医歯学総合病院内）"],
             ["連絡先", "yoppi.ue@gmail.com（お問い合わせはメールにてお願いいたします）"],
             ["販売URL", "https://lohas-papers-web.vercel.app"],
