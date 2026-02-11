@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: lohas-papers-backend
+    runtime: docker
+    repo: https://github.com/yo0001/LOHAS-Papers.git
+    rootDir: lohas-papers-backend
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: LLM_MODEL
+        value: claude-sonnet-4-5-20250929
+      - key: REDIS_URL
+        value: ""
+      - key: DATABASE_URL
+        value: ""
