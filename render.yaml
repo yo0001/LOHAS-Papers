@@ -1,11 +1,12 @@
 services:
   - type: web
     name: lohas-papers-backend
-    runtime: docker
+    runtime: python
     repo: https://github.com/yo0001/LOHAS-Papers.git
     rootDir: lohas-papers-backend
     plan: free
-    dockerfilePath: ./Dockerfile
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false
@@ -13,6 +14,8 @@ services:
         value: production
       - key: LLM_MODEL
         value: claude-sonnet-4-5-20250929
+      - key: PYTHON_VERSION
+        value: "3.11.0"
       - key: REDIS_URL
         value: ""
       - key: DATABASE_URL
