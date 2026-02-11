@@ -67,8 +67,10 @@ export async function POST(request: Request) {
     };
 
     // --- EMV 3-D Secure: always request 3DS authentication ---
+    // Stripe API accepts these nested options but TypeScript types are incomplete,
+    // so we use type assertions to satisfy the compiler.
     if (isOneTime) {
-      params.payment_intent_data = {
+      (params as Record<string, unknown>).payment_intent_data = {
         payment_method_options: {
           card: {
             request_three_d_secure: "any",
@@ -76,11 +78,11 @@ export async function POST(request: Request) {
         },
       };
     } else {
-      params.subscription_data = {
+      (params as Record<string, unknown>).subscription_data = {
         payment_settings: {
           payment_method_options: {
             card: {
-              request_three_d_secure: "any" as "any",
+              request_three_d_secure: "any",
             },
           },
         },
