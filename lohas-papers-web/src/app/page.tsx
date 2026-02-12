@@ -33,6 +33,7 @@ export default function HomePage() {
           <p className="text-gray-500 text-sm">
             AI-powered academic paper search & multilingual summarization
           </p>
+          <p className="text-gray-400 text-xs">by LOHAS Inc.</p>
         </div>
 
         <SearchBar onSearch={handleSearch} large />
