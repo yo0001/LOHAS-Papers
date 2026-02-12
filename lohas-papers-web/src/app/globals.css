@@ -9,6 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter), var(--font-noto-sans-jp), "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --font-display: var(--font-shippori), var(--font-playfair), "Hiragino Mincho ProN", "Yu Mincho", serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --color-navy-50: #F0F1F6;
   --color-navy-100: #DDDEED;
@@ -49,6 +50,11 @@ body {
   background: radial-gradient(circle, rgba(22, 29, 64, 0.3) 0%, transparent 70%);
 }
 
+/* Display font for hero */
+.font-display {
+  font-family: var(--font-display);
+}
+
 /* 3D Button — Navy primary */
 .btn-3d {
   background: linear-gradient(180deg, #1a2452 0%, #0B1029 100%);
@@ -58,7 +64,23 @@ body {
     0 4px 6px -1px rgba(11, 16, 41, 0.35),
     0 10px 20px -3px rgba(11, 16, 41, 0.25),
     0 1px 3px 0 rgba(11, 16, 41, 0.2);
-  transition: all 0.15s ease;
+  letter-spacing: 0.04em;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.btn-3d::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  transition: left 0.5s ease;
+}
+.btn-3d:hover::after {
+  left: 120%;
 }
 .btn-3d:hover {
   background: linear-gradient(180deg, #222d5e 0%, #0e1535 100%);
@@ -86,7 +108,23 @@ body {
     0 4px 6px -1px rgba(0, 0, 0, 0.08),
     0 10px 20px -3px rgba(0, 0, 0, 0.06),
     0 1px 3px 0 rgba(0, 0, 0, 0.06);
-  transition: all 0.15s ease;
+  letter-spacing: 0.04em;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.btn-3d-white::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transition: left 0.5s ease;
+}
+.btn-3d-white:hover::after {
+  left: 120%;
 }
 .btn-3d-white:hover {
   background: linear-gradient(180deg, #ffffff 0%, #eef0f4 100%);

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Noto_Sans_JP } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
+import { Noto_Sans_JP, Shippori_Mincho } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -19,6 +19,20 @@ const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "700", "900"],
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["700", "800", "900"],
+});
+
+const shipporiMincho = Shippori_Mincho({
+  variable: "--font-shippori",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["500", "700", "800"],
 });
 
 const BASE_URL = "https://lohas-papers.com";
@@ -111,7 +125,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${notoSansJP.variable} antialiased bg-gray-50 min-h-screen flex flex-col`}
+        className={`${inter.variable} ${notoSansJP.variable} ${playfair.variable} ${shipporiMincho.variable} antialiased bg-gray-50 min-h-screen flex flex-col`}
       >
         <AuthProvider>
           <LanguageProvider>

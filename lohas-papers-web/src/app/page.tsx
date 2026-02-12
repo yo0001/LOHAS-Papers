@@ -120,7 +120,7 @@ function LandingPage() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-navy-100/40 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
 
         <div className="relative max-w-5xl mx-auto px-4 py-24 sm:py-32 text-center">
-          <h1 className="text-4xl sm:text-6xl font-black text-navy-600 leading-tight tracking-tight">
+          <h1 className="font-display text-4xl sm:text-6xl font-bold text-navy-600 leading-tight tracking-tight">
             {t(locale, "heroTitle")}
           </h1>
           <p className="mt-5 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto font-medium">
@@ -291,7 +291,7 @@ function LandingPage() {
         <div className="absolute inset-0 hero-grid" />
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-navy-400/30 to-transparent" />
         <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">
             {t(locale, "bottomCta")}
           </h2>
           <p className="mt-4 text-navy-200 font-medium">
