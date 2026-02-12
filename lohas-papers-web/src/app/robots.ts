@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/auth/"],
+      disallow: ["/api/ai/", "/api/stripe/", "/api/credits", "/auth/"],
     },
     sitemap: "https://lohas-papers.com/sitemap.xml",
   };

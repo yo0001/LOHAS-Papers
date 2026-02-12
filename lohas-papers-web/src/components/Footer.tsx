@@ -12,6 +12,10 @@ export default function Footer() {
       <div className="max-w-5xl mx-auto px-4 py-6 flex flex-col items-center gap-3 text-xs text-gray-400">
         <div className="flex flex-col items-center gap-2 w-full">
           <div className="flex items-center gap-3 flex-wrap justify-center">
+            <Link href="/topics" className="hover:text-gray-600 transition-colors">
+              {t(locale, "footerTopics")}
+            </Link>
+            <span className="text-gray-300">·</span>
             <Link href="/pricing" className="hover:text-gray-600 transition-colors">
               {t(locale, "footerPricing")}
             </Link>

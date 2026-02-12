@@ -30,7 +30,11 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protect AI API routes — require authentication
+  // Exception: /api/ai/search allows unauthenticated trial access (controlled in route handler)
   if (request.nextUrl.pathname.startsWith("/api/ai/") && !user) {
+    if (request.nextUrl.pathname === "/api/ai/search") {
+      return supabaseResponse; // route handler controls trial access
+    }
     return NextResponse.json(
       { error: "Authentication required" },
       { status: 401 },
