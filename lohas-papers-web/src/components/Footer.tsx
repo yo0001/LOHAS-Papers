@@ -12,9 +12,18 @@ export default function Footer() {
       <div className="max-w-5xl mx-auto px-4 py-6 flex flex-col items-center gap-3 text-xs text-gray-400">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full">
           <p>&copy; {new Date().getFullYear()} LOHAS Inc. — LOHAS Papers</p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap justify-center">
             <Link href="/pricing" className="hover:text-gray-600 transition-colors">
               {t(locale, "footerPricing")}
+            </Link>
+            <Link href="/legal#terms" className="hover:text-gray-600 transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/legal#privacy" className="hover:text-gray-600 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/legal#refund" className="hover:text-gray-600 transition-colors">
+              Refund Policy
             </Link>
             <Link href="/legal" className="hover:text-gray-600 transition-colors">
               {t(locale, "footerLegal")}
@@ -22,7 +31,7 @@ export default function Footer() {
           </div>
         </div>
         <p className="text-gray-400">
-          {t(locale, "footerSupervised")}
+          {t(locale, "footerSupervised")} · tatsuaki.lohas@gmail.com
         </p>
       </div>
     </footer>

@@ -1,76 +1,220 @@
 export default function LegalPage() {
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">特定商取引法に基づく表記</h1>
+    <div className="max-w-2xl mx-auto px-4 py-10 space-y-10">
+      <h1 className="text-2xl font-bold text-gray-900">Legal Information</h1>
 
-      <table className="w-full text-sm border-collapse">
-        <tbody>
-          {[
-            ["販売業者", "LOHAS Inc.（LOHAS株式会社）"],
-            ["運営統括責任者", "上原 達明"],
-            ["所在地", "東京都豊島区池袋二丁目52番地3号 ルミナリータワー池袋2104号"],
-            ["連絡先", "tatsuaki.lohas@gmail.com（お問い合わせはメールにてお願いいたします）"],
-            ["販売URL", "https://lohas-papers-web.vercel.app"],
-            ["販売価格", "各サービスの購入ページに表示された価格（税込）"],
-            [
-              "商品代金以外の費用",
-              "インターネット接続に必要な通信費はお客様のご負担となります",
-            ],
-            ["支払方法", "クレジットカード（Stripe経由）"],
-            ["支払時期", "クレジットカード決済：ご注文時に即時決済"],
-            [
-              "商品の引渡時期",
-              "クレジット購入：決済完了後、即時にアカウントへクレジットが付与されます",
-            ],
-            [
-              "返品・キャンセル",
-              "デジタルコンテンツの性質上、購入後の返品・返金には原則として応じかねます。サービスの不具合による場合はお問い合わせください。",
-            ],
-            [
-              "サブスクリプションの解約",
-              "マイアカウントページからいつでも解約可能です。解約後も現在の請求期間終了まではサービスをご利用いただけます。",
-            ],
-            [
-              "動作環境",
-              "最新のWebブラウザ（Chrome, Safari, Firefox, Edge）。インターネット接続が必要です。",
-            ],
-          ].map(([label, value]) => (
-            <tr key={label} className="border-b border-gray-200">
-              <th className="py-3 pr-4 text-left font-medium text-gray-700 align-top whitespace-nowrap w-40">
-                {label}
-              </th>
-              <td className="py-3 text-gray-600">{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* 特定商取引法 */}
+      <section id="tokushoho" className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">特定商取引法に基づく表記</h2>
+        <table className="w-full text-sm border-collapse">
+          <tbody>
+            {[
+              ["販売業者", "LOHAS Inc.（LOHAS株式会社）"],
+              ["運営統括責任者", "上原 達明"],
+              ["所在地", "東京都豊島区池袋二丁目52番地3号 ルミナリータワー池袋2104号"],
+              ["連絡先", "tatsuaki.lohas@gmail.com（お問い合わせはメールにてお願いいたします）"],
+              ["販売URL", "https://lohas-papers.com"],
+              ["販売価格", "各サービスの購入ページに表示された価格（税込）"],
+              ["商品代金以外の費用", "インターネット接続に必要な通信費はお客様のご負担となります"],
+              ["支払方法", "クレジットカード（Stripe経由）"],
+              ["支払時期", "クレジットカード決済：ご注文時に即時決済"],
+              ["商品の引渡時期", "クレジット購入：決済完了後、即時にアカウントへクレジットが付与されます"],
+              ["返品・キャンセル", "デジタルコンテンツの性質上、購入後の返品・返金には原則として応じかねます。サービスの不具合による場合はお問い合わせください。"],
+              ["サブスクリプションの解約", "マイアカウントページからいつでも解約可能です。解約後も現在の請求期間終了まではサービスをご利用いただけます。"],
+              ["動作環境", "最新のWebブラウザ（Chrome, Safari, Firefox, Edge）。インターネット接続が必要です。"],
+            ].map(([label, value]) => (
+              <tr key={label} className="border-b border-gray-200">
+                <th className="py-3 pr-4 text-left font-medium text-gray-700 align-top whitespace-nowrap w-40">
+                  {label}
+                </th>
+                <td className="py-3 text-gray-600">{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
 
-      <div className="space-y-4 text-sm text-gray-600">
-        <h2 className="text-lg font-semibold text-gray-900">サービス概要</h2>
+      {/* Service Description */}
+      <section id="service" className="space-y-4 text-sm text-gray-600">
+        <h2 className="text-lg font-semibold text-gray-900">Service Description</h2>
         <p>
-          LOHAS Papers は、AI を活用した学術論文検索・多言語要約サービスです。
-          PubMed および Semantic Scholar から論文を横断検索し、
-          Claude AI による要約・翻訳を8言語・3難易度で提供します。
+          LOHAS Papers is an AI-powered academic paper search and multilingual summarization service
+          operated by LOHAS Inc. The service cross-searches PubMed and Semantic Scholar databases,
+          and provides AI-generated summaries and translations via Claude AI in 8 languages
+          (Japanese, English, Korean, Chinese, Spanish, Portuguese, Thai, Vietnamese)
+          at 3 difficulty levels (Expert, General, Kids).
         </p>
         <p>
-          クレジット制の従量課金モデルを採用しており、検索（1クレジット）、
-          論文詳細（0.3クレジット）、全文翻訳（3クレジット）でご利用いただけます。
+          The service operates on a credit-based pay-as-you-go model:
         </p>
-      </div>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Search with AI summary: 1.0 credit</li>
+          <li>Paper detail view: 0.3 credits</li>
+          <li>Full text translation: 3.0 credits</li>
+        </ul>
+        <p>
+          Credits can be purchased as one-time packs (Starter ¥600, Standard ¥2,200, Premium ¥5,500)
+          or via monthly subscriptions (Pro ¥4,980/mo, Lab ¥29,800/mo, Institutional ¥98,000/mo).
+          All prices include tax.
+        </p>
+      </section>
 
-      <div className="space-y-4 text-sm text-gray-600">
-        <h2 className="text-lg font-semibold text-gray-900">プライバシーポリシー</h2>
+      {/* Terms of Service */}
+      <section id="terms" className="space-y-4 text-sm text-gray-600">
+        <h2 className="text-lg font-semibold text-gray-900">Terms of Service</h2>
         <p>
-          当サービスでは、Google OAuth
-          を通じてメールアドレス、表示名、プロフィール画像を取得します。
-          これらの情報はサービスの提供およびアカウント管理の目的にのみ使用し、
-          第三者への提供は法令に基づく場合を除き行いません。
+          By accessing or using LOHAS Papers ("the Service"), you agree to be bound by these Terms of Service.
+          If you do not agree, please do not use the Service.
         </p>
+        <h3 className="font-medium text-gray-800">1. Account Registration</h3>
         <p>
-          決済情報は Stripe が安全に管理しており、
-          当サービスのサーバーにクレジットカード情報が保存されることはありません。
+          You must sign in with a valid Google account to use paid features.
+          You are responsible for maintaining the security of your account credentials.
+          You must be at least 18 years old or have parental consent to create an account.
         </p>
-      </div>
+        <h3 className="font-medium text-gray-800">2. Credits and Payment</h3>
+        <p>
+          Credits are consumed when you perform searches, view paper details, or request translations.
+          Purchased credits do not expire. All payments are processed securely through Stripe.
+          Prices are displayed in Japanese Yen (JPY) and include applicable taxes.
+        </p>
+        <h3 className="font-medium text-gray-800">3. Acceptable Use</h3>
+        <p>
+          You agree not to: abuse the Service or attempt to circumvent usage limits;
+          use automated bots or scripts to access the Service;
+          redistribute AI-generated summaries commercially without permission;
+          use the Service for any unlawful purpose.
+        </p>
+        <h3 className="font-medium text-gray-800">4. AI-Generated Content Disclaimer</h3>
+        <p>
+          Summaries and translations are generated by AI and may contain errors or inaccuracies.
+          The Service is supervised by a licensed physician, but AI-generated content should not
+          replace professional medical advice, diagnosis, or treatment. Always consult qualified
+          healthcare professionals for medical decisions.
+        </p>
+        <h3 className="font-medium text-gray-800">5. Intellectual Property</h3>
+        <p>
+          Original academic papers are the property of their respective authors and publishers.
+          AI-generated summaries are provided for personal informational use.
+          The LOHAS Papers platform, branding, and technology are the property of LOHAS Inc.
+        </p>
+        <h3 className="font-medium text-gray-800">6. Limitation of Liability</h3>
+        <p>
+          LOHAS Inc. shall not be liable for any indirect, incidental, or consequential damages
+          arising from use of the Service. The Service is provided "as is" without warranties
+          of any kind, either express or implied. Our total liability shall not exceed the
+          amount you paid in the 12 months preceding the claim.
+        </p>
+        <h3 className="font-medium text-gray-800">7. Changes to Terms</h3>
+        <p>
+          We may update these Terms from time to time. Continued use of the Service after
+          changes constitutes acceptance of the updated Terms. Material changes will be
+          communicated via email or in-app notification.
+        </p>
+      </section>
+
+      {/* Refund Policy */}
+      <section id="refund" className="space-y-4 text-sm text-gray-600">
+        <h2 className="text-lg font-semibold text-gray-900">Refund &amp; Cancellation Policy</h2>
+        <h3 className="font-medium text-gray-800">One-Time Credit Purchases</h3>
+        <p>
+          Due to the digital nature of our service, credit purchases are generally non-refundable
+          once credits have been delivered to your account. However, we will consider refund
+          requests in the following circumstances:
+        </p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Service malfunction that prevented you from using purchased credits</li>
+          <li>Duplicate or accidental purchases (reported within 24 hours)</li>
+          <li>Credits were not properly applied to your account</li>
+        </ul>
+        <p>
+          To request a refund, please contact us at tatsuaki.lohas@gmail.com with your
+          account email and a description of the issue. We aim to respond within 2 business days.
+        </p>
+        <h3 className="font-medium text-gray-800">Subscriptions</h3>
+        <p>
+          You may cancel your subscription at any time from your account page.
+          Upon cancellation, you will retain access to your subscription benefits until the
+          end of your current billing period. No partial refunds are provided for the
+          remaining days in a billing cycle. Unused credits from subscriptions do not carry
+          over after cancellation.
+        </p>
+      </section>
+
+      {/* Privacy Policy */}
+      <section id="privacy" className="space-y-4 text-sm text-gray-600">
+        <h2 className="text-lg font-semibold text-gray-900">Privacy Policy</h2>
+        <p>
+          LOHAS Inc. ("we", "us") is committed to protecting your privacy. This Privacy Policy
+          explains how we collect, use, and protect your personal information when you use
+          LOHAS Papers.
+        </p>
+        <h3 className="font-medium text-gray-800">Information We Collect</h3>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong>Account information:</strong> Email address, display name, and profile image obtained via Google OAuth sign-in</li>
+          <li><strong>Usage data:</strong> Search queries, service usage patterns, and credit transaction history</li>
+          <li><strong>Technical data:</strong> IP address, browser type, and device information for security and analytics purposes</li>
+        </ul>
+        <h3 className="font-medium text-gray-800">How We Use Your Information</h3>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>To provide and maintain the Service</li>
+          <li>To process payments and manage your account</li>
+          <li>To improve service quality and user experience</li>
+          <li>To communicate service updates and important notices</li>
+          <li>To prevent fraud and ensure security</li>
+        </ul>
+        <h3 className="font-medium text-gray-800">Payment Information</h3>
+        <p>
+          All payment processing is handled securely by Stripe, Inc. We do not store, collect,
+          or have access to your credit card numbers or bank account details. Stripe&apos;s privacy
+          policy governs the handling of your payment data.
+        </p>
+        <h3 className="font-medium text-gray-800">Data Sharing</h3>
+        <p>
+          We do not sell your personal information to third parties. We may share data only:
+        </p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>With Stripe for payment processing</li>
+          <li>With Supabase for authentication and data storage</li>
+          <li>With Anthropic (Claude AI) for generating summaries (search queries only, no personal data)</li>
+          <li>When required by law or legal process</li>
+        </ul>
+        <h3 className="font-medium text-gray-800">Data Security</h3>
+        <p>
+          We implement industry-standard security measures including HTTPS encryption,
+          secure authentication via OAuth 2.0, and rate limiting to protect your data.
+          Our database is hosted on Supabase with row-level security enabled.
+        </p>
+        <h3 className="font-medium text-gray-800">Data Retention</h3>
+        <p>
+          Account data is retained while your account is active. You may request deletion
+          of your account and associated data by contacting us at tatsuaki.lohas@gmail.com.
+          We will process deletion requests within 30 days.
+        </p>
+        <h3 className="font-medium text-gray-800">Cookies</h3>
+        <p>
+          We use essential cookies for authentication and session management. We also use
+          Vercel Analytics for anonymous, privacy-friendly website analytics. No third-party
+          advertising cookies are used.
+        </p>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="space-y-4 text-sm text-gray-600">
+        <h2 className="text-lg font-semibold text-gray-900">Contact Us</h2>
+        <p>
+          If you have any questions about these policies, your account, or the Service,
+          please contact us:
+        </p>
+        <ul className="list-none space-y-1">
+          <li><strong>Email:</strong> tatsuaki.lohas@gmail.com</li>
+          <li><strong>Company:</strong> LOHAS Inc. (LOHAS株式会社)</li>
+          <li><strong>Address:</strong> Luminaria Tower Ikebukuro 2104, 2-52-3 Ikebukuro, Toshima-ku, Tokyo, Japan</li>
+        </ul>
+        <p>We aim to respond to all inquiries within 2 business days.</p>
+      </section>
+
+      <p className="text-xs text-gray-400 text-center">Last updated: February 12, 2026</p>
     </div>
   );
 }
