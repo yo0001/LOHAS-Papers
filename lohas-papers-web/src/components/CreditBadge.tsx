@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function CreditBadge() {
@@ -7,12 +8,21 @@ export default function CreditBadge() {
 
   if (!user) return null;
 
+  const isLow = credits < 1.0;
+
   return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+    <Link
+      href="/pricing"
+      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${
+        isLow
+          ? "bg-red-100 text-red-700 animate-pulse"
+          : "bg-emerald-100 text-emerald-700"
+      } hover:opacity-80`}
+    >
       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       {credits.toFixed(1)}
-    </span>
+    </Link>
   );
 }

@@ -12,11 +12,13 @@ import {
   type SearchResponse,
 } from "@/lib/api";
 import { addSearchHistory } from "@/lib/favorites";
+import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import SearchProgress from "@/components/SearchProgress";
 import AISummaryCard from "@/components/AISummaryCard";
 import PaperCard from "@/components/PaperCard";
 import LoginModal from "@/components/LoginModal";
+import ShareButton from "@/components/ShareButton";
 
 function ResultsContent() {
   const searchParams = useSearchParams();
@@ -43,7 +45,7 @@ function ResultsContent() {
       if (e instanceof AuthRequiredError) {
         setShowLogin(true);
       } else if (e instanceof InsufficientCreditsError) {
-        setError(t(lang as "ja", "insufficientCredits"));
+        setError("insufficientCredits");
       } else {
         setError(t(lang as "ja", "errorNetwork"));
       }
@@ -70,13 +72,24 @@ function ResultsContent() {
 
       {error && (
         <div className="text-center py-12">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button
-            onClick={() => doSearch(query, locale)}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-          >
-            {t(locale, "retry")}
-          </button>
+          <p className="text-red-500 mb-4">
+            {error === "insufficientCredits" ? t(locale, "insufficientCredits") : error}
+          </p>
+          {error === "insufficientCredits" ? (
+            <Link
+              href="/pricing"
+              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors inline-block"
+            >
+              {t(locale, "buyCredits")}
+            </Link>
+          ) : (
+            <button
+              onClick={() => doSearch(query, locale)}
+              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+            >
+              {t(locale, "retry")}
+            </button>
+          )}
         </div>
       )}
 
@@ -89,10 +102,15 @@ function ResultsContent() {
           </div>
 
           {result.ai_summary.text && (
-            <AISummaryCard
-              text={result.ai_summary.text}
-              paperCount={result.total_results}
-            />
+            <>
+              <AISummaryCard
+                text={result.ai_summary.text}
+                paperCount={result.total_results}
+              />
+              <div className="flex justify-end">
+                <ShareButton query={query} paperCount={result.total_results} />
+              </div>
+            </>
           )}
 
           <div className="space-y-3">

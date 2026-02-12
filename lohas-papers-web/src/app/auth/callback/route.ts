@@ -37,7 +37,12 @@ export async function GET(request: Request) {
         // Don't block login if audit logging fails
       }
 
-      return NextResponse.redirect(`${origin}${next}`);
+      // Check if this is a new user (created within last 60 seconds)
+      const createdAt = new Date(data.user.created_at);
+      const isNewUser = Date.now() - createdAt.getTime() < 60_000;
+      const redirectUrl = isNewUser ? `${origin}/?welcome=1` : `${origin}${next}`;
+
+      return NextResponse.redirect(redirectUrl);
     }
   }
 
