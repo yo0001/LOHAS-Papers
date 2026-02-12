@@ -113,26 +113,24 @@ function LandingPage() {
 
   return (
     <div className="bg-gray-50">
-      {/* Hero — dark navy gradient */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-navy-700 via-navy-600 to-navy-500">
-        {/* Grid pattern */}
-        <div className="absolute inset-0 hero-grid" />
-        {/* Accent orbs */}
-        <div className="absolute top-10 right-10 w-96 h-96 hero-orb-1 rounded-full blur-2xl animate-float" />
-        <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] hero-orb-2 rounded-full blur-3xl" />
+      {/* Hero — white base + navy accent */}
+      <section className="relative overflow-hidden bg-white">
+        {/* Subtle accent shapes for depth */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-navy-50/60 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-navy-100/40 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
 
         <div className="relative max-w-5xl mx-auto px-4 py-24 sm:py-32 text-center">
-          <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-black text-navy-600 leading-tight tracking-tight">
             {t(locale, "heroTitle")}
           </h1>
-          <p className="mt-5 text-lg sm:text-xl text-navy-200 max-w-2xl mx-auto font-medium">
+          <p className="mt-5 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto font-medium">
             {t(locale, "heroDescription")}
           </p>
 
           {/* Trial search bar */}
           <div className="mt-12 max-w-2xl mx-auto">
             <SearchBar onSearch={handleTrialSearch} large />
-            <p className="mt-3 text-sm text-navy-300">
+            <p className="mt-3 text-sm text-gray-400">
               {t(locale, "trialSearchHint")}
             </p>
           </div>
@@ -140,19 +138,21 @@ function LandingPage() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => signInWithGoogle("/")}
-              className="px-8 py-3.5 bg-white text-navy-700 font-bold rounded-full hover:bg-navy-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+              className="px-8 py-3.5 bg-navy-600 text-white font-bold rounded-full hover:bg-navy-700 transition-all shadow-lg shadow-navy-600/25 hover:shadow-xl hover:shadow-navy-600/30 hover:-translate-y-0.5"
             >
               {t(locale, "heroCta")}
             </button>
           </div>
-          <p className="mt-3 text-sm text-navy-300 font-medium">
+          <p className="mt-3 text-sm text-gray-400 font-medium">
             {t(locale, "heroBonus")}
           </p>
         </div>
+        {/* Bottom edge shadow for depth */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-navy-200/50 to-transparent" />
       </section>
 
       {/* How it Works */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50/80">
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 tracking-tight">
             {t(locale, "howItWorksTitle")}
@@ -164,7 +164,7 @@ function LandingPage() {
               { num: "3", title: t(locale, "step3Title"), desc: t(locale, "step3Desc"), icon: "03" },
             ].map((step) => (
               <div key={step.num} className="text-center group">
-                <div className="w-16 h-16 mx-auto bg-navy-600 rounded-2xl shadow-lg flex items-center justify-center text-lg font-bold text-white group-hover:scale-105 transition-transform">
+                <div className="w-16 h-16 mx-auto bg-white rounded-2xl shadow-md shadow-navy-600/10 border border-gray-100 flex items-center justify-center text-lg font-black text-navy-600 group-hover:shadow-lg group-hover:shadow-navy-600/15 group-hover:-translate-y-0.5 transition-all">
                   {step.icon}
                 </div>
                 <h3 className="mt-5 text-lg font-bold text-gray-900">{step.title}</h3>
@@ -176,7 +176,7 @@ function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 tracking-tight">
             {t(locale, "featuresTitle")}
@@ -188,7 +188,7 @@ function LandingPage() {
               { title: t(locale, "feature3Title"), desc: t(locale, "feature3Desc"), emoji: "🔍" },
               { title: t(locale, "feature4Title"), desc: t(locale, "feature4Desc"), emoji: "🤖" },
             ].map((feat) => (
-              <div key={feat.title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all">
+              <div key={feat.title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md shadow-gray-200/60 hover:shadow-xl hover:shadow-navy-600/8 hover:-translate-y-0.5 hover:border-navy-100 transition-all">
                 <div className="flex items-start gap-4">
                   <span className="text-2xl">{feat.emoji}</span>
                   <div>
@@ -203,7 +203,7 @@ function LandingPage() {
       </section>
 
       {/* Popular Topics */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50/80">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
             <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
@@ -242,7 +242,7 @@ function LandingPage() {
       </section>
 
       {/* Target Audience */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 tracking-tight">
             {t(locale, "audienceTitle")}
@@ -254,7 +254,7 @@ function LandingPage() {
               { title: t(locale, "audience3Title"), desc: t(locale, "audience3Desc"), emoji: "📚" },
               { title: t(locale, "audience4Title"), desc: t(locale, "audience4Desc"), emoji: "👨‍👩‍👧" },
             ].map((aud) => (
-              <div key={aud.title} className="text-center p-6 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow">
+              <div key={aud.title} className="text-center p-6 rounded-2xl border border-gray-100 bg-white shadow-md shadow-gray-200/60 hover:shadow-xl hover:shadow-navy-600/8 hover:-translate-y-0.5 transition-all">
                 <span className="text-3xl">{aud.emoji}</span>
                 <h3 className="mt-3 font-bold text-gray-900 text-sm">{aud.title}</h3>
                 <p className="mt-2 text-gray-500 text-xs leading-relaxed">{aud.desc}</p>
@@ -265,7 +265,7 @@ function LandingPage() {
       </section>
 
       {/* Physician Supervised */}
-      <section className="py-14 bg-white border-t border-gray-100">
+      <section className="py-14 bg-gray-50/80 border-t border-gray-100">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-2xl px-8 py-5 shadow-sm">
             <div className="w-12 h-12 bg-navy-600 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
@@ -286,9 +286,10 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Bottom CTA — navy gradient */}
-      <section className="relative py-20 bg-gradient-to-br from-navy-700 via-navy-600 to-navy-500 overflow-hidden">
+      {/* Bottom CTA */}
+      <section className="relative py-20 bg-navy-600 overflow-hidden">
         <div className="absolute inset-0 hero-grid" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-navy-400/30 to-transparent" />
         <div className="relative max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {t(locale, "bottomCta")}
@@ -298,7 +299,7 @@ function LandingPage() {
           </p>
           <button
             onClick={() => signInWithGoogle("/")}
-            className="mt-8 px-8 py-3.5 bg-white text-navy-700 font-bold rounded-full hover:bg-navy-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+            className="mt-8 px-8 py-3.5 bg-white text-navy-700 font-bold rounded-full hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
           >
             {t(locale, "loginWithGoogle")}
           </button>
