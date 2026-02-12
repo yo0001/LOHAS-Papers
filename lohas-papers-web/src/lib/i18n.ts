@@ -147,6 +147,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "特定商取引法に基づく表記",
     welcomeMessage: "ようこそ！LOHAS Papersへ",
     welcomeCredits: "1クレジットをプレゼントしました。さっそく論文を検索してみましょう！",
+    supervisedBadge: "医師監修",
+    supervisedName: "上原 吉敬（医師）",
+    supervisedAffiliation: "臨床研修医",
+    footerSupervised: "医師監修: 上原 吉敬",
   },
   en: {
     appName: "LOHAS Papers",
@@ -272,6 +276,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "Legal Notice",
     welcomeMessage: "Welcome to LOHAS Papers!",
     welcomeCredits: "You've received 1 free credit. Start searching papers now!",
+    supervisedBadge: "Physician Supervised",
+    supervisedName: "Yoshitaka Uehara, M.D.",
+    supervisedAffiliation: "Resident Physician",
+    footerSupervised: "Supervised by Yoshitaka Uehara, M.D.",
   },
   ko: {
     appName: "LOHAS Papers",
@@ -396,6 +404,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "법적 고지",
     welcomeMessage: "LOHAS Papers에 오신 것을 환영합니다!",
     welcomeCredits: "무료 크레딧 1개를 드렸습니다. 지금 바로 논문을 검색해 보세요!",
+    supervisedBadge: "의사 감수",
+    supervisedName: "우에하라 요시타카 (의사)",
+    supervisedAffiliation: "전공의",
+    footerSupervised: "의사 감수: 우에하라 요시타카",
   },
   "zh-Hans": {
     appName: "LOHAS Papers",
@@ -520,6 +532,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "法律声明",
     welcomeMessage: "欢迎来到LOHAS Papers！",
     welcomeCredits: "已赠送1个免费积分。现在就开始搜索论文吧！",
+    supervisedBadge: "医师监修",
+    supervisedName: "上原 吉敬（医师）",
+    supervisedAffiliation: "住院医师",
+    footerSupervised: "医师监修: 上原 吉敬",
   },
   es: {
     appName: "LOHAS Papers",
@@ -644,6 +660,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "Aviso legal",
     welcomeMessage: "¡Bienvenido a LOHAS Papers!",
     welcomeCredits: "Has recibido 1 crédito gratis. ¡Empieza a buscar artículos ahora!",
+    supervisedBadge: "Supervisado por médico",
+    supervisedName: "Yoshitaka Uehara, M.D.",
+    supervisedAffiliation: "Médico residente",
+    footerSupervised: "Supervisado por Yoshitaka Uehara, M.D.",
   },
   "pt-BR": {
     appName: "LOHAS Papers",
@@ -768,6 +788,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "Aviso legal",
     welcomeMessage: "Bem-vindo ao LOHAS Papers!",
     welcomeCredits: "Você recebeu 1 crédito grátis. Comece a pesquisar artigos agora!",
+    supervisedBadge: "Supervisionado por médico",
+    supervisedName: "Yoshitaka Uehara, M.D.",
+    supervisedAffiliation: "Médico residente",
+    footerSupervised: "Supervisionado por Yoshitaka Uehara, M.D.",
   },
   th: {
     appName: "LOHAS Papers",
@@ -892,6 +916,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "ข้อกำหนดทางกฎหมาย",
     welcomeMessage: "ยินดีต้อนรับสู่ LOHAS Papers!",
     welcomeCredits: "คุณได้รับ 1 เครดิตฟรี เริ่มค้นหาบทความได้เลย!",
+    supervisedBadge: "แพทย์กำกับดูแล",
+    supervisedName: "Yoshitaka Uehara, M.D.",
+    supervisedAffiliation: "แพทย์ประจำบ้าน",
+    footerSupervised: "กำกับดูแลโดย Yoshitaka Uehara, M.D.",
   },
   vi: {
     appName: "LOHAS Papers",
@@ -1016,6 +1044,10 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "Thông báo pháp lý",
     welcomeMessage: "Chào mừng đến với LOHAS Papers!",
     welcomeCredits: "Bạn đã nhận 1 tín dụng miễn phí. Hãy bắt đầu tìm kiếm bài báo ngay!",
+    supervisedBadge: "Bác sĩ giám sát",
+    supervisedName: "Yoshitaka Uehara, M.D.",
+    supervisedAffiliation: "Bác sĩ nội trú",
+    footerSupervised: "Giám sát bởi Yoshitaka Uehara, M.D.",
   },
 };
 

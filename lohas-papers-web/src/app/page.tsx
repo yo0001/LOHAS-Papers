@@ -197,6 +197,28 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* Physician Supervised */}
+      <section className="py-12 bg-gray-50 border-t border-gray-100">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-6 py-4 shadow-sm">
+            <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-lg flex-shrink-0">
+              🩺
+            </div>
+            <div className="text-left">
+              <p className="text-xs text-emerald-600 font-semibold">
+                {t(locale, "supervisedBadge")}
+              </p>
+              <p className="text-sm font-medium text-gray-900">
+                {t(locale, "supervisedName")}
+              </p>
+              <p className="text-xs text-gray-500">
+                {t(locale, "supervisedAffiliation")}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Bottom CTA */}
       <section className="py-16 bg-emerald-600">
         <div className="max-w-3xl mx-auto px-4 text-center">

@@ -51,27 +51,51 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: "LOHAS Papers",
-    url: BASE_URL,
-    applicationCategory: "ReferenceApplication",
-    operatingSystem: "Web",
-    description:
-      "AI-powered academic paper search and multilingual summarization platform. Searches PubMed and Semantic Scholar simultaneously.",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "JPY",
-      description: "Free credits for new users",
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "LOHAS Papers",
+      url: BASE_URL,
+      applicationCategory: "ReferenceApplication",
+      operatingSystem: "Web",
+      description:
+        "AI-powered academic paper search and multilingual summarization platform. Searches PubMed and Semantic Scholar simultaneously.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "JPY",
+        description: "Free credits for new users",
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${BASE_URL}/results?q={search_term}`,
+        "query-input": "required name=search_term",
+      },
     },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${BASE_URL}/results?q={search_term}`,
-      "query-input": "required name=search_term",
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      name: "LOHAS Papers - AI Academic Paper Search",
+      url: BASE_URL,
+      about: {
+        "@type": "MedicalCondition",
+        name: "Medical Literature Search",
+      },
+      reviewedBy: {
+        "@type": "Person",
+        name: "Yoshitaka Uehara",
+        jobTitle: "Physician",
+        description:
+          "Medical doctor supervising AI-generated medical paper summaries for accuracy and clinical relevance.",
+      },
+      lastReviewed: "2026-02-12",
+      medicalAudience: {
+        "@type": "MedicalAudience",
+        audienceType: "Clinician",
+      },
     },
-  };
+  ];
 
   return (
     <html lang="ja">
