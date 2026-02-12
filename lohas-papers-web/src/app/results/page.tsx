@@ -32,6 +32,8 @@ function ResultsContent() {
   const [error, setError] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState(false);
   const lastSearchRef = useRef<string>("");
+  const refreshCreditsRef = useRef(refreshCredits);
+  refreshCreditsRef.current = refreshCredits;
 
   useEffect(() => {
     if (!query) return;
@@ -45,6 +47,7 @@ function ResultsContent() {
     if (cached) {
       setResult(cached);
       setError(null);
+      setLoading(false);
       return;
     }
 
@@ -60,7 +63,7 @@ function ResultsContent() {
         if (!cancelled) {
           setResult(res);
           setCachedResult(query, locale, res);
-          refreshCredits();
+          refreshCreditsRef.current();
         }
       } catch (e) {
         if (cancelled) return;
@@ -78,7 +81,8 @@ function ResultsContent() {
 
     doSearch();
     return () => { cancelled = true; };
-  }, [query, locale, refreshCredits]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, locale]);
 
   const handleSearch = (newQuery: string) => {
     lastSearchRef.current = "";

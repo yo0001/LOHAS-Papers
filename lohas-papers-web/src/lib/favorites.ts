@@ -83,7 +83,23 @@ function getCacheStore(): Record<string, CacheEntry> {
 }
 
 function saveCacheStore(store: Record<string, CacheEntry>): void {
-  localStorage.setItem(CACHE_KEY, JSON.stringify(store));
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(store));
+  } catch {
+    // localStorage full — evict oldest half and retry
+    const keys = Object.keys(store);
+    const sorted = keys.sort((a, b) => store[a].timestamp - store[b].timestamp);
+    const half = Math.ceil(sorted.length / 2);
+    for (let i = 0; i < half; i++) {
+      delete store[sorted[i]];
+    }
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(store));
+    } catch {
+      // Still failing — clear cache entirely
+      localStorage.removeItem(CACHE_KEY);
+    }
+  }
 }
 
 export function getCachedResult(query: string, locale: string): unknown | null {
