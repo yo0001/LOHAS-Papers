@@ -25,12 +25,13 @@ export default function LanguageSwitcher() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg border border-gray-300 hover:border-emerald-500 hover:text-emerald-700 transition-colors"
+        className="flex items-center gap-1 px-2 py-1.5 text-sm rounded-lg border border-gray-300 hover:border-emerald-500 hover:text-emerald-700 transition-colors sm:px-3"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
         </svg>
-        {current?.name}
+        <span className="hidden sm:inline">{current?.name}</span>
+        <span className="sm:hidden text-xs">{current?.code.substring(0, 2).toUpperCase()}</span>
       </button>
 
       {open && (

@@ -11,11 +11,11 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-emerald-700 hover:text-emerald-600 transition-colors">
+      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
+        <Link href="/" className="text-lg sm:text-xl font-bold text-emerald-700 hover:text-emerald-600 transition-colors shrink-0">
           LOHAS Papers
         </Link>
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <Link
             href="/favorites"
             className="hidden sm:inline text-sm text-gray-600 hover:text-emerald-700 transition-colors"
