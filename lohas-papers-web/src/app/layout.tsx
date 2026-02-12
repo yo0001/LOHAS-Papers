@@ -21,24 +21,24 @@ const BASE_URL = "https://lohas-papers.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "LOHAS Papers - AI Academic Paper Search",
+  title: "LOHAS Papers - AI論文検索・多言語要約 | AI Academic Paper Search",
   description:
-    "Search PubMed & Semantic Scholar simultaneously. AI summarizes academic papers in 8 languages at 3 difficulty levels. Free credits for new users.",
+    "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で医学論文を要約。医師監修の論文検索プラットフォーム。新規登録で無料クレジット付与。Search PubMed & Semantic Scholar simultaneously with AI summaries in 8 languages.",
   openGraph: {
-    title: "LOHAS Papers - AI Academic Paper Search",
+    title: "LOHAS Papers - AI論文検索・多言語要約",
     description:
-      "Search PubMed & Semantic Scholar simultaneously. AI summarizes academic papers in 8 languages at 3 difficulty levels.",
+      "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で医学論文を要約。医師監修の論文検索プラットフォーム。",
     url: BASE_URL,
     siteName: "LOHAS Papers",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "LOHAS Papers" }],
-    locale: "en_US",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "LOHAS Papers - AI論文検索" }],
+    locale: "ja_JP",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "LOHAS Papers - AI Academic Paper Search",
+    title: "LOHAS Papers - AI論文検索・多言語要約",
     description:
-      "Search PubMed & Semantic Scholar simultaneously. AI summarizes papers in 8 languages at 3 difficulty levels.",
+      "PubMed・Semantic Scholarを同時検索、AIが8言語・3難易度で論文を要約。医師監修。",
     images: ["/og-image.png"],
     site: "@lohas_inc",
     creator: "@lohas_inc",
@@ -76,18 +76,19 @@ export default function RootLayout({
     {
       "@context": "https://schema.org",
       "@type": "MedicalWebPage",
-      name: "LOHAS Papers - AI Academic Paper Search",
+      name: "LOHAS Papers - AI論文検索・多言語要約",
       url: BASE_URL,
+      inLanguage: "ja",
       about: {
         "@type": "MedicalCondition",
         name: "Medical Literature Search",
       },
       reviewedBy: {
         "@type": "Person",
-        name: "Yoshitaka Uehara",
-        jobTitle: "Physician",
+        name: "上原 吉敬",
+        jobTitle: "医師",
         description:
-          "Medical doctor supervising AI-generated medical paper summaries for accuracy and clinical relevance.",
+          "AI生成の医学論文要約を監修する医師。Medical doctor supervising AI-generated medical paper summaries.",
       },
       lastReviewed: "2026-02-12",
       medicalAudience: {
