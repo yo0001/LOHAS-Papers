@@ -113,84 +113,89 @@ function LandingPage() {
 
   return (
     <div className="bg-gray-50">
-      {/* Hero — monotone + glass */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-gray-100 to-white">
-        {/* Decorative glass circles */}
-        <div className="absolute top-10 -right-20 w-72 h-72 rounded-full bg-white/40 blur-3xl" />
-        <div className="absolute -bottom-10 -left-20 w-96 h-96 rounded-full bg-gray-200/30 blur-3xl" />
+      {/* Hero — dark navy gradient */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-navy-700 via-navy-600 to-navy-500">
+        {/* Grid pattern */}
+        <div className="absolute inset-0 hero-grid" />
+        {/* Accent orbs */}
+        <div className="absolute top-10 right-10 w-96 h-96 hero-orb-1 rounded-full blur-2xl animate-float" />
+        <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] hero-orb-2 rounded-full blur-3xl" />
 
-        <div className="relative max-w-5xl mx-auto px-4 py-20 sm:py-28 text-center">
-          <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
+        <div className="relative max-w-5xl mx-auto px-4 py-24 sm:py-32 text-center">
+          <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
             {t(locale, "heroTitle")}
           </h1>
-          <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
+          <p className="mt-5 text-lg sm:text-xl text-navy-200 max-w-2xl mx-auto font-medium">
             {t(locale, "heroDescription")}
           </p>
 
           {/* Trial search bar */}
-          <div className="mt-10 max-w-2xl mx-auto">
+          <div className="mt-12 max-w-2xl mx-auto">
             <SearchBar onSearch={handleTrialSearch} large />
-            <p className="mt-3 text-sm text-gray-400">
+            <p className="mt-3 text-sm text-navy-300">
               {t(locale, "trialSearchHint")}
             </p>
           </div>
 
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => signInWithGoogle("/")}
-              className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all shadow-lg"
+              className="px-8 py-3.5 bg-white text-navy-700 font-bold rounded-full hover:bg-navy-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
             >
               {t(locale, "heroCta")}
             </button>
           </div>
-          <p className="mt-3 text-sm text-gray-400 font-medium">
+          <p className="mt-3 text-sm text-navy-300 font-medium">
             {t(locale, "heroBonus")}
           </p>
         </div>
       </section>
 
-      {/* How it Works — glass cards */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm">
+      {/* How it Works */}
+      <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 tracking-tight">
             {t(locale, "howItWorksTitle")}
           </h2>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-10">
             {[
               { num: "1", title: t(locale, "step1Title"), desc: t(locale, "step1Desc"), icon: "01" },
               { num: "2", title: t(locale, "step2Title"), desc: t(locale, "step2Desc"), icon: "02" },
               { num: "3", title: t(locale, "step3Title"), desc: t(locale, "step3Desc"), icon: "03" },
             ].map((step) => (
-              <div key={step.num} className="text-center">
-                <div className="w-16 h-16 mx-auto bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl shadow-lg flex items-center justify-center text-lg font-bold text-gray-900">
+              <div key={step.num} className="text-center group">
+                <div className="w-16 h-16 mx-auto bg-navy-600 rounded-2xl shadow-lg flex items-center justify-center text-lg font-bold text-white group-hover:scale-105 transition-transform">
                   {step.icon}
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-gray-900">{step.title}</h3>
-                <p className="mt-2 text-gray-500 text-sm">{step.desc}</p>
+                <h3 className="mt-5 text-lg font-bold text-gray-900">{step.title}</h3>
+                <p className="mt-2 text-gray-500 text-sm leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features — glass cards */}
-      <section className="py-16 bg-gray-50">
+      {/* Features */}
+      <section className="py-20 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 tracking-tight">
             {t(locale, "featuresTitle")}
           </h2>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
-              { title: t(locale, "feature1Title"), desc: t(locale, "feature1Desc") },
-              { title: t(locale, "feature2Title"), desc: t(locale, "feature2Desc") },
-              { title: t(locale, "feature3Title"), desc: t(locale, "feature3Desc") },
-              { title: t(locale, "feature4Title"), desc: t(locale, "feature4Desc") },
+              { title: t(locale, "feature1Title"), desc: t(locale, "feature1Desc"), emoji: "🌐" },
+              { title: t(locale, "feature2Title"), desc: t(locale, "feature2Desc"), emoji: "📊" },
+              { title: t(locale, "feature3Title"), desc: t(locale, "feature3Desc"), emoji: "🔍" },
+              { title: t(locale, "feature4Title"), desc: t(locale, "feature4Desc"), emoji: "🤖" },
             ].map((feat) => (
-              <div key={feat.title} className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-sm hover:shadow-md transition-shadow">
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
-                  {feat.title}
-                </span>
-                <p className="mt-3 text-gray-500 text-sm">{feat.desc}</p>
+              <div key={feat.title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                <div className="flex items-start gap-4">
+                  <span className="text-2xl">{feat.emoji}</span>
+                  <div>
+                    <h3 className="font-bold text-gray-900">{feat.title}</h3>
+                    <p className="mt-2 text-gray-500 text-sm leading-relaxed">{feat.desc}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -198,35 +203,35 @@ function LandingPage() {
       </section>
 
       {/* Popular Topics */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm">
+      <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
               {t(locale, "topicsTitle")}
             </h2>
             <Link
               href="/topics"
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-sm font-semibold text-navy-500 hover:text-navy-700 transition-colors"
             >
-              {t(locale, "topicsViewAll")} &rarr;
+              {t(locale, "topicsViewAll")} →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {featuredTopics.map((topic) => {
               const categoryLabel = CATEGORY_LABELS[topic.category];
               return (
                 <Link
                   key={topic.slug}
                   href={`/topics/${topic.slug}`}
-                  className="group bg-white/60 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
+                  className="group bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-navy-200 transition-all"
                 >
-                  <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">
+                  <span className="text-[10px] uppercase tracking-widest text-navy-400 font-bold">
                     {locale === "ja" ? categoryLabel?.ja : categoryLabel?.en}
                   </span>
-                  <h3 className="mt-2 font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
+                  <h3 className="mt-2 font-bold text-gray-900 group-hover:text-navy-600 transition-colors">
                     {locale === "ja" ? topic.title_ja : topic.title_en}
                   </h3>
-                  <p className="mt-1 text-xs text-gray-400 line-clamp-2">
+                  <p className="mt-1 text-xs text-gray-400 line-clamp-2 leading-relaxed">
                     {locale === "ja" ? topic.description_ja : topic.description_en}
                   </p>
                 </Link>
@@ -237,21 +242,22 @@ function LandingPage() {
       </section>
 
       {/* Target Audience */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 tracking-tight">
             {t(locale, "audienceTitle")}
           </h2>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: t(locale, "audience1Title"), desc: t(locale, "audience1Desc") },
-              { title: t(locale, "audience2Title"), desc: t(locale, "audience2Desc") },
-              { title: t(locale, "audience3Title"), desc: t(locale, "audience3Desc") },
-              { title: t(locale, "audience4Title"), desc: t(locale, "audience4Desc") },
+              { title: t(locale, "audience1Title"), desc: t(locale, "audience1Desc"), emoji: "🩺" },
+              { title: t(locale, "audience2Title"), desc: t(locale, "audience2Desc"), emoji: "🔬" },
+              { title: t(locale, "audience3Title"), desc: t(locale, "audience3Desc"), emoji: "📚" },
+              { title: t(locale, "audience4Title"), desc: t(locale, "audience4Desc"), emoji: "👨‍👩‍👧" },
             ].map((aud) => (
-              <div key={aud.title} className="text-center p-6 rounded-2xl border border-white/30 bg-white/60 backdrop-blur-xl shadow-sm">
-                <h3 className="font-semibold text-gray-900 text-sm">{aud.title}</h3>
-                <p className="mt-2 text-gray-400 text-xs">{aud.desc}</p>
+              <div key={aud.title} className="text-center p-6 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <span className="text-3xl">{aud.emoji}</span>
+                <h3 className="mt-3 font-bold text-gray-900 text-sm">{aud.title}</h3>
+                <p className="mt-2 text-gray-500 text-xs leading-relaxed">{aud.desc}</p>
               </div>
             ))}
           </div>
@@ -259,20 +265,20 @@ function LandingPage() {
       </section>
 
       {/* Physician Supervised */}
-      <section className="py-12 bg-white/30 backdrop-blur-sm border-t border-gray-100">
+      <section className="py-14 bg-white border-t border-gray-100">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-3 bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl px-6 py-4 shadow-sm">
-            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">
+          <div className="inline-flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-2xl px-8 py-5 shadow-sm">
+            <div className="w-12 h-12 bg-navy-600 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
               MD
             </div>
             <div className="text-left">
-              <p className="text-xs text-gray-500 font-semibold">
+              <p className="text-xs text-navy-400 font-bold uppercase tracking-wide">
                 {t(locale, "supervisedBadge")}
               </p>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-bold text-gray-900">
                 {t(locale, "supervisedName")}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500">
                 {t(locale, "supervisedAffiliation")}
               </p>
             </div>
@@ -280,18 +286,19 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Bottom CTA — dark glass */}
-      <section className="py-16 bg-gray-900">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">
+      {/* Bottom CTA — navy gradient */}
+      <section className="relative py-20 bg-gradient-to-br from-navy-700 via-navy-600 to-navy-500 overflow-hidden">
+        <div className="absolute inset-0 hero-grid" />
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {t(locale, "bottomCta")}
           </h2>
-          <p className="mt-3 text-gray-400">
+          <p className="mt-4 text-navy-200 font-medium">
             {t(locale, "bottomCtaDesc")}
           </p>
           <button
             onClick={() => signInWithGoogle("/")}
-            className="mt-8 px-8 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-all shadow-lg"
+            className="mt-8 px-8 py-3.5 bg-white text-navy-700 font-bold rounded-full hover:bg-navy-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
           >
             {t(locale, "loginWithGoogle")}
           </button>
