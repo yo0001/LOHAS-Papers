@@ -14,9 +14,9 @@ const content = {
     registeredDate: "医籍登録日: 令和6年（2024年）10月15日",
     issuer: "厚生労働大臣より免許交付",
     affiliation: "所属",
-    affiliationDetail: "新潟大学医歯学総合病院 臨床研修医",
+    affiliationDetail: "臨床研修医",
     education: "学歴",
-    educationDetail: "新潟大学 医学部 医学科 卒業",
+    educationDetail: "医学部 医学科 卒業",
     verifyTitle: "医師資格の確認",
     verifyDescription:
       "上原吉敬の医師資格は、厚生労働省「医師等資格確認検索」にて確認できます。",
@@ -43,11 +43,9 @@ const content = {
     registeredDate: "Registered: October 15, 2024",
     issuer: "Licensed by the Minister of Health, Labour and Welfare (Japan)",
     affiliation: "Affiliation",
-    affiliationDetail:
-      "Clinical Resident, Niigata University Medical and Dental Hospital",
+    affiliationDetail: "Clinical Resident",
     education: "Education",
-    educationDetail:
-      "M.D., Faculty of Medicine, Niigata University",
+    educationDetail: "M.D., Faculty of Medicine",
     verifyTitle: "Verify Medical Credentials",
     verifyDescription:
       "Dr. Uehara's medical license can be verified through the official Ministry of Health, Labour and Welfare physician search system.",
@@ -87,23 +85,11 @@ const personJsonLd = {
   honorificSuffix: "M.D.",
   affiliation: [
     {
-      "@type": "Hospital",
-      name: "Niigata University Medical and Dental Hospital",
-      alternateName: "新潟大学医歯学総合病院",
-      url: "https://www.nuh.niigata-u.ac.jp/",
-    },
-    {
       "@type": "Organization",
       name: "LOHAS Inc.",
       url: "https://lohas-papers.com",
     },
   ],
-  alumniOf: {
-    "@type": "CollegeOrUniversity",
-    name: "Niigata University",
-    alternateName: "新潟大学",
-    department: "Faculty of Medicine",
-  },
   hasCredential: [
     {
       "@type": "MedicalCredential" as string,
