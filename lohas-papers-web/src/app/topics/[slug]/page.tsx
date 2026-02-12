@@ -53,6 +53,9 @@ async function fetchTopicData(queryEn: string) {
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
     const res = await fetch(`${FASTAPI_URL}/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -65,8 +68,10 @@ async function fetchTopicData(queryEn: string) {
         filters: {},
       }),
       next: { revalidate: 604800 },
+      signal: controller.signal,
     });
 
+    clearTimeout(timeout);
     if (!res.ok) return null;
     return res.json();
   } catch {
