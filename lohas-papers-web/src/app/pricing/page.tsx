@@ -23,6 +23,7 @@ export default function PricingPage() {
   const { locale } = useLanguage();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handlePurchase = async (plan: string) => {
     if (!user) {
@@ -30,6 +31,7 @@ export default function PricingPage() {
       return;
     }
     setLoadingPlan(plan);
+    setError(null);
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
@@ -39,7 +41,13 @@ export default function PricingPage() {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        console.error("Checkout failed:", res.status, data);
+        setError(data.error || `Checkout failed (${res.status})`);
       }
+    } catch (e) {
+      console.error("Checkout error:", e);
+      setError("Network error. Please try again.");
     } finally {
       setLoadingPlan(null);
     }
@@ -62,6 +70,12 @@ export default function PricingPage() {
         <h1 className="text-3xl font-bold text-gray-900">{t(locale, "pricingTitle")}</h1>
         <p className="text-gray-500">{t(locale, "pricingSubtitle")}</p>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <p className="text-red-600 text-sm">{error}</p>
+        </div>
+      )}
 
       {/* Credit Packs */}
       <div>
@@ -146,6 +160,23 @@ export default function PricingPage() {
             <span className="text-gray-600">{t(locale, "fulltextTranslation")}</span>
             <span className="font-medium">3.0 cr</span>
           </div>
+        </div>
+      </div>
+
+      {/* Secure Payments */}
+      <div className="text-center space-y-2 text-xs text-gray-400">
+        <div className="flex items-center justify-center gap-3">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+          <span>Secure payments powered by Stripe. PCI DSS compliant. All data encrypted via HTTPS.</span>
+        </div>
+        <div className="flex items-center justify-center gap-2 text-gray-400">
+          <span className="font-semibold">Visa</span>
+          <span>·</span>
+          <span className="font-semibold">Mastercard</span>
+          <span>·</span>
+          <span className="font-semibold">American Express</span>
+          <span>·</span>
+          <span className="font-semibold">JCB</span>
         </div>
       </div>
 
