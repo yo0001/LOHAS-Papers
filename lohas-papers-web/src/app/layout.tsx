@@ -42,6 +42,34 @@ export const metadata: Metadata = {
   title: "LOHAS Papers - AI論文検索・多言語要約 | AI Academic Paper Search",
   description:
     "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で論文を要約。医師監修の論文検索プラットフォーム。新規登録で無料クレジット付与。Search PubMed & Semantic Scholar simultaneously with AI summaries in 8 languages.",
+  keywords: [
+    "論文検索", "AI要約", "PubMed検索", "医学論文", "多言語要約",
+    "論文翻訳", "医師監修", "学術論文", "エビデンス", "Semantic Scholar",
+    "論文要約AI", "医療論文", "研究論文", "文献検索", "オープンアクセス",
+    "academic paper search", "AI paper summary", "PubMed search",
+    "multilingual paper translation", "medical literature search",
+    "Semantic Scholar search", "evidence-based medicine", "research paper AI",
+    "scientific paper summary", "open access papers",
+  ],
+  alternates: {
+    canonical: BASE_URL,
+    languages: {
+      ja: BASE_URL,
+      en: BASE_URL,
+      ko: BASE_URL,
+      zh: BASE_URL,
+      es: BASE_URL,
+      "pt-BR": BASE_URL,
+      th: BASE_URL,
+      vi: BASE_URL,
+    },
+  },
+  verification: {
+    google: "TODO_GOOGLE_CODE",
+    other: {
+      "msvalidate.01": "TODO_BING_CODE",
+    },
+  },
   openGraph: {
     title: "LOHAS Papers - AI論文検索・多言語要約",
     description:
@@ -112,6 +140,37 @@ export default function RootLayout({
       medicalAudience: {
         "@type": "MedicalAudience",
         audienceType: "Clinician",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "LOHAS Inc.",
+      url: BASE_URL,
+      logo: `${BASE_URL}/icon.png`,
+      description: "AI-powered academic paper search and multilingual summarization platform.",
+      sameAs: [
+        "https://twitter.com/lohas_inc",
+      ],
+      founder: {
+        "@type": "Person",
+        name: "上原 吉敬",
+        jobTitle: "医師",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "LOHAS Papers",
+      url: BASE_URL,
+      inLanguage: ["ja", "en", "ko", "zh", "es", "pt-BR", "th", "vi"],
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${BASE_URL}/results?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
       },
     },
   ];

@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { t } from "@/lib/i18n";
+import { t, type Locale } from "@/lib/i18n";
 import SearchBar from "@/components/SearchBar";
 import { getSearchHistory, clearSearchHistory } from "@/lib/favorites";
 import Link from "next/link";
@@ -286,6 +286,9 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <FAQSection locale={locale} />
+
       {/* Bottom CTA */}
       <section className="relative py-20 bg-navy-600 overflow-hidden">
         <div className="absolute inset-0 hero-grid" />
@@ -306,6 +309,76 @@ function LandingPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-gray-100 rounded-xl overflow-hidden bg-white shadow-sm">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+      >
+        <span className="font-semibold text-gray-900 pr-4">{question}</span>
+        <svg
+          className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="px-6 pb-4 text-sm text-gray-600 leading-relaxed">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FAQSection({ locale }: { locale: Locale }) {
+  const faqItems = [
+    { q: t(locale, "faqQ1"), a: t(locale, "faqA1") },
+    { q: t(locale, "faqQ2"), a: t(locale, "faqA2") },
+    { q: t(locale, "faqQ3"), a: t(locale, "faqA3") },
+    { q: t(locale, "faqQ4"), a: t(locale, "faqA4") },
+    { q: t(locale, "faqQ5"), a: t(locale, "faqA5") },
+    { q: t(locale, "faqQ6"), a: t(locale, "faqA6") },
+  ];
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
+  return (
+    <section className="py-20 bg-gray-50/80">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <div className="max-w-3xl mx-auto px-4">
+        <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 tracking-tight mb-10">
+          {t(locale, "faqTitle")}
+        </h2>
+        <div className="space-y-3">
+          {faqItems.map((item, i) => (
+            <FAQItem key={i} question={item.q} answer={item.a} />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

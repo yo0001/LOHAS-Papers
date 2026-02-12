@@ -109,11 +109,40 @@ export default async function TopicPage({ params }: Props) {
     lastReviewed: new Date().toISOString().split("T")[0],
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "LOHAS Papers",
+        item: "https://lohas-papers.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Topics",
+        item: "https://lohas-papers.com/topics",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: topic.title_ja,
+        item: `https://lohas-papers.com/topics/${slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <div className="max-w-4xl mx-auto px-4 py-12">
