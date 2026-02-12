@@ -82,9 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCredits(0);
   };
 
-  const refreshCredits = async () => {
+  const refreshCredits = useCallback(async () => {
     if (user) await fetchCredits(user.id);
-  };
+  }, [user, fetchCredits]);
 
   return (
     <AuthContext.Provider

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { t } from "@/lib/i18n";
@@ -11,7 +11,7 @@ import {
   InsufficientCreditsError,
   type SearchResponse,
 } from "@/lib/api";
-import { addSearchHistory } from "@/lib/favorites";
+import { addSearchHistory, getCachedResult, setCachedResult } from "@/lib/favorites";
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import SearchProgress from "@/components/SearchProgress";
@@ -24,44 +24,74 @@ function ResultsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { locale } = useLanguage();
-  const { user, refreshCredits } = useAuth();
+  const { refreshCredits } = useAuth();
 
   const query = searchParams.get("q") || "";
   const [result, setResult] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showLogin, setShowLogin] = useState(false);
-
-  const doSearch = useCallback(async (q: string, lang: string) => {
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    try {
-      addSearchHistory(q);
-      const res = await searchWithAI(q, lang);
-      setResult(res);
-      refreshCredits();
-    } catch (e) {
-      if (e instanceof AuthRequiredError) {
-        setShowLogin(true);
-      } else if (e instanceof InsufficientCreditsError) {
-        setError("insufficientCredits");
-      } else {
-        setError(t(lang as "ja", "errorNetwork"));
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [refreshCredits]);
+  const lastSearchRef = useRef<string>("");
 
   useEffect(() => {
-    if (query) {
-      doSearch(query, locale);
+    if (!query) return;
+
+    const searchKey = `${query}_${locale}`;
+    if (lastSearchRef.current === searchKey) return;
+    lastSearchRef.current = searchKey;
+
+    // Check cache first
+    const cached = getCachedResult(query, locale) as SearchResponse | null;
+    if (cached) {
+      setResult(cached);
+      setError(null);
+      return;
     }
-  }, [query, locale, doSearch]);
+
+    // No cache — call API
+    let cancelled = false;
+    const doSearch = async () => {
+      setLoading(true);
+      setError(null);
+      setResult(null);
+      try {
+        addSearchHistory(query);
+        const res = await searchWithAI(query, locale);
+        if (!cancelled) {
+          setResult(res);
+          setCachedResult(query, locale, res);
+          refreshCredits();
+        }
+      } catch (e) {
+        if (cancelled) return;
+        if (e instanceof AuthRequiredError) {
+          setShowLogin(true);
+        } else if (e instanceof InsufficientCreditsError) {
+          setError("insufficientCredits");
+        } else {
+          setError(t(locale, "errorNetwork"));
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    doSearch();
+    return () => { cancelled = true; };
+  }, [query, locale, refreshCredits]);
 
   const handleSearch = (newQuery: string) => {
+    lastSearchRef.current = "";
     router.push(`/results?q=${encodeURIComponent(newQuery)}&lang=${locale}`);
+  };
+
+  const handleRetry = () => {
+    lastSearchRef.current = "";
+    setError(null);
+    setResult(null);
+    // Trigger re-search by resetting ref — the effect will re-run on next render
+    // Force re-render by using router
+    router.push(`/results?q=${encodeURIComponent(query)}&lang=${locale}&t=${Date.now()}`);
   };
 
   return (
@@ -84,7 +114,7 @@ function ResultsContent() {
             </Link>
           ) : (
             <button
-              onClick={() => doSearch(query, locale)}
+              onClick={handleRetry}
               className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
             >
               {t(locale, "retry")}
