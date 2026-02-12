@@ -138,7 +138,7 @@ function LandingPage() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => signInWithGoogle("/")}
-              className="px-8 py-3.5 bg-navy-600 text-white font-bold rounded-full hover:bg-navy-700 transition-all shadow-lg shadow-navy-600/25 hover:shadow-xl hover:shadow-navy-600/30 hover:-translate-y-0.5"
+              className="btn-3d px-8 py-3.5 text-white font-bold rounded-full"
             >
               {t(locale, "heroCta")}
             </button>
@@ -299,7 +299,7 @@ function LandingPage() {
           </p>
           <button
             onClick={() => signInWithGoogle("/")}
-            className="mt-8 px-8 py-3.5 bg-white text-navy-700 font-bold rounded-full hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+            className="btn-3d-white mt-8 px-8 py-3.5 text-navy-700 font-bold rounded-full"
           >
             {t(locale, "loginWithGoogle")}
           </button>

@@ -238,7 +238,7 @@ export default async function TopicPage({ params }: Props) {
         <div className="mb-12 text-center">
           <Link
             href={`/results?q=${encodeURIComponent(topic.query_en)}&lang=ja`}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all shadow-lg"
+            className="btn-3d inline-flex items-center gap-2 px-8 py-3 text-white font-bold rounded-full"
           >
             <svg
               className="w-5 h-5"

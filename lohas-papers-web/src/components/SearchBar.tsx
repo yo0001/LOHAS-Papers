@@ -44,7 +44,7 @@ export default function SearchBar({ onSearch, initialQuery = "", large = false }
         </div>
         <button
           type="submit"
-          className={`bg-navy-600 text-white font-medium rounded-xl hover:bg-navy-700 transition-colors whitespace-nowrap ${
+          className={`btn-3d text-white font-bold rounded-xl whitespace-nowrap ${
             large ? "px-5 py-3 text-base sm:px-8 sm:py-4 sm:text-lg" : "px-5 py-2.5 text-sm"
           }`}
         >

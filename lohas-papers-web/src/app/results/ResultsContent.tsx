@@ -47,7 +47,7 @@ function TrialBanner() {
             // Trigger Google login via the auth context
             document.dispatchEvent(new CustomEvent("lohas-open-login"));
           }}
-          className="mt-5 inline-flex items-center gap-2 px-8 py-3 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all shadow-lg"
+          className="btn-3d mt-5 inline-flex items-center gap-2 px-8 py-3 text-white font-bold rounded-full"
         >
           {t(locale, "trialBannerCta")}
         </Link>
