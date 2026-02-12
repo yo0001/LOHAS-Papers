@@ -28,8 +28,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 
   const descMap: Record<string, string> = {
-    ja: `「${query}」に関する最新の医学論文をAIが要約。LOHAS Papersで論文を検索・理解。`,
-    en: `AI-summarized medical papers about "${query}". Search and understand papers with LOHAS Papers.`,
+    ja: `「${query}」に関する最新の論文をAIが要約。LOHAS Papersで論文を検索・理解。`,
+    en: `AI-summarized papers about "${query}". Search and understand papers with LOHAS Papers.`,
   };
 
   const title = titleMap[lang] || titleMap.en;

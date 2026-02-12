@@ -8,13 +8,13 @@ import {
 } from "@/data/topics";
 
 export const metadata: Metadata = {
-  title: "医学研究トピック - LOHAS Papers",
+  title: "研究トピック - LOHAS Papers",
   description:
-    "AIが最新の医学論文を要約した研究トピックを探索。循環器、内分泌、腫瘍学、神経学など幅広い分野をカバー。",
+    "AIが最新の論文を要約した研究トピックを探索。循環器、内分泌、腫瘍学、神経学など幅広い分野をカバー。",
   openGraph: {
-    title: "医学研究トピック - LOHAS Papers",
+    title: "研究トピック - LOHAS Papers",
     description:
-      "AIが最新の医学論文を要約した研究トピックを探索。",
+      "AIが最新の論文を要約した研究トピックを探索。",
     images: ["/api/og?title=Medical%20Research%20Topics&type=topic"],
   },
 };

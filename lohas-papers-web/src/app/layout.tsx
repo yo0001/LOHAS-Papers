@@ -23,11 +23,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: "LOHAS Papers - AI論文検索・多言語要約 | AI Academic Paper Search",
   description:
-    "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で医学論文を要約。医師監修の論文検索プラットフォーム。新規登録で無料クレジット付与。Search PubMed & Semantic Scholar simultaneously with AI summaries in 8 languages.",
+    "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で論文を要約。医師監修の論文検索プラットフォーム。新規登録で無料クレジット付与。Search PubMed & Semantic Scholar simultaneously with AI summaries in 8 languages.",
   openGraph: {
     title: "LOHAS Papers - AI論文検索・多言語要約",
     description:
-      "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で医学論文を要約。医師監修の論文検索プラットフォーム。",
+      "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で論文を要約。医師監修の論文検索プラットフォーム。",
     url: BASE_URL,
     siteName: "LOHAS Papers",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "LOHAS Papers - AI論文検索" }],
@@ -88,7 +88,7 @@ export default function RootLayout({
         name: "上原 吉敬",
         jobTitle: "医師",
         description:
-          "AI生成の医学論文要約を監修する医師。Medical doctor supervising AI-generated medical paper summaries.",
+          "AI生成の論文要約を監修する医師。Medical doctor supervising AI-generated paper summaries.",
       },
       lastReviewed: "2026-02-12",
       medicalAudience: {
