@@ -25,7 +25,7 @@ export default function FulltextViewer({ sections }: FulltextViewerProps) {
             <h3 className="font-semibold text-gray-900">{section.section_name}</h3>
             <button
               onClick={() => toggleOriginal(i)}
-              className="text-xs text-emerald-600 hover:text-emerald-700 transition-colors"
+              className="text-xs text-navy-600 hover:text-navy-700 transition-colors"
             >
               {showOriginal[i] ? t(locale, "abstractTranslated") : t(locale, "fulltextShowOriginal")}
             </button>

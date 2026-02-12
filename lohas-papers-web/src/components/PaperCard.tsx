@@ -18,7 +18,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
   return (
     <Link
       href={`/paper/${encodeURIComponent(paper.id)}?lang=${locale}`}
-      className="block bg-white rounded-xl border border-gray-200 hover:border-emerald-300 hover:shadow-md transition-all p-5"
+      className="block bg-white rounded-xl border border-gray-200 hover:border-navy-300 hover:shadow-md transition-all p-5"
     >
       <div className="space-y-2">
         <h3 className="font-medium text-gray-900 leading-snug">

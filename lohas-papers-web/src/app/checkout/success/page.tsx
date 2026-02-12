@@ -16,8 +16,8 @@ export default function CheckoutSuccessPage() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-20 text-center space-y-6">
-      <div className="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
-        <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="w-16 h-16 mx-auto bg-navy-100 rounded-full flex items-center justify-center">
+        <svg className="w-8 h-8 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
       </div>
@@ -26,13 +26,13 @@ export default function CheckoutSuccessPage() {
       <div className="flex flex-col gap-3">
         <Link
           href="/"
-          className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+          className="px-6 py-3 bg-navy-600 text-white rounded-lg font-medium hover:bg-navy-700 transition-colors"
         >
           {t(locale, "startSearching")}
         </Link>
         <Link
           href="/account"
-          className="px-6 py-3 text-emerald-600 font-medium hover:text-emerald-700 transition-colors"
+          className="px-6 py-3 text-navy-600 font-medium hover:text-navy-700 transition-colors"
         >
           {t(locale, "account")}
         </Link>

@@ -37,14 +37,14 @@ export default function SearchBar({ onSearch, initialQuery = "", large = false }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t(locale, "searchPlaceholder")}
-            className={`w-full pl-10 pr-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all ${
+            className={`w-full pl-10 pr-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-navy-500 focus:border-transparent transition-all ${
               large ? "py-3 text-base sm:py-4 sm:text-lg" : "py-2.5 text-sm"
             }`}
           />
         </div>
         <button
           type="submit"
-          className={`bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 transition-colors whitespace-nowrap ${
+          className={`bg-navy-600 text-white font-medium rounded-xl hover:bg-navy-700 transition-colors whitespace-nowrap ${
             large ? "px-5 py-3 text-base sm:px-8 sm:py-4 sm:text-lg" : "px-5 py-2.5 text-sm"
           }`}
         >

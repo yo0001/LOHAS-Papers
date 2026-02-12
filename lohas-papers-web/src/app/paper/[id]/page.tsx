@@ -150,7 +150,7 @@ function PaperDetailContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin" />
+        <div className="w-10 h-10 rounded-full border-4 border-navy-200 border-t-navy-600 animate-spin" />
       </div>
     );
   }
@@ -161,7 +161,7 @@ function PaperDetailContent() {
         <p className="text-red-500 mb-4">{error || t(locale, "errorGeneric")}</p>
         <button
           onClick={fetchDetail}
-          className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+          className="px-4 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 transition-colors"
         >
           {t(locale, "retry")}
         </button>
@@ -174,7 +174,7 @@ function PaperDetailContent() {
       {/* Back link */}
       <Link
         href="/results"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-emerald-700 transition-colors"
+        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-navy-700 transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -215,7 +215,7 @@ function PaperDetailContent() {
           onClick={toggleFavorite}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             fav
-              ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+              ? "bg-navy-100 text-navy-700 hover:bg-navy-200"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
@@ -260,7 +260,7 @@ function PaperDetailContent() {
             <h2 className="font-semibold text-gray-900">{t(locale, "abstract")}</h2>
             <button
               onClick={() => setShowOriginalAbstract(!showOriginalAbstract)}
-              className="text-xs text-emerald-600 hover:text-emerald-700 transition-colors"
+              className="text-xs text-navy-600 hover:text-navy-700 transition-colors"
             >
               {showOriginalAbstract ? t(locale, "abstractTranslated") : t(locale, "abstractOriginal")}
             </button>
@@ -278,8 +278,8 @@ function PaperDetailContent() {
 
       {/* Summary */}
       {detail.summary && (
-        <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-5 space-y-2">
-          <h2 className="font-semibold text-emerald-800">{t(locale, "aiAnswer")}</h2>
+        <div className="bg-navy-50 rounded-xl border border-navy-200 p-5 space-y-2">
+          <h2 className="font-semibold text-navy-800">{t(locale, "aiAnswer")}</h2>
           <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{detail.summary}</p>
         </div>
       )}
@@ -298,7 +298,7 @@ function PaperDetailContent() {
             <button
               onClick={loadFulltext}
               disabled={fulltextLoading}
-              className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+              className="w-full py-3 bg-navy-600 text-white rounded-lg font-medium hover:bg-navy-700 disabled:opacity-50 transition-colors"
             >
               {fulltextLoading ? t(locale, "fulltextLoading") : t(locale, "fulltextTranslation")}
             </button>

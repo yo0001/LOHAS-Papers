@@ -25,7 +25,7 @@ export default function LanguageSwitcher() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-2 py-1.5 text-sm rounded-lg border border-gray-300 hover:border-emerald-500 hover:text-emerald-700 transition-colors sm:px-3"
+        className="flex items-center gap-1 px-2 py-1.5 text-sm rounded-lg border border-gray-300 hover:border-navy-500 hover:text-navy-700 transition-colors sm:px-3"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -43,8 +43,8 @@ export default function LanguageSwitcher() {
                 setLocale(l.code as Locale);
                 setOpen(false);
               }}
-              className={`w-full text-left px-4 py-2 text-sm hover:bg-emerald-50 transition-colors ${
-                locale === l.code ? "text-emerald-700 font-medium bg-emerald-50" : "text-gray-700"
+              className={`w-full text-left px-4 py-2 text-sm hover:bg-navy-50 transition-colors ${
+                locale === l.code ? "text-navy-700 font-medium bg-navy-50" : "text-gray-700"
               }`}
             >
               {l.name}

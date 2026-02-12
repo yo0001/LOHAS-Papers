@@ -32,7 +32,7 @@ export default function UserMenu() {
     return (
       <button
         onClick={() => signInWithGoogle()}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-navy-600 rounded-lg hover:bg-navy-700 transition-colors"
       >
         {t(locale, "login")}
       </button>
@@ -48,7 +48,7 @@ export default function UserMenu() {
       <div className="relative">
         <button
           onClick={() => setOpen(!open)}
-          className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border-2 border-gray-200 hover:border-emerald-400 transition-colors bg-gray-100"
+          className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border-2 border-gray-200 hover:border-navy-400 transition-colors bg-gray-100"
         >
           {avatarUrl && !imgError ? (
             <img

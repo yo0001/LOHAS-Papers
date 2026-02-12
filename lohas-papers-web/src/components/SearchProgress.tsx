@@ -27,15 +27,15 @@ export default function SearchProgress() {
   return (
     <div className="flex flex-col items-center justify-center py-20 gap-6">
       <div className="relative w-12 h-12">
-        <div className="absolute inset-0 rounded-full border-4 border-emerald-200" />
-        <div className="absolute inset-0 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin" />
+        <div className="absolute inset-0 rounded-full border-4 border-navy-200" />
+        <div className="absolute inset-0 rounded-full border-4 border-navy-600 border-t-transparent animate-spin" />
       </div>
       <div className="space-y-3 text-center">
         {phases.map((text, i) => (
           <p
             key={i}
             className={`text-sm transition-all duration-500 ${
-              i <= phase ? "text-emerald-700 opacity-100" : "text-gray-400 opacity-50"
+              i <= phase ? "text-navy-700 opacity-100" : "text-gray-400 opacity-50"
             } ${i === phase ? "font-medium" : ""}`}
           >
             {i < phase ? "\u2713 " : i === phase ? "" : ""}{text}

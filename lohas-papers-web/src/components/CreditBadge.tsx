@@ -16,7 +16,7 @@ export default function CreditBadge() {
       className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${
         isLow
           ? "bg-red-100 text-red-700 animate-pulse"
-          : "bg-emerald-100 text-emerald-700"
+          : "bg-navy-100 text-navy-700"
       } hover:opacity-80`}
     >
       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

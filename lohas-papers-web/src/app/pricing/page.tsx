@@ -85,11 +85,11 @@ export default function PricingPage() {
             <div
               key={plan.key}
               className={`relative bg-white rounded-xl border p-6 space-y-4 ${
-                plan.popular ? "border-emerald-400 ring-2 ring-emerald-100" : "border-gray-200"
+                plan.popular ? "border-navy-400 ring-2 ring-navy-100" : "border-gray-200"
               }`}
             >
               {plan.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-emerald-600 text-white text-xs font-medium rounded-full">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-navy-600 text-white text-xs font-medium rounded-full">
                   {t(locale, "popular")}
                 </span>
               )}
@@ -105,7 +105,7 @@ export default function PricingPage() {
                 disabled={loadingPlan === plan.key}
                 className={`w-full py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 ${
                   plan.popular
-                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                    ? "bg-navy-600 text-white hover:bg-navy-700"
                     : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                 }`}
               >

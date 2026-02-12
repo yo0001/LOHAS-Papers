@@ -10,6 +10,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-navy-50: #F0F1F6;
+  --color-navy-100: #DDDEED;
+  --color-navy-200: #B4B8D4;
+  --color-navy-300: #6A72A0;
+  --color-navy-400: #2E3668;
+  --color-navy-500: #161D40;
+  --color-navy-600: #0B1029;
+  --color-navy-700: #080D20;
+  --color-navy-800: #050A18;
+  --color-navy-900: #030710;
 }
 
 body {

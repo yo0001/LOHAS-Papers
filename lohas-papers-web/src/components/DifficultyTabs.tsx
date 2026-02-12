@@ -27,7 +27,7 @@ export default function DifficultyTabs({ selected, onChange }: DifficultyTabsPro
           onClick={() => onChange(key)}
           className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm transition-all ${
             selected === key
-              ? "bg-white text-emerald-700 font-medium shadow-sm"
+              ? "bg-white text-navy-700 font-medium shadow-sm"
               : "text-gray-600 hover:text-gray-800"
           }`}
         >
