@@ -6,7 +6,7 @@ export default function LegalPage() {
       <table className="w-full text-sm border-collapse">
         <tbody>
           {[
-            ["販売業者", "上原 達明"],
+            ["販売業者", "LOHAS Inc.（LOHAS株式会社）"],
             ["運営統括責任者", "上原 達明"],
             ["所在地", "東京都豊島区池袋二丁目52番地3号 ルミナリータワー池袋2104号"],
             ["連絡先", "tatsuaki.lohas@gmail.com（お問い合わせはメールにてお願いいたします）"],
