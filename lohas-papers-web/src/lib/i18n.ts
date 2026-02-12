@@ -149,7 +149,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "1クレジットをプレゼントしました。さっそく論文を検索してみましょう！",
     supervisedBadge: "医師監修",
     supervisedName: "上原 吉敬（医師）",
-    supervisedAffiliation: "臨床研修医",
+    supervisedAffiliation: "医師",
     footerSupervised: "医師監修: 上原 吉敬",
   },
   en: {
@@ -278,7 +278,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "You've received 1 free credit. Start searching papers now!",
     supervisedBadge: "Physician Supervised",
     supervisedName: "Yoshitaka Uehara, M.D.",
-    supervisedAffiliation: "Resident Physician",
+    supervisedAffiliation: "Physician",
     footerSupervised: "Supervised by Yoshitaka Uehara, M.D.",
   },
   ko: {
@@ -406,7 +406,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "무료 크레딧 1개를 드렸습니다. 지금 바로 논문을 검색해 보세요!",
     supervisedBadge: "의사 감수",
     supervisedName: "우에하라 요시타카 (의사)",
-    supervisedAffiliation: "전공의",
+    supervisedAffiliation: "의사",
     footerSupervised: "의사 감수: 우에하라 요시타카",
   },
   "zh-Hans": {
@@ -534,7 +534,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "已赠送1个免费积分。现在就开始搜索论文吧！",
     supervisedBadge: "医师监修",
     supervisedName: "上原 吉敬（医师）",
-    supervisedAffiliation: "住院医师",
+    supervisedAffiliation: "医师",
     footerSupervised: "医师监修: 上原 吉敬",
   },
   es: {
@@ -662,7 +662,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "Has recibido 1 crédito gratis. ¡Empieza a buscar artículos ahora!",
     supervisedBadge: "Supervisado por médico",
     supervisedName: "Yoshitaka Uehara, M.D.",
-    supervisedAffiliation: "Médico residente",
+    supervisedAffiliation: "Médico",
     footerSupervised: "Supervisado por Yoshitaka Uehara, M.D.",
   },
   "pt-BR": {
@@ -790,7 +790,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "Você recebeu 1 crédito grátis. Comece a pesquisar artigos agora!",
     supervisedBadge: "Supervisionado por médico",
     supervisedName: "Yoshitaka Uehara, M.D.",
-    supervisedAffiliation: "Médico residente",
+    supervisedAffiliation: "Médico",
     footerSupervised: "Supervisionado por Yoshitaka Uehara, M.D.",
   },
   th: {
@@ -918,7 +918,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "คุณได้รับ 1 เครดิตฟรี เริ่มค้นหาบทความได้เลย!",
     supervisedBadge: "แพทย์กำกับดูแล",
     supervisedName: "Yoshitaka Uehara, M.D.",
-    supervisedAffiliation: "แพทย์ประจำบ้าน",
+    supervisedAffiliation: "แพทย์",
     footerSupervised: "กำกับดูแลโดย Yoshitaka Uehara, M.D.",
   },
   vi: {
@@ -1046,7 +1046,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits: "Bạn đã nhận 1 tín dụng miễn phí. Hãy bắt đầu tìm kiếm bài báo ngay!",
     supervisedBadge: "Bác sĩ giám sát",
     supervisedName: "Yoshitaka Uehara, M.D.",
-    supervisedAffiliation: "Bác sĩ nội trú",
+    supervisedAffiliation: "Bác sĩ",
     footerSupervised: "Giám sát bởi Yoshitaka Uehara, M.D.",
   },
 };
