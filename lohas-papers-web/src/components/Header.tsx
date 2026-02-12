@@ -15,12 +15,21 @@ export default function Header() {
         <Link href="/" className="text-xl font-bold text-emerald-700 hover:text-emerald-600 transition-colors">
           LOHAS Papers
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/favorites"
-            className="text-sm text-gray-600 hover:text-emerald-700 transition-colors"
+            className="hidden sm:inline text-sm text-gray-600 hover:text-emerald-700 transition-colors"
           >
             {t(locale, "favorites")}
+          </Link>
+          <Link
+            href="/favorites"
+            className="sm:hidden text-gray-600 hover:text-emerald-700 transition-colors"
+            aria-label={t(locale, "favorites")}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
           </Link>
           <LanguageSwitcher />
           <UserMenu />

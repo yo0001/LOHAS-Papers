@@ -24,10 +24,10 @@ export default function LegalPage() {
               ["動作環境", "最新のWebブラウザ（Chrome, Safari, Firefox, Edge）。インターネット接続が必要です。"],
             ].map(([label, value]) => (
               <tr key={label} className="border-b border-gray-200">
-                <th className="py-3 pr-4 text-left font-medium text-gray-700 align-top whitespace-nowrap w-40">
+                <th className="py-3 pr-4 text-left font-medium text-gray-700 align-top whitespace-normal sm:whitespace-nowrap w-28 sm:w-40">
                   {label}
                 </th>
-                <td className="py-3 text-gray-600">{value}</td>
+                <td className="py-3 text-gray-600 break-words">{value}</td>
               </tr>
             ))}
           </tbody>
