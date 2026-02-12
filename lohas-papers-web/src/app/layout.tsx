@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "TODO_GOOGLE_CODE",
+    google: "it_vQGwCanHwiy4Py-p5aUx1a2WrJtbbf7dZlGqHSrM",
     other: {
       "msvalidate.01": "TODO_BING_CODE",
     },
