@@ -16,7 +16,7 @@ export default function ShareButton({ query, paperCount }: ShareButtonProps) {
       locale === "ja"
         ? `「${query}」について${paperCount}件の論文をAI要約で確認しました #LOHASPapers`
         : `Checked AI summaries of ${paperCount} papers about "${query}" #LOHASPapers`;
-    const url = `https://lohas-papers-web.vercel.app/results?q=${encodeURIComponent(query)}&lang=${locale}`;
+    const url = `https://lohas-papers.com/results?q=${encodeURIComponent(query)}&lang=${locale}`;
     const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(intentUrl, "_blank", "noopener,noreferrer,width=550,height=420");
   };

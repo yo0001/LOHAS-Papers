@@ -25,6 +25,7 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
+    console.error("[checkout] Auth failed:", authError?.message || "no user");
     return Response.json({ error: "Authentication required" }, { status: 401 });
   }
 
@@ -50,7 +51,13 @@ export async function POST(request: Request) {
   const planKey = plan as PlanKey;
   const planInfo = PRICE_MAP[planKey];
   const isOneTime = ONE_TIME_PLANS.includes(planKey);
-  const origin = request.headers.get("origin") || "";
+  // Build base URL reliably — origin header may be absent in some contexts
+  const origin = request.headers.get("origin");
+  const host = request.headers.get("host");
+  const proto = request.headers.get("x-forwarded-proto") || "https";
+  const baseUrl = origin || (host ? `${proto}://${host}` : "https://lohas-papers.com");
+
+  console.log("[checkout] origin:", origin, "host:", host, "baseUrl:", baseUrl);
 
   try {
     const params: Stripe.Checkout.SessionCreateParams = {
@@ -62,37 +69,21 @@ export async function POST(request: Request) {
       },
       line_items: [{ price: planInfo.priceId, quantity: 1 }],
       mode: isOneTime ? "payment" : "subscription",
-      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/pricing`,
+      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/pricing`,
     };
 
-    // --- EMV 3-D Secure: always request 3DS authentication ---
-    // Stripe API accepts these nested options but TypeScript types are incomplete,
-    // so we use type assertions to satisfy the compiler.
-    if (isOneTime) {
-      (params as Record<string, unknown>).payment_intent_data = {
-        payment_method_options: {
-          card: {
-            request_three_d_secure: "any",
-          },
-        },
-      };
-    } else {
-      (params as Record<string, unknown>).subscription_data = {
-        payment_settings: {
-          payment_method_options: {
-            card: {
-              request_three_d_secure: "any",
-            },
-          },
-        },
-      };
-    }
+    // Note: Stripe Checkout handles 3D Secure automatically when required
+    // by the card issuer. No need to explicitly request it.
 
-    const session = await getStripe().checkout.sessions.create(params);
+    const stripe = getStripe();
+    console.log("[checkout] Creating session for plan:", planKey, "priceId:", planInfo.priceId, "mode:", params.mode);
+    const session = await stripe.checkout.sessions.create(params);
+    console.log("[checkout] Session created:", session.id, "url:", session.url ? "OK" : "MISSING");
     return Response.json({ url: session.url });
-  } catch {
-    // Never expose Stripe error details to the client
+  } catch (err) {
+    // Log error details for debugging, but never expose to client
+    console.error("[checkout] Stripe error:", err instanceof Error ? err.message : err);
     return Response.json(GENERIC_ERROR, { status: 500 });
   }
 }

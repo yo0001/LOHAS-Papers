@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/auth/"],
     },
-    sitemap: "https://lohas-papers-web.vercel.app/sitemap.xml",
+    sitemap: "https://lohas-papers.com/sitemap.xml",
   };
 }

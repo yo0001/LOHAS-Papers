@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const BASE_URL = "https://lohas-papers-web.vercel.app";
+const BASE_URL = "https://lohas-papers.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

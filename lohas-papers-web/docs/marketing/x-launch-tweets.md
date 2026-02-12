@@ -9,7 +9,7 @@ PubMed と Semantic Scholar を同時検索し、AIが8言語・3難易度で論
 
 医師が作った、医療論文検索の新しいかたち。
 
-🔗 https://lohas-papers-web.vercel.app
+🔗 https://lohas-papers.com
 
 #LOHAS #医学論文 #AI #PubMed
 
@@ -53,7 +53,7 @@ Search PubMed & Semantic Scholar simultaneously. AI summarizes academic papers i
 
 Built by a physician, for everyone who needs medical literature access.
 
-🔗 https://lohas-papers-web.vercel.app
+🔗 https://lohas-papers.com
 
 #AI #MedicalResearch #PubMed
 
@@ -97,7 +97,7 @@ Follow us for updates 🙏
 
 母国語で世界中の医学論文を読めます。
 
-🔗 https://lohas-papers-web.vercel.app
+🔗 https://lohas-papers.com
 #LOHASPapers #多言語 #医学論文
 
 ### 3段階の難易度
@@ -137,7 +137,7 @@ Googleアカウントで即登録。
 
 まずは気になるテーマで検索してみてください。
 
-🔗 https://lohas-papers-web.vercel.app
+🔗 https://lohas-papers.com
 #LOHASPapers
 
 ---
