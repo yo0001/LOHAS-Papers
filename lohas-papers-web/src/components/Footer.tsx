@@ -36,7 +36,12 @@ export default function Footer() {
               {t(locale, "footerLegal")}
             </Link>
           </div>
-          <p>{t(locale, "footerSupervised")} · tatsuaki.lohas@gmail.com</p>
+          <p>
+            <Link href="/supervisor" className="hover:text-gray-600 transition-colors underline">
+              {t(locale, "footerSupervised")}
+            </Link>
+            {" "}· tatsuaki.lohas@gmail.com
+          </p>
           <p>&copy; {new Date().getFullYear()} LOHAS Inc.</p>
         </div>
       </div>
