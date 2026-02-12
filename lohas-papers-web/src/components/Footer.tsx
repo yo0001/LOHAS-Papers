@@ -21,7 +21,7 @@ export default function Footer() {
             </Link>
           </div>
         </div>
-        <p className="text-gray-300">
+        <p className="text-gray-400">
           {t(locale, "footerSupervised")}
         </p>
       </div>
