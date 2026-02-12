@@ -7,14 +7,12 @@ const content = {
   ja: {
     title: "監修医について",
     name: "上原 吉敬（うえはら よしあき）",
-    role: "LOHAS Papers 監修医 / LOHAS Inc. 代表取締役",
+    role: "医師 / LOHAS Papers 監修 / LOHAS Inc. 代表取締役",
     license: "医師免許",
     licenseNumber: "医籍登録番号: 第611760号",
     exam: "第118回 医師国家試験 合格",
     registeredDate: "医籍登録日: 令和6年（2024年）10月15日",
     issuer: "厚生労働大臣より免許交付",
-    affiliation: "所属",
-    affiliationDetail: "臨床研修医",
     education: "学歴",
     educationDetail: "医学部 医学科 卒業",
     verifyTitle: "医師資格の確認",
@@ -36,14 +34,12 @@ const content = {
   en: {
     title: "Medical Supervisor",
     name: "Yoshiaki Uehara, M.D.",
-    role: "Medical Supervisor, LOHAS Papers / CEO, LOHAS Inc.",
+    role: "M.D. / Medical Supervisor, LOHAS Papers / CEO, LOHAS Inc.",
     license: "Medical License",
     licenseNumber: "Medical Registry No. 611760",
     exam: "Passed the 118th National Medical Practitioners Examination (Japan)",
     registeredDate: "Registered: October 15, 2024",
     issuer: "Licensed by the Minister of Health, Labour and Welfare (Japan)",
-    affiliation: "Affiliation",
-    affiliationDetail: "Clinical Resident",
     education: "Education",
     educationDetail: "M.D., Faculty of Medicine",
     verifyTitle: "Verify Medical Credentials",
@@ -81,7 +77,7 @@ const personJsonLd = {
   gender: "Male",
   birthDate: "1987-09-02",
   nationality: { "@type": "Country", name: "Japan" },
-  jobTitle: ["Medical Doctor", "CEO"],
+  jobTitle: ["Medical Doctor", "CEO, LOHAS Inc."],
   honorificSuffix: "M.D.",
   affiliation: [
     {
@@ -156,21 +152,13 @@ export default function SupervisorPage() {
           </div>
         </section>
 
-        {/* Affiliation & Education */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <section className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
-            <h3 className="text-xl font-bold text-navy-900 mb-3 flex items-center gap-2">
-              🏥 {c.affiliation}
-            </h3>
-            <p className="text-gray-700">{c.affiliationDetail}</p>
-          </section>
-          <section className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
-            <h3 className="text-xl font-bold text-navy-900 mb-3 flex items-center gap-2">
-              🎓 {c.education}
-            </h3>
-            <p className="text-gray-700">{c.educationDetail}</p>
-          </section>
-        </div>
+        {/* Education */}
+        <section className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 mb-8">
+          <h3 className="text-xl font-bold text-navy-900 mb-3 flex items-center gap-2">
+            🎓 {c.education}
+          </h3>
+          <p className="text-gray-700">{c.educationDetail}</p>
+        </section>
 
         {/* Verification */}
         <section className="bg-navy-50 rounded-2xl border border-navy-200 p-8 mb-8">
