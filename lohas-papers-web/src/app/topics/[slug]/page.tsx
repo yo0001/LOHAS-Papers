@@ -51,14 +51,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 async function fetchTopicData(queryEn: string) {
   const FASTAPI_URL =
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+  const BACKEND_API_KEY = process.env.BACKEND_API_KEY || "";
 
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
 
+    const fetchHeaders: Record<string, string> = { "Content-Type": "application/json" };
+    if (BACKEND_API_KEY) {
+      fetchHeaders["X-API-Key"] = BACKEND_API_KEY;
+    }
+
     const res = await fetch(`${FASTAPI_URL}/search`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: fetchHeaders,
       body: JSON.stringify({
         query: queryEn,
         language: "ja",

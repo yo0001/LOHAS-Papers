@@ -1,4 +1,14 @@
 /**
+ * TODO: This in-memory rate limiter does NOT work across multiple serverless
+ * instances (e.g. Vercel). Each instance has its own Map, so limits are
+ * effectively per-instance, not global. For production, migrate to:
+ *   - Vercel KV (https://vercel.com/docs/storage/vercel-kv)
+ *   - Upstash Redis (https://upstash.com/)
+ * This is acceptable for now as a defense-in-depth layer, but should not be
+ * relied upon as the sole rate-limiting mechanism in a scaled deployment.
+ */
+
+/**
  * In-memory rate limiter for credit master / card testing attack prevention.
  * Tracks attempts by key (user ID, IP address) with sliding window.
  */

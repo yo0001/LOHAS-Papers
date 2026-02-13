@@ -14,7 +14,7 @@ class SearchFilters(BaseModel):
 
 
 class SearchRequest(BaseModel):
-    query: str
+    query: str = Field(..., max_length=500)
     language: str = "ja"
     page: int = 1
     per_page: int = 50

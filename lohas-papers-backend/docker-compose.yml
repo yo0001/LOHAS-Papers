@@ -1,3 +1,5 @@
+# ⚠️ SECURITY: Set POSTGRES_PASSWORD in .env or environment before deploying.
+# Never use default passwords in production.
 services:
   api:
     build: .
@@ -10,7 +12,7 @@ services:
       - postgres
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/lohas_papers
+      - DATABASE_URL=postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-changeme_in_production}@postgres:5432/lohas_papers
 
   redis:
     image: redis:7-alpine
@@ -23,7 +25,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
       POSTGRES_DB: lohas_papers
     volumes:
       - pgdata:/var/lib/postgresql/data

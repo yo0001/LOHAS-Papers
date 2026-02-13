@@ -1,9 +1,33 @@
 import logging
+import re
 
 from app.models.schemas import QueryTransformResult
 from app.services.llm_client import llm_chat_json
 
 logger = logging.getLogger(__name__)
+
+# ── Query sanitization ──
+_MAX_QUERY_LENGTH = 500
+
+
+def _sanitize_query(query: str) -> str:
+    """Sanitize user query to mitigate prompt injection and abuse."""
+    # Truncate to max length
+    query = query[:_MAX_QUERY_LENGTH]
+    # Remove common prompt injection patterns
+    query = re.sub(
+        r"(ignore\s+(previous|above|all)\s+instructions|"
+        r"you\s+are\s+now|"
+        r"system\s*:\s*|"
+        r"<\|.*?\|>|"
+        r"\{\{.*?\}\})",
+        "",
+        query,
+        flags=re.IGNORECASE,
+    )
+    # Strip excessive whitespace
+    query = re.sub(r"\s+", " ", query).strip()
+    return query
 
 SYSTEM_PROMPT = """あなたは医学・科学分野の学術検索クエリ最適化エンジンです。
 
@@ -52,6 +76,12 @@ FALLBACK_RESULT = QueryTransformResult(
 
 async def transform_query(user_query: str, language: str) -> QueryTransformResult:
     """Transform a natural language query into academic search queries."""
+    user_query = _sanitize_query(user_query)
+    if not user_query:
+        logger.warning("Query empty after sanitization")
+        fallback = FALLBACK_RESULT.model_copy()
+        fallback.original_query = ""
+        return fallback
     user_message = f"入力言語: {language}\n検索クエリ: {user_query}"
 
     try:

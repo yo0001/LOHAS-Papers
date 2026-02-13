@@ -5,6 +5,7 @@ import { cookies, headers } from "next/headers";
 
 const FASTAPI_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const BACKEND_API_KEY = process.env.BACKEND_API_KEY || "";
 
 const TRIAL_COOKIE = "lohas_trial";
 const TRIAL_IP_MAX = 3;
@@ -60,9 +61,13 @@ export async function POST(request: Request) {
   // 3. Execute trial search — proxy to FastAPI directly (no credit deduction)
   try {
     const body = await request.text();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (BACKEND_API_KEY) {
+      headers["X-API-Key"] = BACKEND_API_KEY;
+    }
     const res = await fetch(`${FASTAPI_URL}/search`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body,
     });
 

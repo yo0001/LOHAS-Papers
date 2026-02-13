@@ -4,6 +4,7 @@ import { CREDIT_COSTS, type CreditOperation } from "@/lib/credit-costs";
 
 const FASTAPI_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const BACKEND_API_KEY = process.env.BACKEND_API_KEY || "";
 
 export async function authenticatedProxy(
   operation: CreditOperation,
@@ -49,6 +50,9 @@ export async function authenticatedProxy(
     const headers: Record<string, string> = {};
     if (fetchOptions?.body) {
       headers["Content-Type"] = "application/json";
+    }
+    if (BACKEND_API_KEY) {
+      headers["X-API-Key"] = BACKEND_API_KEY;
     }
 
     const res = await fetch(`${FASTAPI_URL}${fastApiPath}`, {
