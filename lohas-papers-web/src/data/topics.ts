@@ -10,6 +10,7 @@ export interface Topic {
 }
 
 export const TOPIC_CATEGORIES = [
+  "general-practice",
   "cardiology",
   "endocrinology",
   "oncology",
@@ -39,6 +40,7 @@ export const TOPIC_CATEGORIES = [
 ] as const;
 
 export const CATEGORY_LABELS: Record<string, { ja: string; en: string }> = {
+  "general-practice": { ja: "総合診療・家庭医", en: "General Practice" },
   cardiology: { ja: "循環器", en: "Cardiology" },
   endocrinology: { ja: "内分泌・代謝", en: "Endocrinology" },
   oncology: { ja: "腫瘍学", en: "Oncology" },
@@ -68,6 +70,58 @@ export const CATEGORY_LABELS: Record<string, { ja: string; en: string }> = {
 };
 
 export const TOPICS: Topic[] = [
+  // General Practice / Family Medicine
+  {
+    slug: "lifestyle-disease-management",
+    query_en: "lifestyle disease metabolic syndrome comprehensive management",
+    title_ja: "生活習慣病の包括管理",
+    title_en: "Lifestyle Disease Management",
+    description_ja: "メタボ・高血圧・脂質異常の統合的アプローチと最新エビデンス",
+    description_en: "Comprehensive management of metabolic syndrome, hypertension, and dyslipidemia",
+    category: "general-practice",
+    keywords: ["生活習慣病", "メタボリックシンドローム", "高血圧", "糖尿病", "脂質異常症", "多因子介入"],
+  },
+  {
+    slug: "chronic-pain-management",
+    query_en: "chronic pain management non-cancer biopsychosocial",
+    title_ja: "慢性疼痛のマネジメント",
+    title_en: "Chronic Pain Management",
+    description_ja: "非がん性慢性疼痛の最新エビデンス — 運動療法・心理療法・薬物療法",
+    description_en: "Latest evidence on non-cancer chronic pain including exercise, psychological therapy, and pharmacotherapy",
+    category: "general-practice",
+    keywords: ["慢性疼痛", "慢性痛", "腰痛", "線維筋痛症", "認知行動療法", "運動療法", "バイオサイコソーシャル"],
+  },
+  {
+    slug: "osteoporosis-treatment",
+    query_en: "osteoporosis treatment prevention bone density fracture",
+    title_ja: "骨粗鬆症の予防と治療",
+    title_en: "Osteoporosis Prevention & Treatment",
+    description_ja: "骨密度検査から薬物療法まで — 骨折を防ぐための最新エビデンス",
+    description_en: "Latest evidence on osteoporosis from bone density testing to pharmacotherapy for fracture prevention",
+    category: "general-practice",
+    keywords: ["骨粗鬆症", "骨密度", "骨折予防", "ビスホスホネート", "デノスマブ", "ロモソズマブ", "DXA"],
+  },
+  {
+    slug: "preventive-medicine-checkup",
+    query_en: "preventive medicine health checkup cancer screening evidence",
+    title_ja: "健診・予防医学の最新エビデンス",
+    title_en: "Preventive Medicine & Health Checkups",
+    description_ja: "がん検診・特定健診の有効性と、知っておくべき予防医学の最新知見",
+    description_en: "Evidence on cancer screening, health checkups, and essential preventive medicine updates",
+    category: "general-practice",
+    keywords: ["予防医学", "健康診断", "がん検診", "特定健診", "スクリーニング", "早期発見", "一次予防"],
+  },
+  {
+    slug: "fever-unknown-origin",
+    query_en: "fever unknown origin FUO medically unexplained symptoms approach",
+    title_ja: "不明熱・不定愁訴のアプローチ",
+    title_en: "Fever of Unknown Origin & Unexplained Symptoms",
+    description_ja: "原因不明の発熱や検査で異常がない症状への総合診療的アプローチ",
+    description_en: "General practice approach to fever of unknown origin and medically unexplained symptoms",
+    category: "general-practice",
+    keywords: ["不明熱", "FUO", "不定愁訴", "身体症状症", "PET-CT", "成人Still病", "総合診療"],
+  },
+
   // Cardiology
   {
     slug: "heart-failure-treatment",

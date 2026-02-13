@@ -1,6 +1,13 @@
 // Auto-generated index of all topic content files
 // Last updated: 2026-02-13
 
+// General Practice / Family Medicine (総合診療・家庭医)
+export { content as lifestyleDiseaseManagement } from "./lifestyle-disease-management";
+export { content as chronicPainManagement } from "./chronic-pain-management";
+export { content as osteoporosisTreatment } from "./osteoporosis-treatment";
+export { content as preventiveMedicineCheckup } from "./preventive-medicine-checkup";
+export { content as feverUnknownOrigin } from "./fever-unknown-origin";
+
 export { content as heartFailureTreatment } from "./heart-failure-treatment";
 export { content as atrialFibrillationManagement } from "./atrial-fibrillation-management";
 export { content as hypertensionGuidelines } from "./hypertension-guidelines";
@@ -105,6 +112,13 @@ export { content as stutteringTreatment } from "./stuttering-treatment";
 export { content as articulationDisorders } from "./articulation-disorders";
 
 // Slug-based lookup map for dynamic routing
+// General Practice
+import { content as _lifestyleDiseaseManagement } from "./lifestyle-disease-management";
+import { content as _chronicPainManagement } from "./chronic-pain-management";
+import { content as _osteoporosisTreatment } from "./osteoporosis-treatment";
+import { content as _preventiveMedicineCheckup } from "./preventive-medicine-checkup";
+import { content as _feverUnknownOrigin } from "./fever-unknown-origin";
+
 import { content as _heartFailureTreatment } from "./heart-failure-treatment";
 import { content as _atrialFibrillationManagement } from "./atrial-fibrillation-management";
 import { content as _hypertensionGuidelines } from "./hypertension-guidelines";
@@ -221,6 +235,13 @@ export type TopicContent = {
 };
 
 export const topicContentMap: Record<string, TopicContent> = {
+  // General Practice
+  "lifestyle-disease-management": _lifestyleDiseaseManagement,
+  "chronic-pain-management": _chronicPainManagement,
+  "osteoporosis-treatment": _osteoporosisTreatment,
+  "preventive-medicine-checkup": _preventiveMedicineCheckup,
+  "fever-unknown-origin": _feverUnknownOrigin,
+  // Cardiology
   "heart-failure-treatment": _heartFailureTreatment,
   "atrial-fibrillation-management": _atrialFibrillationManagement,
   "hypertension-guidelines": _hypertensionGuidelines,
