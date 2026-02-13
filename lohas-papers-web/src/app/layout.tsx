@@ -7,6 +7,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
+import MaintenanceBanner from "@/components/MaintenanceBanner";
 import Footer from "@/components/Footer";
 
 const inter = Inter({
@@ -190,6 +191,7 @@ export default function RootLayout({
         <AuthProvider>
           <LanguageProvider>
             <Header />
+            <MaintenanceBanner />
             <main className="flex-1">{children}</main>
             <Footer />
           </LanguageProvider>
