@@ -303,7 +303,6 @@ export const topicContentMap: Record<string, TopicContent> = {
   "breast-cancer-screening": _breastCancerScreening,
   "alzheimer-disease-treatment": _alzheimerDiseaseTreatment,
   "stroke-prevention": _strokePrevention,
-  "migraine-treatment": _migraineTreatment,
   "copd-management": _copdManagement,
   "asthma-biologics": _asthmaBiologics,
   "sleep-apnea": _sleepApnea,
@@ -319,7 +318,6 @@ export const topicContentMap: Record<string, TopicContent> = {
   "low-dose-ct-screening": _lowDoseCtScreening,
   "mri-latest-technology": _mriLatestTechnology,
   "interventional-radiology": _interventionalRadiology,
-  "radiation-therapy-advances": _radiationTherapyAdvances,
   "ai-medical-imaging": _aiMedicalImaging,
   "mechanical-ventilation-update": _mechanicalVentilationUpdate,
   "ecmo-evidence": _ecmoEvidence,
@@ -329,25 +327,18 @@ export const topicContentMap: Record<string, TopicContent> = {
   "pediatric-amblyopia": _pediatricAmblyopia,
   "glaucoma-screening": _glaucomaScreening,
   "age-related-macular-degeneration": _ageRelatedMacularDegeneration,
-  "oct-clinical-application": _octClinicalApplication,
   "digital-eye-strain": _digitalEyeStrain,
   // Clinical Laboratory
   "tumor-markers-update": _tumorMarkersUpdate,
-  "novel-biomarkers": _novelBiomarkers,
   "point-of-care-testing": _pointOfCareTesting,
-  "rapid-infectious-disease-testing": _rapidInfectiousDiseaseTesting,
   "genetic-testing-clinical": _geneticTestingClinical,
   // Nutrition
   "diabetes-nutrition-therapy": _diabetesNutritionTherapy,
   "ckd-nutrition-management": _ckdNutritionManagement,
   "cancer-nutrition-support": _cancerNutritionSupport,
   "sarcopenia-nutrition": _sarcopeniaNutrition,
-  "enteral-nutrition-update": _enteralNutritionUpdate,
   // Midwifery
   "hypertensive-disorders-pregnancy": _hypertensiveDisordersPregnancy,
-  "postpartum-depression": _postpartumDepression,
-  "breastfeeding-evidence": _breastfeedingEvidence,
-  "labor-analgesia": _laborAnalgesia,
   "preterm-birth-prevention": _pretermBirthPrevention,
   // Emergency Medical Services
   "cpr-guidelines-update": _cprGuidelinesUpdate,
@@ -368,9 +359,7 @@ export const topicContentMap: Record<string, TopicContent> = {
   "end-of-life-care": _endOfLifeCare,
   "preventive-care-exercise": _preventiveCareExercise,
   // Physical Therapy
-  "exercise-therapy-evidence": _exerciseTherapyEvidence,
   "low-back-pain-rehabilitation": _lowBackPainRehabilitation,
-  "knee-osteoarthritis-pt": _kneeOsteoarthritisPt,
   "stroke-rehabilitation": _strokeRehabilitation,
   "cardiac-rehabilitation": _cardiacRehabilitation,
   // Occupational Therapy
@@ -378,7 +367,6 @@ export const topicContentMap: Record<string, TopicContent> = {
   "higher-brain-dysfunction": _higherBrainDysfunction,
   "developmental-disorders-ot": _developmentalDisordersOt,
   "dementia-occupational-therapy": _dementiaOccupationalTherapy,
-  "return-to-work-rehabilitation": _returnToWorkRehabilitation,
   // Speech-Language Therapy
   "dysphagia-rehabilitation": _dysphagiaRehabilitation,
   "aphasia-treatment": _aphasiaTreatment,
@@ -391,12 +379,9 @@ export const topicContentMap: Record<string, TopicContent> = {
   "caries-prevention": _cariesPrevention,
   "temporomandibular-disorders": _temporomandibularDisorders,
   "dental-antimicrobial-stewardship": _dentalAntimicrobialStewardship,
-  "oral-care-aspiration-pneumonia": _oralCareAspirationPneumonia,
   "periodontal-basic-therapy": _periodontalBasicTherapy,
   "fluoride-application": _fluorideApplication,
   // Pharmacist
-  "drug-drug-interactions": _drugDrugInteractions,
-  "drug-induced-organ-injury": _drugInducedOrganInjury,
   "medication-adherence": _medicationAdherence,
   "opioid-stewardship": _opioidStewardship,
   "pharmacogenomics": _pharmacogenomics,
@@ -405,7 +390,6 @@ export const topicContentMap: Record<string, TopicContent> = {
   // Nursing
   "pain-management": _painManagement,
   "delirium-prevention": _deliriumPrevention,
-  "fall-prevention": _fallPrevention,
   "pressure-injury-prevention": _pressureInjuryPrevention,
 };
 

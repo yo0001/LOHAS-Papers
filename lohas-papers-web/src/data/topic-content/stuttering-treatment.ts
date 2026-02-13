@@ -16,7 +16,7 @@ export const content = {
 
 ■ Jones et al.（2015年、Journal of Fluency Disorders）— リッカムプログラム長期追跡
 リッカムプログラムを受けた子どもたちの6年後の追跡調査。
-治療効果は長期間維持されており、対照群との差は拡大していた。
+治療効果は長期間維持されており、長期的な改善維持が示唆されたが、追跡研究は非ランダム化となりやすく厳密な群間比較には限界がある。
 つまり、幼児期に適切な治療を受けた効果は一時的なものではなく、長く続くということ。
 
 ■ Iverach & Rapee（2014年、American Journal of Speech-Language Pathology）
