@@ -228,6 +228,15 @@ export const TOPICS: Topic[] = [
     description_en: "Evidence on primary/secondary stroke prevention and acute management",
     category: "neurology",
   },
+  {
+    slug: "migraine-treatment",
+    query_en: "migraine treatment CGRP prevention",
+    title_ja: "片頭痛の最新治療",
+    title_en: "Migraine Treatment",
+    description_ja: "CGRP関連薬を含む片頭痛治療の最新エビデンス",
+    description_en: "Latest evidence on migraine treatment including CGRP-related medications",
+    category: "neurology",
+  },
 
   // Pulmonology
   {
@@ -423,6 +432,16 @@ export const TOPICS: Topic[] = [
     keywords: ["せん妄", "意識障害", "高齢者", "入院", "非薬物的介入", "CAM", "睡眠"],
   },
   {
+    slug: "fall-prevention",
+    query_en: "fall prevention elderly hospital nursing evidence",
+    title_ja: "転倒予防のエビデンス",
+    title_en: "Fall Prevention Evidence",
+    description_ja: "高齢者・入院患者の転倒予防に関する最新エビデンスと介入方法",
+    description_en: "Latest evidence and interventions for fall prevention in elderly and hospitalized patients",
+    category: "nursing",
+    keywords: ["転倒", "転落", "高齢者", "バランス", "筋力", "リスクアセスメント", "環境調整"],
+  },
+  {
     slug: "pain-management",
     query_en: "pain management nursing multimodal analgesia",
     title_ja: "疼痛管理 — ペインマネジメント",
@@ -431,6 +450,16 @@ export const TOPICS: Topic[] = [
     description_en: "Latest evidence on multimodal pain management and nursing care",
     category: "nursing",
     keywords: ["疼痛", "痛み", "鎮痛", "NSAIDs", "オピオイド", "非薬物療法", "ペインスケール"],
+  },
+  {
+    slug: "oral-care-aspiration-pneumonia",
+    query_en: "oral care aspiration pneumonia prevention nursing",
+    title_ja: "口腔ケアと誤嚥性肺炎予防",
+    title_en: "Oral Care & Aspiration Pneumonia Prevention",
+    description_ja: "口腔ケアによる誤嚥性肺炎予防のエビデンスと実践方法",
+    description_en: "Evidence and practical methods for preventing aspiration pneumonia through oral care",
+    category: "nursing",
+    keywords: ["口腔ケア", "誤嚥性肺炎", "嚥下", "高齢者", "口腔内細菌", "ブラッシング", "吸引"],
   },
 
   // Dental Hygiene
@@ -465,6 +494,16 @@ export const TOPICS: Topic[] = [
     description_en: "Latest evidence on polypharmacy review and deprescribing strategies",
     category: "pharmacy",
     keywords: ["ポリファーマシー", "多剤併用", "減薬", "高齢者", "処方見直し", "薬剤師", "PIMs", "Beers基準"],
+  },
+  {
+    slug: "drug-drug-interactions",
+    query_en: "drug-drug interactions clinical significance CYP pharmacokinetics",
+    title_ja: "薬物相互作用の最新知見",
+    title_en: "Drug-Drug Interactions: Latest Insights",
+    description_ja: "臨床で注意すべき薬物相互作用の最新エビデンスと回避戦略",
+    description_en: "Latest evidence on clinically significant drug-drug interactions and avoidance strategies",
+    category: "pharmacy",
+    keywords: ["薬物相互作用", "CYP", "P-糖タンパク質", "併用禁忌", "薬物動態", "代謝酵素", "TDM"],
   },
   {
     slug: "pharmacogenomics",
@@ -506,6 +545,16 @@ export const TOPICS: Topic[] = [
     category: "pharmacy",
     keywords: ["オピオイド", "鎮痛薬", "依存", "適正使用", "モルヒネ", "フェンタニル", "マルチモーダル鎮痛"],
   },
+  {
+    slug: "drug-induced-organ-injury",
+    query_en: "drug-induced liver injury nephrotoxicity interstitial lung disease",
+    title_ja: "薬剤性臓器障害",
+    title_en: "Drug-Induced Organ Injury",
+    description_ja: "肝障害・腎障害・間質性肺炎の早期発見 — 薬が原因の臓器ダメージを見逃さないために",
+    description_en: "Early detection of drug-induced liver injury, nephrotoxicity, and interstitial lung disease",
+    category: "pharmacy",
+    keywords: ["薬剤性肝障害", "薬剤性腎障害", "間質性肺炎", "DILI", "副作用", "早期発見", "因果関係評価"],
+  },
 
   // Radiology Tech (診療放射線技師)
   {
@@ -537,6 +586,16 @@ export const TOPICS: Topic[] = [
     description_en: "Latest trends in interventional radiology including catheter therapy, embolization, and thrombectomy",
     category: "radiology-tech",
     keywords: ["IVR", "画像下治療", "カテーテル", "塞栓術", "TACE", "血栓回収", "低侵襲治療"],
+  },
+  {
+    slug: "radiation-therapy-advances",
+    query_en: "radiation therapy proton heavy ion SBRT advances",
+    title_ja: "放射線治療の進歩",
+    title_en: "Advances in Radiation Therapy",
+    description_ja: "粒子線治療・定位放射線治療（SBRT）を含む放射線治療の最新エビデンス",
+    description_en: "Latest evidence on radiation therapy including proton/heavy ion therapy and SBRT",
+    category: "radiology-tech",
+    keywords: ["放射線治療", "粒子線", "陽子線", "重粒子線", "SBRT", "IMRT", "IGRT"],
   },
   {
     slug: "ai-medical-imaging",
@@ -633,6 +692,16 @@ export const TOPICS: Topic[] = [
     keywords: ["加齢黄斑変性", "AMD", "抗VEGF", "アイリーア", "ファリシマブ", "黄斑", "OCT"],
   },
   {
+    slug: "oct-clinical-application",
+    query_en: "OCT optical coherence tomography retina optic nerve",
+    title_ja: "OCT（光干渉断層計）の臨床活用",
+    title_en: "OCT Clinical Applications",
+    description_ja: "OCTによる網膜・視神経評価の最新技術 — OCTA・AI解析の進歩",
+    description_en: "Latest OCT technology for retinal and optic nerve evaluation including OCTA and AI analysis",
+    category: "orthoptics",
+    keywords: ["OCT", "光干渉断層計", "OCTA", "網膜", "視神経", "RNFL", "AI画像解析"],
+  },
+  {
     slug: "digital-eye-strain",
     query_en: "digital eye strain VDT syndrome screen time prevention",
     title_ja: "デジタル眼精疲労",
@@ -655,6 +724,16 @@ export const TOPICS: Topic[] = [
     keywords: ["腫瘍マーカー", "CEA", "PSA", "CA19-9", "AFP", "CA125", "リキッドバイオプシー"],
   },
   {
+    slug: "novel-biomarkers",
+    query_en: "novel biomarkers early diagnosis liquid biopsy ctDNA",
+    title_ja: "新規バイオマーカー",
+    title_en: "Novel Biomarkers",
+    description_ja: "早期診断のための最新検査 — リキッドバイオプシーからアルツハイマー血液検査まで",
+    description_en: "Latest diagnostic biomarkers from liquid biopsy to Alzheimer's blood tests",
+    category: "clinical-laboratory",
+    keywords: ["バイオマーカー", "リキッドバイオプシー", "ctDNA", "p-tau217", "マルチキャンサー検出", "高感度トロポニン"],
+  },
+  {
     slug: "point-of-care-testing",
     query_en: "point-of-care testing POCT bedside rapid diagnostics",
     title_ja: "POCT(即時検査)の最新動向",
@@ -663,6 +742,16 @@ export const TOPICS: Topic[] = [
     description_en: "Advances in bedside testing and POCT applications in emergency and home care",
     category: "clinical-laboratory",
     keywords: ["POCT", "即時検査", "ベッドサイド検査", "血糖測定", "迅速検査", "在宅医療", "救急"],
+  },
+  {
+    slug: "rapid-infectious-disease-testing",
+    query_en: "rapid infectious disease testing PCR antigen LAMP multiplex",
+    title_ja: "感染症迅速検査",
+    title_en: "Rapid Infectious Disease Testing",
+    description_ja: "PCR・抗原検査の最新技術 — LAMP法やCRISPR診断の進歩",
+    description_en: "Latest technologies in PCR, antigen tests, LAMP, and CRISPR-based diagnostics",
+    category: "clinical-laboratory",
+    keywords: ["PCR", "抗原検査", "LAMP法", "迅速検査", "マルチプレックス", "CRISPR", "感染症診断"],
   },
   {
     slug: "genetic-testing-clinical",
@@ -716,6 +805,16 @@ export const TOPICS: Topic[] = [
     category: "nutrition",
     keywords: ["サルコペニア", "フレイル", "たんぱく質", "ロイシン", "レジスタンス運動", "ビタミンD", "高齢者栄養"],
   },
+  {
+    slug: "enteral-nutrition-update",
+    query_en: "enteral nutrition tube feeding PEG semi-solid",
+    title_ja: "経腸栄養の最新動向",
+    title_en: "Enteral Nutrition Update",
+    description_ja: "経管栄養の選択と管理 — 半固形化栄養剤と在宅経腸栄養",
+    description_en: "Tube feeding selection and management including semi-solid formulas and home enteral nutrition",
+    category: "nutrition",
+    keywords: ["経腸栄養", "経管栄養", "胃瘻", "PEG", "半固形化", "在宅栄養", "誤嚥性肺炎予防"],
+  },
 
   // Midwifery (助産師)
   {
@@ -727,6 +826,36 @@ export const TOPICS: Topic[] = [
     description_en: "Latest evidence on prevention and management of hypertensive disorders in pregnancy",
     category: "midwifery",
     keywords: ["妊娠高血圧", "妊娠高血圧腎症", "子癇", "低用量アスピリン", "sFlt-1/PlGF", "HELLP症候群", "産後フォロー"],
+  },
+  {
+    slug: "postpartum-depression",
+    query_en: "postpartum depression screening treatment EPDS brexanolone",
+    title_ja: "産後うつの予防と治療",
+    title_en: "Postpartum Depression",
+    description_ja: "スクリーニングと介入のエビデンス — EPDSの活用と新薬の動向",
+    description_en: "Evidence on screening and intervention for postpartum depression",
+    category: "midwifery",
+    keywords: ["産後うつ", "EPDS", "マタニティブルーズ", "ブレキサノロン", "認知行動療法", "スクリーニング", "授乳と抗うつ薬"],
+  },
+  {
+    slug: "breastfeeding-evidence",
+    query_en: "breastfeeding evidence benefits support lactation",
+    title_ja: "母乳育児のエビデンス",
+    title_en: "Breastfeeding Evidence",
+    description_ja: "母乳栄養の利点と支援方法 — 感染症予防から母体の長期的健康まで",
+    description_en: "Benefits of breastfeeding and support methods from infection prevention to maternal health",
+    category: "midwifery",
+    keywords: ["母乳育児", "母乳栄養", "ラッチオン", "乳腺炎", "母乳バンク", "ドナーミルク", "授乳支援"],
+  },
+  {
+    slug: "labor-analgesia",
+    query_en: "labor analgesia epidural pain relief childbirth",
+    title_ja: "無痛分娩の最新動向",
+    title_en: "Labor Analgesia",
+    description_ja: "硬膜外麻酔のエビデンスと安全性 — 最新の大規模研究から",
+    description_en: "Evidence and safety of epidural analgesia based on latest large-scale studies",
+    category: "midwifery",
+    keywords: ["無痛分娩", "硬膜外麻酔", "エピデュラル", "分娩鎮痛", "CSEA", "笑気", "帝王切開率"],
   },
   {
     slug: "preterm-birth-prevention",
@@ -897,6 +1026,16 @@ export const TOPICS: Topic[] = [
 
   // Physical Therapy (理学療法士)
   {
+    slug: "exercise-therapy-evidence",
+    query_en: "exercise therapy chronic disease prescription evidence",
+    title_ja: "運動療法のエビデンス",
+    title_en: "Exercise Therapy Evidence",
+    description_ja: "慢性疾患に対する運動処方の最新知見 — 運動は最良の薬",
+    description_en: "Latest evidence on exercise prescription for chronic diseases",
+    category: "physical-therapy",
+    keywords: ["運動療法", "運動処方", "慢性疾患", "有酸素運動", "筋力トレーニング", "理学療法", "WHO身体活動ガイドライン"],
+  },
+  {
     slug: "low-back-pain-rehabilitation",
     query_en: "non-specific low back pain exercise therapy rehabilitation",
     title_ja: "腰痛のリハビリテーション",
@@ -905,6 +1044,16 @@ export const TOPICS: Topic[] = [
     description_en: "Evidence-based exercise therapy for non-specific low back pain",
     category: "physical-therapy",
     keywords: ["腰痛", "非特異的腰痛", "運動療法", "体幹トレーニング", "マッケンジー法", "ピラティス", "恐怖回避"],
+  },
+  {
+    slug: "knee-osteoarthritis-pt",
+    query_en: "knee osteoarthritis physical therapy exercise evidence",
+    title_ja: "変形性膝関節症の理学療法",
+    title_en: "Knee Osteoarthritis Physical Therapy",
+    description_ja: "運動・物理療法の最新エビデンス — 手術の前にまずリハビリ",
+    description_en: "Latest evidence on exercise and physical therapy for knee osteoarthritis",
+    category: "physical-therapy",
+    keywords: ["変形性膝関節症", "膝OA", "大腿四頭筋", "運動療法", "水中運動", "減量", "人工関節"],
   },
   {
     slug: "stroke-rehabilitation",
@@ -967,6 +1116,16 @@ export const TOPICS: Topic[] = [
     description_en: "Effectiveness of OT as non-pharmacological intervention for dementia",
     category: "occupational-therapy",
     keywords: ["認知症", "非薬物療法", "回想法", "認知刺激療法", "BPSD", "介護者支援", "作業療法"],
+  },
+  {
+    slug: "return-to-work-rehabilitation",
+    query_en: "return to work rehabilitation vocational occupational therapy",
+    title_ja: "復職支援リハビリテーション",
+    title_en: "Return-to-Work Rehabilitation",
+    description_ja: "職業リハの最新エビデンス — 安全な職場復帰を支える作業療法",
+    description_en: "Latest evidence on vocational rehabilitation and return-to-work support",
+    category: "occupational-therapy",
+    keywords: ["復職支援", "職業リハ", "ジョブコーチ", "段階的復帰", "メンタルヘルス", "休職", "環境調整"],
   },
 
   // Speech-Language Therapy (言語聴覚士)

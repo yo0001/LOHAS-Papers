@@ -391,6 +391,23 @@ export const topicContentMap: Record<string, TopicContent> = {
   "pain-management": _painManagement,
   "delirium-prevention": _deliriumPrevention,
   "pressure-injury-prevention": _pressureInjuryPrevention,
+  // Restored topics (passed Round 3 fact-check ≥7)
+  "drug-induced-organ-injury": _drugInducedOrganInjury,
+  "enteral-nutrition-update": _enteralNutritionUpdate,
+  "labor-analgesia": _laborAnalgesia,
+  "novel-biomarkers": _novelBiomarkers,
+  "postpartum-depression": _postpartumDepression,
+  "rapid-infectious-disease-testing": _rapidInfectiousDiseaseTesting,
+  "breastfeeding-evidence": _breastfeedingEvidence,
+  "drug-drug-interactions": _drugDrugInteractions,
+  "exercise-therapy-evidence": _exerciseTherapyEvidence,
+  "fall-prevention": _fallPrevention,
+  "knee-osteoarthritis-pt": _kneeOsteoarthritisPt,
+  "migraine-treatment": _migraineTreatment,
+  "oct-clinical-application": _octClinicalApplication,
+  "oral-care-aspiration-pneumonia": _oralCareAspirationPneumonia,
+  "radiation-therapy-advances": _radiationTherapyAdvances,
+  "return-to-work-rehabilitation": _returnToWorkRehabilitation,
 };
 
 export function getTopicContent(slug: string): TopicContent | undefined {
