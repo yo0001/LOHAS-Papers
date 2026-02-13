@@ -1,4 +1,5 @@
 import { authenticatedProxy, executeTrialSearch } from "@/lib/api-proxy";
+import { LLMServiceError } from "@/lib/backend/llm-client";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { cookies, headers } from "next/headers";
@@ -74,6 +75,14 @@ export async function POST(request: Request) {
     return response;
   } catch (err) {
     console.error("Trial search failed:", err);
+
+    if (err instanceof LLMServiceError) {
+      return Response.json(
+        { error: "service_unavailable", code: err.code, message: err.message },
+        { status: 503 },
+      );
+    }
+
     return Response.json(
       { error: err instanceof Error ? err.message : "Backend error" },
       { status: 500 },

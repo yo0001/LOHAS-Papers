@@ -141,6 +141,13 @@ export class InsufficientCreditsError extends Error {
   }
 }
 
+export class ServiceUnavailableError extends Error {
+  constructor(public code: string = "unknown") {
+    super("Service temporarily unavailable");
+    this.name = "ServiceUnavailableError";
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const url = API_BASE + path;
   const headers: Record<string, string> = { ...options?.headers as Record<string, string> };
@@ -245,6 +252,10 @@ async function authRequest<T>(path: string, options?: RequestInit): Promise<T> {
   if (res.status === 402) {
     const data = await res.json();
     throw new InsufficientCreditsError(data.required || 0);
+  }
+  if (res.status === 503) {
+    const data = await res.json().catch(() => ({}));
+    throw new ServiceUnavailableError(data.code || "unknown");
   }
   if (!res.ok) throw new APIError(res.status, `HTTP ${res.status}`);
 

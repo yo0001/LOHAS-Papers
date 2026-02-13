@@ -6,6 +6,7 @@ import {
   handlePaperDetail,
   handleFulltext,
 } from "@/lib/backend";
+import { LLMServiceError } from "@/lib/backend/llm-client";
 import type { SearchRequest } from "@/lib/backend/types";
 
 /**
@@ -64,6 +65,14 @@ export async function authenticatedProxy(
       p_description: `Refund: ${operation} failed - ${err instanceof Error ? err.message : "unknown error"}`,
       p_reference_id: referenceId,
     });
+
+    // Return 503 for LLM service errors (billing, rate limit, overload)
+    if (err instanceof LLMServiceError) {
+      return Response.json(
+        { error: "service_unavailable", code: err.code, message: err.message },
+        { status: 503 },
+      );
+    }
 
     const statusCode = err instanceof BackendError ? err.statusCode : 500;
     return Response.json(

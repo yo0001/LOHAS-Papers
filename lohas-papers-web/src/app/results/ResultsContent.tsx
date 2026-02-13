@@ -9,6 +9,7 @@ import {
   searchWithAI,
   AuthRequiredError,
   InsufficientCreditsError,
+  ServiceUnavailableError,
   type SearchResponse,
 } from "@/lib/api";
 import { addSearchHistory, getCachedResult, setCachedResult } from "@/lib/favorites";
@@ -125,6 +126,8 @@ function ResultsInner() {
           setShowLogin(true);
         } else if (e instanceof InsufficientCreditsError) {
           setError("insufficientCredits");
+        } else if (e instanceof ServiceUnavailableError) {
+          setError("serviceUnavailable");
         } else {
           setError(t(locale, "errorNetwork"));
         }
@@ -158,10 +161,21 @@ function ResultsInner() {
 
       {error && (
         <div className="text-center py-12">
-          <p className="text-red-500 mb-4">
-            {error === "insufficientCredits" ? t(locale, "insufficientCredits") : error}
+          <p className={`mb-4 ${error === "serviceUnavailable" ? "text-amber-600" : "text-red-500"}`}>
+            {error === "insufficientCredits"
+              ? t(locale, "insufficientCredits")
+              : error === "serviceUnavailable"
+                ? t(locale, "serviceUnavailable")
+                : error}
           </p>
-          {error === "insufficientCredits" ? (
+          {error === "serviceUnavailable" ? (
+            <button
+              onClick={handleRetry}
+              className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors inline-block"
+            >
+              {t(locale, "retry") || "Retry"}
+            </button>
+          ) : error === "insufficientCredits" ? (
             <Link
               href="/pricing"
               className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors inline-block"
