@@ -111,6 +111,31 @@ export { content as childLanguageDevelopment } from "./child-language-developmen
 export { content as stutteringTreatment } from "./stuttering-treatment";
 export { content as articulationDisorders } from "./articulation-disorders";
 
+// Dentistry (歯科)
+export { content as periodontalDiseaseSystemic } from "./periodontal-disease-systemic";
+export { content as periImplantitis } from "./peri-implantitis";
+export { content as cariesPrevention } from "./caries-prevention";
+export { content as temporomandibularDisorders } from "./temporomandibular-disorders";
+export { content as dentalAntimicrobialStewardship } from "./dental-antimicrobial-stewardship";
+export { content as oralCareAspirationPneumonia } from "./oral-care-aspiration-pneumonia";
+export { content as periodontalBasicTherapy } from "./periodontal-basic-therapy";
+export { content as fluorideApplication } from "./fluoride-application";
+
+// Pharmacist (薬剤師)
+export { content as drugDrugInteractions } from "./drug-drug-interactions";
+export { content as drugInducedOrganInjury } from "./drug-induced-organ-injury";
+export { content as medicationAdherence } from "./medication-adherence";
+export { content as opioidStewardship } from "./opioid-stewardship";
+export { content as pharmacogenomics } from "./pharmacogenomics";
+export { content as polypharmacyDeprescribing } from "./polypharmacy-deprescribing";
+export { content as biosimilarsGuide } from "./biosimilars-guide";
+
+// Nursing (看護師)
+export { content as painManagement } from "./pain-management";
+export { content as deliriumPrevention } from "./delirium-prevention";
+export { content as fallPrevention } from "./fall-prevention";
+export { content as pressureInjuryPrevention } from "./pressure-injury-prevention";
+
 // Slug-based lookup map for dynamic routing
 // General Practice
 import { content as _lifestyleDiseaseManagement } from "./lifestyle-disease-management";
@@ -221,6 +246,31 @@ import { content as _aphasiaTreatment } from "./aphasia-treatment";
 import { content as _childLanguageDevelopment } from "./child-language-development";
 import { content as _stutteringTreatment } from "./stuttering-treatment";
 import { content as _articulationDisorders } from "./articulation-disorders";
+
+// Dentistry
+import { content as _periodontalDiseaseSystemic } from "./periodontal-disease-systemic";
+import { content as _periImplantitis } from "./peri-implantitis";
+import { content as _cariesPrevention } from "./caries-prevention";
+import { content as _temporomandibularDisorders } from "./temporomandibular-disorders";
+import { content as _dentalAntimicrobialStewardship } from "./dental-antimicrobial-stewardship";
+import { content as _oralCareAspirationPneumonia } from "./oral-care-aspiration-pneumonia";
+import { content as _periodontalBasicTherapy } from "./periodontal-basic-therapy";
+import { content as _fluorideApplication } from "./fluoride-application";
+
+// Pharmacist
+import { content as _drugDrugInteractions } from "./drug-drug-interactions";
+import { content as _drugInducedOrganInjury } from "./drug-induced-organ-injury";
+import { content as _medicationAdherence } from "./medication-adherence";
+import { content as _opioidStewardship } from "./opioid-stewardship";
+import { content as _pharmacogenomics } from "./pharmacogenomics";
+import { content as _polypharmacyDeprescribing } from "./polypharmacy-deprescribing";
+import { content as _biosimilarsGuide } from "./biosimilars-guide";
+
+// Nursing
+import { content as _painManagement } from "./pain-management";
+import { content as _deliriumPrevention } from "./delirium-prevention";
+import { content as _fallPrevention } from "./fall-prevention";
+import { content as _pressureInjuryPrevention } from "./pressure-injury-prevention";
 
 export type TopicContent = {
   slug: string;
@@ -335,6 +385,28 @@ export const topicContentMap: Record<string, TopicContent> = {
   "child-language-development": _childLanguageDevelopment,
   "stuttering-treatment": _stutteringTreatment,
   "articulation-disorders": _articulationDisorders,
+  // Dentistry
+  "periodontal-disease-systemic": _periodontalDiseaseSystemic,
+  "peri-implantitis": _periImplantitis,
+  "caries-prevention": _cariesPrevention,
+  "temporomandibular-disorders": _temporomandibularDisorders,
+  "dental-antimicrobial-stewardship": _dentalAntimicrobialStewardship,
+  "oral-care-aspiration-pneumonia": _oralCareAspirationPneumonia,
+  "periodontal-basic-therapy": _periodontalBasicTherapy,
+  "fluoride-application": _fluorideApplication,
+  // Pharmacist
+  "drug-drug-interactions": _drugDrugInteractions,
+  "drug-induced-organ-injury": _drugInducedOrganInjury,
+  "medication-adherence": _medicationAdherence,
+  "opioid-stewardship": _opioidStewardship,
+  "pharmacogenomics": _pharmacogenomics,
+  "polypharmacy-deprescribing": _polypharmacyDeprescribing,
+  "biosimilars-guide": _biosimilarsGuide,
+  // Nursing
+  "pain-management": _painManagement,
+  "delirium-prevention": _deliriumPrevention,
+  "fall-prevention": _fallPrevention,
+  "pressure-injury-prevention": _pressureInjuryPrevention,
 };
 
 export function getTopicContent(slug: string): TopicContent | undefined {
