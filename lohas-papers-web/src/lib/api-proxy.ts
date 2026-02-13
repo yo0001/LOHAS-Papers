@@ -1,14 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CREDIT_COSTS, type CreditOperation } from "@/lib/credit-costs";
+import {
+  handleSearch,
+  handlePaperDetail,
+  handleFulltext,
+} from "@/lib/backend";
+import type { SearchRequest } from "@/lib/backend/types";
 
-const FASTAPI_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-const BACKEND_API_KEY = process.env.BACKEND_API_KEY || "";
-
+/**
+ * Authenticate user, deduct credits, and execute backend logic directly.
+ * Previously this proxied to FastAPI on Fly.io — now it calls local TypeScript functions.
+ */
 export async function authenticatedProxy(
   operation: CreditOperation,
-  fastApiPath: string,
+  backendPath: string,
   fetchOptions?: RequestInit,
   referenceId?: string,
 ) {
@@ -31,7 +37,7 @@ export async function authenticatedProxy(
     p_user_id: user.id,
     p_amount: cost,
     p_type: operation,
-    p_description: `${operation}: ${fastApiPath}`,
+    p_description: `${operation}: ${backendPath}`,
     p_reference_id: referenceId,
   });
 
@@ -45,46 +51,84 @@ export async function authenticatedProxy(
     return Response.json({ error: "Credit deduction failed" }, { status: 500 });
   }
 
-  // 3. Proxy to FastAPI
+  // 3. Execute backend logic directly
   try {
-    const headers: Record<string, string> = {};
-    if (fetchOptions?.body) {
-      headers["Content-Type"] = "application/json";
-    }
-    if (BACKEND_API_KEY) {
-      headers["X-API-Key"] = BACKEND_API_KEY;
-    }
-
-    const res = await fetch(`${FASTAPI_URL}${fastApiPath}`, {
-      ...fetchOptions,
-      headers,
-    });
-
-    if (!res.ok) {
-      // Refund credits on FastAPI error
-      await admin.rpc("add_credits", {
-        p_user_id: user.id,
-        p_amount: cost,
-        p_type: "refund",
-        p_description: `Refund: ${operation} failed with HTTP ${res.status}`,
-        p_reference_id: referenceId,
-      });
-      return Response.json(
-        { error: `Backend error: ${res.status}` },
-        { status: res.status },
-      );
-    }
-
-    const body = await res.json();
-    return Response.json({ ...body, credits_remaining: data });
-  } catch {
-    // Refund on network error
+    const result = await executeBackendLogic(operation, backendPath, fetchOptions);
+    return Response.json({ ...result, credits_remaining: data });
+  } catch (err) {
+    // Refund credits on error
     await admin.rpc("add_credits", {
       p_user_id: user.id,
       p_amount: cost,
       p_type: "refund",
-      p_description: `Refund: ${operation} network error`,
+      p_description: `Refund: ${operation} failed - ${err instanceof Error ? err.message : "unknown error"}`,
+      p_reference_id: referenceId,
     });
-    return Response.json({ error: "Backend unavailable" }, { status: 502 });
+
+    const statusCode = err instanceof BackendError ? err.statusCode : 500;
+    return Response.json(
+      { error: err instanceof Error ? err.message : "Backend error" },
+      { status: statusCode },
+    );
+  }
+}
+
+/**
+ * Execute backend logic for trial (unauthenticated) searches.
+ * No credit deduction.
+ */
+export async function executeTrialSearch(body: string): Promise<Record<string, unknown>> {
+  const request: SearchRequest = JSON.parse(body);
+  const result = await handleSearch(request);
+  return result as unknown as Record<string, unknown>;
+}
+
+class BackendError extends Error {
+  statusCode: number;
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+async function executeBackendLogic(
+  operation: CreditOperation,
+  backendPath: string,
+  fetchOptions?: RequestInit,
+): Promise<Record<string, unknown>> {
+  switch (operation) {
+    case "search": {
+      const body = fetchOptions?.body;
+      if (!body) throw new BackendError("Missing request body", 400);
+      const request: SearchRequest = JSON.parse(body as string);
+      const result = await handleSearch(request);
+      return result as unknown as Record<string, unknown>;
+    }
+
+    case "paper_detail": {
+      // Parse paper ID and language from path like /paper/{id}/detail?language=ja
+      const match = backendPath.match(/\/paper\/([^/]+)\/detail/);
+      if (!match) throw new BackendError("Invalid path", 400);
+      const paperId = decodeURIComponent(match[1]);
+      const url = new URL(`http://dummy${backendPath}`);
+      const language = url.searchParams.get("language") || "ja";
+      const result = await handlePaperDetail(paperId, language);
+      return result as unknown as Record<string, unknown>;
+    }
+
+    case "fulltext": {
+      // Parse paper ID, language, difficulty from path like /paper/{id}/fulltext?language=ja&difficulty=layperson
+      const match = backendPath.match(/\/paper\/([^/]+)\/fulltext/);
+      if (!match) throw new BackendError("Invalid path", 400);
+      const paperId = decodeURIComponent(match[1]);
+      const url = new URL(`http://dummy${backendPath}`);
+      const language = url.searchParams.get("language") || "ja";
+      const difficulty = url.searchParams.get("difficulty") || "layperson";
+      const result = await handleFulltext(paperId, language, difficulty);
+      return result as unknown as Record<string, unknown>;
+    }
+
+    default:
+      throw new BackendError(`Unknown operation: ${operation}`, 400);
   }
 }

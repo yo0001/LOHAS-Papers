@@ -1,11 +1,7 @@
-import { authenticatedProxy } from "@/lib/api-proxy";
+import { authenticatedProxy, executeTrialSearch } from "@/lib/api-proxy";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { cookies, headers } from "next/headers";
-
-const FASTAPI_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-const BACKEND_API_KEY = process.env.BACKEND_API_KEY || "";
 
 const TRIAL_COOKIE = "lohas_trial";
 const TRIAL_IP_MAX = 3;
@@ -58,27 +54,10 @@ export async function POST(request: Request) {
     );
   }
 
-  // 3. Execute trial search — proxy to FastAPI directly (no credit deduction)
+  // 3. Execute trial search — call backend directly (no credit deduction)
   try {
     const body = await request.text();
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (BACKEND_API_KEY) {
-      headers["X-API-Key"] = BACKEND_API_KEY;
-    }
-    const res = await fetch(`${FASTAPI_URL}/search`, {
-      method: "POST",
-      headers,
-      body,
-    });
-
-    if (!res.ok) {
-      return Response.json(
-        { error: `Backend error: ${res.status}` },
-        { status: res.status },
-      );
-    }
-
-    const data = await res.json();
+    const data = await executeTrialSearch(body);
 
     // Build response with trial flag and set cookie
     const response = Response.json({ ...data, is_trial: true });
@@ -90,7 +69,11 @@ export async function POST(request: Request) {
     );
 
     return response;
-  } catch {
-    return Response.json({ error: "Backend unavailable" }, { status: 502 });
+  } catch (err) {
+    console.error("Trial search failed:", err);
+    return Response.json(
+      { error: err instanceof Error ? err.message : "Backend error" },
+      { status: 500 },
+    );
   }
 }
