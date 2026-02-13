@@ -12,7 +12,7 @@ export const content = {
     latestEvidence: `■ Cicerone et al.（2019年、Archives of Physical Medicine and Rehabilitation）
 高次脳機能障害のリハビリに関する包括的ガイドライン（第4版）。
 注意障害には「直接訓練＋メタ認知戦略」、記憶障害には「外的代償手段（メモ・アラーム等）の訓練」、遂行機能障害には「問題解決訓練」がそれぞれ「Practice Standard（標準的治療）」として推奨された。
-つまり、高次脳機能障害の種類ごとに「これをやるべき」というエビデンスベースの指針が確立されているということ。
+つまり、高次脳機能障害の種類ごとに推奨が示されているが、適用は患者群・重症度・回復段階により条件付きということ。
 
 ■ Tate et al.（2014年、Journal of Rehabilitation Medicine）
 外傷性脳損傷後の社会的行動障害（怒りのコントロールの問題、社交性の低下など）に対する行動療法の効果を検証。
