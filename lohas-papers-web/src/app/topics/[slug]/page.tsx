@@ -7,6 +7,7 @@ import {
   getRelatedTopics,
   CATEGORY_LABELS,
 } from "@/data/topics";
+import { getTopicContent, DISCLAIMER } from "@/data/topic-content";
 
 export const revalidate = 604800; // 7 days
 
@@ -94,6 +95,7 @@ export default async function TopicPage({ params }: Props) {
   const data = await fetchTopicData(topic.query_en);
   const relatedTopics = getRelatedTopics(slug, 4);
   const categoryLabel = CATEGORY_LABELS[topic.category];
+  const topicContent = getTopicContent(slug);
 
   // JSON-LD for SEO
   const jsonLd = {
@@ -114,6 +116,22 @@ export default async function TopicPage({ params }: Props) {
     },
     lastReviewed: new Date().toISOString().split("T")[0],
   };
+
+  // FAQ schema for Google rich results
+  const faqJsonLd = topicContent?.sections.faq?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: topicContent.sections.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
+      }
+    : null;
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -150,6 +168,12 @@ export default async function TopicPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}
@@ -201,6 +225,123 @@ export default async function TopicPage({ params }: Props) {
             </div>
             <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
               {data.ai_summary.text}
+            </p>
+          </div>
+        )}
+
+        {/* Static Topic Content (SEO) */}
+        {topicContent && (
+          <div className="mb-10 space-y-8">
+            {/* Overview */}
+            <section>
+              <h2 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <span className="w-1 h-6 bg-gray-900 rounded-full" />
+                概要
+              </h2>
+              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                {topicContent.sections.overview}
+              </p>
+            </section>
+
+            {/* Latest Evidence */}
+            <section>
+              <h2 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <span className="w-1 h-6 bg-blue-500 rounded-full" />
+                最新のエビデンス
+              </h2>
+              <div className="bg-blue-50/50 rounded-2xl p-5 border border-blue-100/50">
+                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {topicContent.sections.latestEvidence}
+                </p>
+              </div>
+            </section>
+
+            {/* Treatments */}
+            {topicContent.sections.treatments.length > 0 && (
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="w-1 h-6 bg-green-500 rounded-full" />
+                  主な治療法・アプローチ
+                </h2>
+                <div className="space-y-3">
+                  {topicContent.sections.treatments.map((t, i) => (
+                    <div
+                      key={i}
+                      className="bg-white/60 backdrop-blur-xl rounded-xl p-4 border border-white/30"
+                    >
+                      <h3 className="font-semibold text-gray-900 text-sm">
+                        {t.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                        {t.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* FAQ */}
+            {topicContent.sections.faq.length > 0 && (
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="w-1 h-6 bg-amber-500 rounded-full" />
+                  よくある質問
+                </h2>
+                <div className="space-y-4">
+                  {topicContent.sections.faq.map((item, i) => (
+                    <details
+                      key={i}
+                      className="group bg-white/60 backdrop-blur-xl rounded-xl border border-white/30"
+                    >
+                      <summary className="cursor-pointer p-4 text-sm font-medium text-gray-900 flex items-center justify-between">
+                        <span>{item.question}</span>
+                        <svg
+                          className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </summary>
+                      <div className="px-4 pb-4 text-xs text-gray-600 leading-relaxed">
+                        {item.answer}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Doctor Comment */}
+            {topicContent.sections.doctorComment && (
+              <section className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">👨‍⚕️</span>
+                  <h2 className="text-sm font-bold text-gray-900">
+                    医師からのコメント
+                  </h2>
+                </div>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {topicContent.sections.doctorComment}
+                </p>
+              </section>
+            )}
+
+            {/* Disclaimer */}
+            <p className="text-[10px] text-gray-400 leading-relaxed">
+              {DISCLAIMER}
+            </p>
+
+            {/* Last reviewed */}
+            <p className="text-[10px] text-gray-400">
+              最終レビュー: {topicContent.lastReviewed}
             </p>
           </div>
         )}
