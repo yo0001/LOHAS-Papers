@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { cookies, headers } from "next/headers";
 
+// Allow up to 60s for LLM + PubMed/S2 API calls
+export const maxDuration = 60;
+
 const TRIAL_COOKIE = "lohas_trial";
 const TRIAL_IP_MAX = 3;
 const TRIAL_IP_WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
