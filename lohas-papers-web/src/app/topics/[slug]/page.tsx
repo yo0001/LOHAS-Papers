@@ -7,7 +7,7 @@ import {
   getRelatedTopics,
   CATEGORY_LABELS,
 } from "@/data/topics";
-import { getTopicContent, DISCLAIMER } from "@/data/topic-content";
+import { getTopicContent, DISCLAIMER, AI_GENERATION_NOTE } from "@/data/topic-content";
 
 export const revalidate = 604800; // 7 days
 
@@ -336,6 +336,11 @@ export default async function TopicPage({ params }: Props) {
             {/* Disclaimer */}
             <p className="text-[10px] text-gray-400 leading-relaxed">
               {DISCLAIMER}
+            </p>
+
+            {/* AI generation note */}
+            <p className="text-[10px] text-gray-400 leading-relaxed">
+              {AI_GENERATION_NOTE}
             </p>
 
             {/* Last reviewed */}
