@@ -110,9 +110,8 @@ export default async function TopicPage({ params }: Props) {
       name: topic.title_en,
     },
     reviewedBy: {
-      "@type": "Person",
-      name: "上原 吉敬",
-      jobTitle: "医師",
+      "@type": "Organization",
+      name: "LOHAS Inc.",
     },
     lastReviewed: new Date().toISOString().split("T")[0],
   };

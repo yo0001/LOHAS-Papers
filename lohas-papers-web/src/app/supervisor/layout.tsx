@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "監修医について - 上原吉敬 | LOHAS Papers",
+  title: "監修について | LOHAS Papers",
   description:
-    "LOHAS Papers監修医・上原吉敬（医籍登録番号 第611760号）のプロフィール。医師資格は厚生労働省の医師等資格確認検索にて確認できます。",
+    "LOHAS Papersの医師監修体制について。AI生成の論文要約は、医師による品質管理のもとで提供されています。",
   openGraph: {
-    title: "監修医について - 上原吉敬, M.D. | LOHAS Papers",
+    title: "監修について | LOHAS Papers",
     description:
-      "LOHAS Papers監修医・上原吉敬のプロフィールと医師資格情報。厚生労働省の公式検索で確認可能。",
+      "LOHAS Papersの医師監修体制とAI要約の品質管理について。",
     url: "https://lohas-papers.com/supervisor",
   },
   alternates: {

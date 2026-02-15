@@ -132,11 +132,10 @@ export default function RootLayout({
         name: "Medical Literature Search",
       },
       reviewedBy: {
-        "@type": "Person",
-        name: "上原 吉敬",
-        jobTitle: "医師",
+        "@type": "Organization",
+        name: "LOHAS Inc.",
         description:
-          "AI生成の論文要約を監修する医師。Medical doctor supervising AI-generated paper summaries.",
+          "医師監修のAI論文要約プラットフォーム。Physician-supervised AI paper summarization platform.",
       },
       lastReviewed: "2026-02-12",
       medicalAudience: {
@@ -155,9 +154,8 @@ export default function RootLayout({
         "https://twitter.com/lohas_inc",
       ],
       founder: {
-        "@type": "Person",
-        name: "上原 吉敬",
-        jobTitle: "医師",
+        "@type": "Organization",
+        name: "LOHAS Inc.",
       },
     },
     {
