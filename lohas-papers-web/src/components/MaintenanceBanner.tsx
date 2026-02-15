@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/lib/i18n";
 
@@ -15,12 +16,18 @@ export default function MaintenanceBanner() {
   if (!enabled) return null;
 
   const message = t(locale, "maintenanceBanner");
+  const settingsLabel = locale === "ja" ? "設定画面へ →" : "Go to Settings →";
 
   return (
     <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 text-center">
       <div className="flex items-center justify-center gap-2 text-sm text-amber-800">
-        <span className="text-base">⚠️</span>
-        <p className="font-medium">{message}</p>
+        <span className="text-base">🔑</span>
+        <p className="font-medium">
+          {message}{" "}
+          <Link href="/settings" className="underline hover:text-amber-900 font-bold">
+            {settingsLabel}
+          </Link>
+        </p>
       </div>
     </div>
   );
