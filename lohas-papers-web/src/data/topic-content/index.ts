@@ -1,5 +1,17 @@
 // Auto-generated index of all topic content files
-// Last updated: 2026-02-13
+// Last updated: 2026-02-16
+
+// New topics (2026-02-16) — Dermatology, Gynecology, Pediatrics, Otolaryngology, + extras
+export { content as atopicDermatitis } from "./atopic-dermatitis";
+export { content as acneTreatment } from "./acne-treatment";
+export { content as menopauseManagement } from "./menopause-management";
+export { content as pmsDysmenorrhea } from "./pms-dysmenorrhea";
+export { content as childhoodFeverManagement } from "./childhood-fever-management";
+export { content as vaccinationScheduleEvidence } from "./vaccination-schedule-evidence";
+export { content as allergicRhinitisHayFever } from "./allergic-rhinitis-hay-fever";
+export { content as vertigoDizziness } from "./vertigo-dizziness";
+export { content as insomniaTreatment } from "./insomnia-treatment";
+export { content as constipationManagement } from "./constipation-management";
 
 // General Practice / Family Medicine (総合診療・家庭医)
 export { content as lifestyleDiseaseManagement } from "./lifestyle-disease-management";
@@ -272,6 +284,18 @@ import { content as _deliriumPrevention } from "./delirium-prevention";
 import { content as _fallPrevention } from "./fall-prevention";
 import { content as _pressureInjuryPrevention } from "./pressure-injury-prevention";
 
+// New topics (2026-02-16) imports
+import { content as _atopicDermatitis } from "./atopic-dermatitis";
+import { content as _acneTreatment } from "./acne-treatment";
+import { content as _menopauseManagement } from "./menopause-management";
+import { content as _pmsDysmenorrhea } from "./pms-dysmenorrhea";
+import { content as _childhoodFeverManagement } from "./childhood-fever-management";
+import { content as _vaccinationScheduleEvidence } from "./vaccination-schedule-evidence";
+import { content as _allergicRhinitisHayFever } from "./allergic-rhinitis-hay-fever";
+import { content as _vertigoDizziness } from "./vertigo-dizziness";
+import { content as _insomniaTreatment } from "./insomnia-treatment";
+import { content as _constipationManagement } from "./constipation-management";
+
 export type TopicContent = {
   slug: string;
   lastReviewed: string;
@@ -408,6 +432,17 @@ export const topicContentMap: Record<string, TopicContent> = {
   "oral-care-aspiration-pneumonia": _oralCareAspirationPneumonia,
   "radiation-therapy-advances": _radiationTherapyAdvances,
   "return-to-work-rehabilitation": _returnToWorkRehabilitation,
+  // New topics (2026-02-16)
+  "atopic-dermatitis": _atopicDermatitis,
+  "acne-treatment": _acneTreatment,
+  "menopause-management": _menopauseManagement,
+  "pms-dysmenorrhea": _pmsDysmenorrhea,
+  "childhood-fever-management": _childhoodFeverManagement,
+  "vaccination-schedule-evidence": _vaccinationScheduleEvidence,
+  "allergic-rhinitis-hay-fever": _allergicRhinitisHayFever,
+  "vertigo-dizziness": _vertigoDizziness,
+  "insomnia-treatment": _insomniaTreatment,
+  "constipation-management": _constipationManagement,
 };
 
 export function getTopicContent(slug: string): TopicContent | undefined {

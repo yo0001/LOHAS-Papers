@@ -37,6 +37,10 @@ export const TOPIC_CATEGORIES = [
   "physical-therapy",
   "occupational-therapy",
   "speech-therapy",
+  "dermatology",
+  "gynecology",
+  "pediatrics",
+  "otolaryngology",
 ] as const;
 
 export const CATEGORY_LABELS: Record<string, { ja: string; en: string }> = {
@@ -67,6 +71,10 @@ export const CATEGORY_LABELS: Record<string, { ja: string; en: string }> = {
   "physical-therapy": { ja: "理学療法", en: "Physical Therapy" },
   "occupational-therapy": { ja: "作業療法", en: "Occupational Therapy" },
   "speech-therapy": { ja: "言語聴覚", en: "Speech-Language Therapy" },
+  dermatology: { ja: "皮膚科", en: "Dermatology" },
+  gynecology: { ja: "婦人科", en: "Gynecology" },
+  pediatrics: { ja: "小児科", en: "Pediatrics" },
+  otolaryngology: { ja: "耳鼻咽喉科", en: "Otolaryngology" },
 };
 
 export const TOPICS: Topic[] = [
@@ -125,12 +133,13 @@ export const TOPICS: Topic[] = [
   // Cardiology
   {
     slug: "heart-failure-treatment",
-    query_en: "heart failure treatment 2024 2025",
+    query_en: "heart failure treatment latest evidence",
     title_ja: "心不全の最新治療",
     title_en: "Latest Heart Failure Treatment",
     description_ja: "心不全の薬物療法・デバイス治療に関する最新エビデンスをAIが要約",
     description_en: "AI-summarized latest evidence on heart failure pharmacotherapy and device therapy",
     category: "cardiology",
+    keywords: ["心不全", "HFrEF", "HFpEF", "SGLT2阻害薬", "ARNI", "利尿薬", "BNP"],
   },
   {
     slug: "atrial-fibrillation-management",
@@ -140,15 +149,17 @@ export const TOPICS: Topic[] = [
     description_ja: "心房細動の最新ガイドラインと抗凝固療法のエビデンス",
     description_en: "Latest guidelines and evidence on atrial fibrillation and anticoagulation",
     category: "cardiology",
+    keywords: ["心房細動", "Af", "抗凝固療法", "DOAC", "CHADS2", "カテーテルアブレーション", "脳梗塞予防"],
   },
   {
     slug: "hypertension-guidelines",
-    query_en: "hypertension treatment guidelines 2024",
+    query_en: "hypertension treatment guidelines latest",
     title_ja: "高血圧治療ガイドライン",
     title_en: "Hypertension Treatment Guidelines",
     description_ja: "高血圧治療の最新ガイドラインと降圧薬選択のエビデンス",
     description_en: "Latest hypertension treatment guidelines and evidence for antihypertensive selection",
     category: "cardiology",
+    keywords: ["高血圧", "降圧薬", "ARB", "カルシウム拮抗薬", "ACE阻害薬", "家庭血圧", "SPRINT試験"],
   },
 
   // Endocrinology
@@ -160,6 +171,7 @@ export const TOPICS: Topic[] = [
     description_ja: "GLP-1受容体作動薬・SGLT2阻害薬を含む糖尿病治療の最新エビデンス",
     description_en: "Latest evidence on diabetes treatment including GLP-1 and SGLT2 inhibitors",
     category: "endocrinology",
+    keywords: ["2型糖尿病", "GLP-1受容体作動薬", "SGLT2阻害薬", "HbA1c", "インスリン", "心血管保護", "腎保護"],
   },
   {
     slug: "obesity-pharmacotherapy",
@@ -169,6 +181,7 @@ export const TOPICS: Topic[] = [
     description_ja: "セマグルチド・チルゼパチドなど肥満症治療薬の最新知見",
     description_en: "Latest findings on obesity medications including semaglutide and tirzepatide",
     category: "endocrinology",
+    keywords: ["肥満症", "セマグルチド", "チルゼパチド", "GLP-1", "ウゴービ", "BMI", "減量"],
   },
   {
     slug: "thyroid-disorders",
@@ -178,6 +191,7 @@ export const TOPICS: Topic[] = [
     description_ja: "甲状腺機能異常の診断・治療に関する最新エビデンス",
     description_en: "Latest evidence on diagnosis and treatment of thyroid disorders",
     category: "endocrinology",
+    keywords: ["甲状腺", "バセドウ病", "橋本病", "甲状腺機能低下症", "甲状腺機能亢進症", "TSH", "甲状腺結節"],
   },
 
   // Oncology
@@ -189,6 +203,7 @@ export const TOPICS: Topic[] = [
     description_ja: "免疫チェックポイント阻害薬を中心としたがん免疫療法の最前線",
     description_en: "Frontline cancer immunotherapy focused on immune checkpoint inhibitors",
     category: "oncology",
+    keywords: ["がん免疫療法", "免疫チェックポイント阻害薬", "PD-1", "PD-L1", "ニボルマブ", "ペムブロリズマブ", "irAE"],
   },
   {
     slug: "lung-cancer-treatment",
@@ -198,6 +213,7 @@ export const TOPICS: Topic[] = [
     description_ja: "肺がんにおける分子標的薬と免疫療法の最新エビデンス",
     description_en: "Latest evidence on targeted therapy and immunotherapy in lung cancer",
     category: "oncology",
+    keywords: ["肺がん", "分子標的薬", "EGFR", "ALK", "免疫療法", "オシメルチニブ", "非小細胞肺がん"],
   },
   {
     slug: "breast-cancer-screening",
@@ -207,6 +223,7 @@ export const TOPICS: Topic[] = [
     description_ja: "乳がん検診・早期発見に関する最新のガイドラインとエビデンス",
     description_en: "Latest guidelines and evidence on breast cancer screening and early detection",
     category: "oncology",
+    keywords: ["乳がん", "マンモグラフィー", "スクリーニング", "早期発見", "BRCA", "乳房超音波", "高濃度乳房"],
   },
 
   // Neurology
@@ -218,6 +235,7 @@ export const TOPICS: Topic[] = [
     description_ja: "アミロイド抗体療法を含むアルツハイマー病治療の最新動向",
     description_en: "Latest developments in Alzheimer's treatment including amyloid antibody therapy",
     category: "neurology",
+    keywords: ["アルツハイマー", "認知症", "アミロイド", "レカネマブ", "ドナネマブ", "タウ", "認知機能"],
   },
   {
     slug: "stroke-prevention",
@@ -227,6 +245,7 @@ export const TOPICS: Topic[] = [
     description_ja: "脳卒中の一次予防・二次予防と急性期治療のエビデンス",
     description_en: "Evidence on primary/secondary stroke prevention and acute management",
     category: "neurology",
+    keywords: ["脳卒中", "脳梗塞", "脳出血", "tPA", "血栓回収", "抗凝固薬", "高血圧管理"],
   },
   {
     slug: "migraine-treatment",
@@ -236,6 +255,7 @@ export const TOPICS: Topic[] = [
     description_ja: "CGRP関連薬を含む片頭痛治療の最新エビデンス",
     description_en: "Latest evidence on migraine treatment including CGRP-related medications",
     category: "neurology",
+    keywords: ["片頭痛", "CGRP", "エレヌマブ", "ガルカネズマブ", "トリプタン", "予防療法", "前兆"],
   },
 
   // Pulmonology
@@ -247,6 +267,7 @@ export const TOPICS: Topic[] = [
     description_ja: "COPD（慢性閉塞性肺疾患）の最新治療ガイドラインと増悪予防",
     description_en: "Latest COPD treatment guidelines and exacerbation prevention",
     category: "pulmonology",
+    keywords: ["COPD", "慢性閉塞性肺疾患", "吸入薬", "LAMA", "LABA", "ICS", "増悪予防"],
   },
   {
     slug: "asthma-biologics",
@@ -256,6 +277,7 @@ export const TOPICS: Topic[] = [
     description_ja: "重症喘息に対する生物学的製剤の最新エビデンスと使い分け",
     description_en: "Latest evidence on biologics for severe asthma and their selection",
     category: "pulmonology",
+    keywords: ["重症喘息", "生物学的製剤", "オマリズマブ", "メポリズマブ", "デュピルマブ", "好酸球", "IgE"],
   },
   {
     slug: "sleep-apnea",
@@ -265,6 +287,7 @@ export const TOPICS: Topic[] = [
     description_ja: "閉塞性睡眠時無呼吸症候群の診断・CPAP治療の最新知見",
     description_en: "Latest findings on OSA diagnosis and CPAP treatment",
     category: "pulmonology",
+    keywords: ["睡眠時無呼吸", "SAS", "OSA", "CPAP", "AHI", "いびき", "チルゼパチド"],
   },
 
   // Psychiatry
@@ -276,6 +299,7 @@ export const TOPICS: Topic[] = [
     description_ja: "うつ病の薬物療法・心理療法の最新エビデンスとガイドライン",
     description_en: "Latest evidence and guidelines on depression pharmacotherapy and psychotherapy",
     category: "psychiatry",
+    keywords: ["うつ病", "抗うつ薬", "SSRI", "SNRI", "認知行動療法", "再発予防", "治療抵抗性"],
   },
   {
     slug: "adhd-management",
@@ -285,6 +309,7 @@ export const TOPICS: Topic[] = [
     description_ja: "成人ADHDの診断・薬物療法・非薬物療法の最新エビデンス",
     description_en: "Latest evidence on adult ADHD diagnosis and pharmacological/non-pharmacological treatment",
     category: "psychiatry",
+    keywords: ["ADHD", "注意欠如多動症", "メチルフェニデート", "アトモキセチン", "成人ADHD", "実行機能", "コンサータ"],
   },
   {
     slug: "bipolar-disorder",
@@ -294,6 +319,7 @@ export const TOPICS: Topic[] = [
     description_ja: "双極性障害の気分安定薬・最新治療アプローチ",
     description_en: "Mood stabilizers and latest treatment approaches for bipolar disorder",
     category: "psychiatry",
+    keywords: ["双極性障害", "躁うつ病", "リチウム", "バルプロ酸", "気分安定薬", "躁病", "ラモトリギン"],
   },
 
   // Infectious Disease
@@ -305,6 +331,7 @@ export const TOPICS: Topic[] = [
     description_ja: "薬剤耐性菌の現状と抗菌薬スチュワードシップの最新動向",
     description_en: "Current status of AMR and latest trends in antimicrobial stewardship",
     category: "infectious-disease",
+    keywords: ["薬剤耐性", "AMR", "抗菌薬", "MRSA", "ESBL", "抗菌薬スチュワードシップ", "耐性菌"],
   },
   {
     slug: "covid-long-term",
@@ -314,6 +341,7 @@ export const TOPICS: Topic[] = [
     description_ja: "COVID-19後遺症（Long COVID）の病態・治療に関する最新研究",
     description_en: "Latest research on Long COVID pathophysiology and treatment",
     category: "infectious-disease",
+    keywords: ["Long COVID", "コロナ後遺症", "倦怠感", "ブレインフォグ", "PASC", "ワクチン", "リハビリ"],
   },
 
   // Gastroenterology
@@ -325,6 +353,7 @@ export const TOPICS: Topic[] = [
     description_ja: "クローン病・潰瘍性大腸炎の生物学的製剤を含む最新治療",
     description_en: "Latest treatments for Crohn's disease and ulcerative colitis including biologics",
     category: "gastroenterology",
+    keywords: ["炎症性腸疾患", "クローン病", "潰瘍性大腸炎", "IBD", "生物学的製剤", "インフリキシマブ", "JAK阻害薬"],
   },
   {
     slug: "liver-disease-nafld",
@@ -334,6 +363,7 @@ export const TOPICS: Topic[] = [
     description_ja: "NAFLD/MASLDの診断・治療に関する最新エビデンス",
     description_en: "Latest evidence on NAFLD/MASLD diagnosis and treatment",
     category: "gastroenterology",
+    keywords: ["脂肪肝", "NAFLD", "MASLD", "NASH", "線維化", "FIB-4", "エラストグラフィ"],
   },
 
   // Nephrology
@@ -345,6 +375,7 @@ export const TOPICS: Topic[] = [
     description_ja: "CKDの進行抑制と腎保護療法の最新エビデンス",
     description_en: "Latest evidence on CKD progression prevention and renoprotective therapy",
     category: "nephrology",
+    keywords: ["慢性腎臓病", "CKD", "eGFR", "蛋白尿", "SGLT2阻害薬", "腎保護", "フィネレノン"],
   },
 
   // Rheumatology
@@ -356,6 +387,7 @@ export const TOPICS: Topic[] = [
     description_ja: "JAK阻害薬・生物学的製剤を含む関節リウマチ治療の最新動向",
     description_en: "Latest developments in RA treatment including JAK inhibitors and biologics",
     category: "rheumatology",
+    keywords: ["関節リウマチ", "RA", "MTX", "JAK阻害薬", "生物学的製剤", "抗CCP抗体", "寛解"],
   },
 
   // Dental
@@ -488,9 +520,9 @@ export const TOPICS: Topic[] = [
   {
     slug: "polypharmacy-deprescribing",
     query_en: "polypharmacy deprescribing elderly medication review",
-    title_ja: "ポリファーマシーと減薬",
+    title_ja: "薬の飲みすぎ問題（ポリファーマシー）と減薬",
     title_en: "Polypharmacy & Deprescribing",
-    description_ja: "多剤併用の見直しと減薬のエビデンス — 不要な薬を安全に減らすための最新知見",
+    description_ja: "たくさんの薬、本当に全部必要？ — 不要な薬を安全に減らすための最新知見",
     description_en: "Latest evidence on polypharmacy review and deprescribing strategies",
     category: "pharmacy",
     keywords: ["ポリファーマシー", "多剤併用", "減薬", "高齢者", "処方見直し", "薬剤師", "PIMs", "Beers基準"],
@@ -508,9 +540,9 @@ export const TOPICS: Topic[] = [
   {
     slug: "pharmacogenomics",
     query_en: "pharmacogenomics precision medicine CYP2D6 CYP2C19 genotype",
-    title_ja: "ファーマコゲノミクス",
+    title_ja: "自分に合う薬がわかる遺伝子検査",
     title_en: "Pharmacogenomics",
-    description_ja: "遺伝子に基づく個別化薬物療法 — 一人ひとりに合った薬選びの最前線",
+    description_ja: "薬の効き方は遺伝子で変わる — 一人ひとりに合った薬選びの最前線",
     description_en: "Genotype-guided precision pharmacotherapy and its latest clinical evidence",
     category: "pharmacy",
     keywords: ["ファーマコゲノミクス", "遺伝子検査", "CYP2D6", "CYP2C19", "個別化医療", "精密医療", "薬理遺伝学"],
@@ -518,9 +550,9 @@ export const TOPICS: Topic[] = [
   {
     slug: "medication-adherence",
     query_en: "medication adherence compliance intervention strategies",
-    title_ja: "服薬アドヒアランス向上策",
+    title_ja: "薬を飲み忘れない工夫と続けるコツ",
     title_en: "Medication Adherence Strategies",
-    description_ja: "患者が薬を飲み続けるための戦略 — 最新の介入エビデンス",
+    description_ja: "つい忘れる、面倒になる… 服薬を続けるための最新エビデンスと実践法",
     description_en: "Evidence-based strategies to improve medication adherence",
     category: "pharmacy",
     keywords: ["服薬アドヒアランス", "服薬コンプライアンス", "飲み忘れ", "一包化", "服薬指導", "薬剤師介入", "mHealth"],
@@ -528,9 +560,9 @@ export const TOPICS: Topic[] = [
   {
     slug: "biosimilars-guide",
     query_en: "biosimilar efficacy safety interchangeability switching",
-    title_ja: "バイオシミラーの最新動向",
+    title_ja: "バイオシミラー — ジェネリックとは違う後続品",
     title_en: "Biosimilars Guide",
-    description_ja: "生物学的製剤の後続品（バイオシミラー）の有効性・安全性・切り替えに関する最新エビデンス",
+    description_ja: "生物学的製剤の後続品って何？ ジェネリックとの違い・安全性・切り替えのエビデンス",
     description_en: "Latest evidence on biosimilar efficacy, safety, and interchangeability",
     category: "pharmacy",
     keywords: ["バイオシミラー", "生物学的製剤", "後続品", "免疫原性", "切り替え", "抗体医薬", "コスト"],
@@ -580,9 +612,9 @@ export const TOPICS: Topic[] = [
   {
     slug: "interventional-radiology",
     query_en: "interventional radiology IVR minimally invasive treatment",
-    title_ja: "IVR（画像下治療）の最新動向",
+    title_ja: "切らずに治すカテーテル手術（IVR）",
     title_en: "Interventional Radiology: Latest Trends",
-    description_ja: "画像下治療（IVR）の最新動向 — カテーテル治療・塞栓術・血栓回収の進歩",
+    description_ja: "体を切らずにカテーテルで治療 — 塞栓術・血栓回収など画像下治療の進歩",
     description_en: "Latest trends in interventional radiology including catheter therapy, embolization, and thrombectomy",
     category: "radiology-tech",
     keywords: ["IVR", "画像下治療", "カテーテル", "塞栓術", "TACE", "血栓回収", "低侵襲治療"],
@@ -736,9 +768,9 @@ export const TOPICS: Topic[] = [
   {
     slug: "point-of-care-testing",
     query_en: "point-of-care testing POCT bedside rapid diagnostics",
-    title_ja: "POCT(即時検査)の最新動向",
+    title_ja: "すぐに結果がわかる検査（POCT）",
     title_en: "Point-of-Care Testing Update",
-    description_ja: "ベッドサイド検査の進歩 — 救急・在宅医療でのPOCT活用",
+    description_ja: "その場で結果が出る即時検査 — 救急・在宅医療での最新活用法",
     description_en: "Advances in bedside testing and POCT applications in emergency and home care",
     category: "clinical-laboratory",
     keywords: ["POCT", "即時検査", "ベッドサイド検査", "血糖測定", "迅速検査", "在宅医療", "救急"],
@@ -871,7 +903,7 @@ export const TOPICS: Topic[] = [
   // Emergency Medical Services (救急救命士)
   {
     slug: "cpr-guidelines-update",
-    query_en: "CPR guidelines BLS ACLS update 2024 2025",
+    query_en: "CPR guidelines BLS ACLS update latest",
     title_ja: "心肺蘇生ガイドラインの最新動向",
     title_en: "CPR Guidelines Update",
     description_ja: "BLS/ACLSの変更点を含む心肺蘇生ガイドラインの最新エビデンス",
@@ -964,9 +996,9 @@ export const TOPICS: Topic[] = [
   {
     slug: "trauma-informed-care",
     query_en: "trauma informed care TIC ACE organizational approach",
-    title_ja: "トラウマインフォームドケア",
+    title_ja: "トラウマに配慮したケア（TIC）とは",
     title_en: "Trauma-Informed Care",
-    description_ja: "組織的アプローチの最新知見 — ACE研究とTICの6原則",
+    description_ja: "つらい体験に配慮した支援の形 — ACE（逆境的小児期体験）研究とTICの6原則",
     description_en: "Latest findings on organizational trauma-informed care including ACE research",
     category: "psychology",
     keywords: ["トラウマインフォームドケア", "TIC", "ACE", "逆境的小児期体験", "組織変革", "安全"],
@@ -1178,6 +1210,116 @@ export const TOPICS: Topic[] = [
     description_en: "Latest evidence on assessment and treatment of articulation disorders",
     category: "speech-therapy",
     keywords: ["構音障害", "発音", "ディサースリア", "口蓋裂", "構音訓練", "音韻障害", "LSVT"],
+  },
+
+  // --- Dermatology (皮膚科) ---
+  {
+    slug: "atopic-dermatitis",
+    query_en: "atopic dermatitis eczema treatment moisturizer biologic",
+    title_ja: "アトピー性皮膚炎の治療",
+    title_en: "Atopic Dermatitis Treatment",
+    description_ja: "かゆみと湿疹をコントロールする最新治療 — 保湿・ステロイド・デュピルマブまで",
+    description_en: "Latest treatments for controlling eczema including moisturizers, steroids, and dupilumab",
+    category: "dermatology",
+    keywords: ["アトピー", "アトピー性皮膚炎", "湿疹", "かゆみ", "ステロイド", "デュピルマブ", "保湿", "スキンケア"],
+  },
+  {
+    slug: "acne-treatment",
+    query_en: "acne vulgaris treatment retinoid benzoyl peroxide",
+    title_ja: "ニキビ（尋常性ざ瘡）の治療",
+    title_en: "Acne Treatment",
+    description_ja: "思春期・大人ニキビの最新エビデンス — 正しいスキンケアから薬物療法まで",
+    description_en: "Latest evidence on acne treatment from skincare to pharmacotherapy",
+    category: "dermatology",
+    keywords: ["ニキビ", "尋常性ざ瘡", "アダパレン", "過酸化ベンゾイル", "大人ニキビ", "毛穴", "レチノイド"],
+  },
+
+  // --- Gynecology (婦人科) ---
+  {
+    slug: "menopause-management",
+    query_en: "menopause hormone replacement therapy HRT hot flash",
+    title_ja: "更年期障害の治療",
+    title_en: "Menopause Management",
+    description_ja: "ホットフラッシュ・不眠・気分の落ち込み — ホルモン補充療法（HRT）の最新エビデンス",
+    description_en: "Latest evidence on HRT and management of menopausal symptoms",
+    category: "gynecology",
+    keywords: ["更年期", "更年期障害", "ホルモン補充療法", "HRT", "ホットフラッシュ", "エストロゲン", "閉経"],
+  },
+  {
+    slug: "pms-dysmenorrhea",
+    query_en: "PMS premenstrual syndrome dysmenorrhea treatment pill",
+    title_ja: "PMS・生理痛のエビデンス",
+    title_en: "PMS & Dysmenorrhea",
+    description_ja: "月経前症候群（PMS）と月経困難症の最新治療 — ピル・漢方・生活習慣",
+    description_en: "Latest treatments for PMS and dysmenorrhea including OC, herbal medicine, and lifestyle",
+    category: "gynecology",
+    keywords: ["PMS", "月経前症候群", "生理痛", "月経困難症", "低用量ピル", "漢方", "イブプロフェン"],
+  },
+
+  // --- Pediatrics (小児科) ---
+  {
+    slug: "childhood-fever-management",
+    query_en: "childhood fever management when to see doctor antipyretics",
+    title_ja: "子どもの発熱 — 受診の目安と正しい対処法",
+    title_en: "Childhood Fever Management",
+    description_ja: "何度から病院？解熱剤は使っていい？ — 親が知っておくべき発熱のエビデンス",
+    description_en: "When to see a doctor, when to use antipyretics — evidence-based guide for parents",
+    category: "pediatrics",
+    keywords: ["子供 発熱", "子ども 熱", "解熱剤", "アセトアミノフェン", "受診の目安", "熱性けいれん", "小児科"],
+  },
+  {
+    slug: "vaccination-schedule-evidence",
+    query_en: "childhood vaccination schedule safety evidence Japan",
+    title_ja: "予防接種のエビデンス — 効果と安全性",
+    title_en: "Vaccination Schedule & Evidence",
+    description_ja: "日本の予防接種スケジュールと各ワクチンの効果・安全性の最新知見",
+    description_en: "Japanese vaccination schedule and latest evidence on vaccine efficacy and safety",
+    category: "pediatrics",
+    keywords: ["予防接種", "ワクチン", "定期接種", "任意接種", "副反応", "安全性", "子ども"],
+  },
+
+  // --- Otolaryngology (耳鼻咽喉科) ---
+  {
+    slug: "allergic-rhinitis-hay-fever",
+    query_en: "allergic rhinitis hay fever treatment antihistamine immunotherapy",
+    title_ja: "花粉症・アレルギー性鼻炎の治療",
+    title_en: "Hay Fever & Allergic Rhinitis",
+    description_ja: "抗ヒスタミン薬から舌下免疫療法まで — 花粉症を根本から治す最新エビデンス",
+    description_en: "Latest evidence from antihistamines to sublingual immunotherapy for allergic rhinitis",
+    category: "otolaryngology",
+    keywords: ["花粉症", "アレルギー性鼻炎", "抗ヒスタミン薬", "舌下免疫療法", "スギ花粉", "点鼻薬", "鼻づまり"],
+  },
+  {
+    slug: "vertigo-dizziness",
+    query_en: "vertigo dizziness BPPV Meniere treatment",
+    title_ja: "めまいの原因と治療",
+    title_en: "Vertigo & Dizziness",
+    description_ja: "良性発作性頭位めまい症（BPPV）からメニエール病まで — めまいの見分け方と対処法",
+    description_en: "From BPPV to Meniere's disease — diagnosis and management of vertigo and dizziness",
+    category: "otolaryngology",
+    keywords: ["めまい", "BPPV", "良性発作性頭位めまい症", "メニエール病", "前庭", "ふらつき", "Epley法"],
+  },
+
+  // --- New General Practice / Psychiatry Topics ---
+  {
+    slug: "insomnia-treatment",
+    query_en: "insomnia treatment CBT-I sleep hygiene melatonin",
+    title_ja: "不眠症の治療 — 薬に頼らない方法も",
+    title_en: "Insomnia Treatment",
+    description_ja: "睡眠薬だけじゃない。認知行動療法（CBT-I）と睡眠衛生の最新エビデンス",
+    description_en: "Beyond sleeping pills — CBT-I and sleep hygiene evidence for insomnia",
+    category: "psychiatry",
+    keywords: ["不眠", "不眠症", "睡眠薬", "CBT-I", "睡眠衛生", "メラトニン", "オレキシン受容体拮抗薬"],
+  },
+  {
+    slug: "constipation-management",
+    query_en: "chronic constipation treatment laxative fiber evidence",
+    title_ja: "便秘の原因と治し方",
+    title_en: "Constipation Management",
+    description_ja: "慢性便秘のエビデンスに基づく対処法 — 食物繊維・下剤・新薬まで",
+    description_en: "Evidence-based management of chronic constipation including fiber, laxatives, and new drugs",
+    category: "gastroenterology",
+    keywords: ["便秘", "慢性便秘", "下剤", "食物繊維", "酸化マグネシウム", "リナクロチド", "腸活"],
   },
 ];
 
