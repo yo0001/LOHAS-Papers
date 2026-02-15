@@ -1,4 +1,4 @@
-import { llmChatJson } from "./llm-client";
+import { llmChatJson, type LLMConfig } from "./llm-client";
 import type { QueryTransformResult } from "./types";
 
 // ── Query sanitization ──
@@ -68,6 +68,7 @@ const FALLBACK_RESULT: QueryTransformResult = {
 export async function transformQuery(
   userQuery: string,
   language: string,
+  config?: LLMConfig,
 ): Promise<QueryTransformResult> {
   const sanitized = sanitizeQuery(userQuery);
   if (!sanitized) {
@@ -78,7 +79,7 @@ export async function transformQuery(
   const userMessage = `入力言語: ${language}\n検索クエリ: ${sanitized}`;
 
   try {
-    const data = await llmChatJson(SYSTEM_PROMPT, userMessage, { retries: 1 });
+    const data = await llmChatJson(SYSTEM_PROMPT, userMessage, { retries: 1 }, config);
     const result: QueryTransformResult = {
       original_query: (data.original_query as string) || sanitized,
       interpreted_intent: (data.interpreted_intent as string) || "",

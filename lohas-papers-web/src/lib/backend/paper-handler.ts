@@ -3,6 +3,7 @@
  * TypeScript equivalent of api/routes/paper.py
  */
 
+import type { LLMConfig } from "./llm-client";
 import * as cache from "./cache";
 import { extractTextFromUrl, splitIntoSections } from "./pdf-extractor";
 import { fetchPaper } from "./semantic-scholar";
@@ -69,6 +70,7 @@ export async function handlePaperSummary(
 export async function handlePaperDetail(
   paperId: string,
   language: string = "ja",
+  config?: LLMConfig,
 ): Promise<PaperDetailResponse> {
   const paperData = await fetchPaper(paperId);
   if (!paperData) {
@@ -87,7 +89,7 @@ export async function handlePaperDetail(
     if (cachedSummary) {
       summary = cachedSummary;
     } else {
-      summary = await generatePaperSummary(abstract, language, title);
+      summary = await generatePaperSummary(abstract, language, title, config);
       if (summary) {
         await cache.setCachedSummary(paperId, language, summary);
       }
@@ -104,6 +106,7 @@ export async function handlePaperDetail(
       abstract,
       language,
       title,
+      config,
     );
   }
 
@@ -165,6 +168,7 @@ export async function handleFulltext(
   paperId: string,
   language: string = "ja",
   difficulty: string = "layperson",
+  config?: LLMConfig,
 ): Promise<FulltextTranslationResponse> {
   // Validate difficulty
   if (!["expert", "layperson", "children"].includes(difficulty)) {
@@ -207,7 +211,7 @@ export async function handleFulltext(
   );
 
   // Translate all sections in parallel
-  const translated = await translateFulltextSections(sections, language, difficulty);
+  const translated = await translateFulltextSections(sections, language, difficulty, config);
 
   // Cache the result
   await cache.setCachedFulltext(
@@ -237,6 +241,7 @@ async function getAbstractTranslations(
   abstract: string,
   language: string,
   title: string,
+  config?: LLMConfig,
 ): Promise<AbstractTranslations> {
   const difficulties = ["expert", "layperson", "children"] as const;
 
@@ -261,7 +266,7 @@ async function getAbstractTranslations(
     // Generate uncached translations in parallel
     if (uncachedFiltered.length > 0) {
       const tasks = uncachedFiltered.map((d) =>
-        translateAbstract(abstract, language, d, title),
+        translateAbstract(abstract, language, d, title, config),
       );
       const results = await Promise.allSettled(tasks);
 

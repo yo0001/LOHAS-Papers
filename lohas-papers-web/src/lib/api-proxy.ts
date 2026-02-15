@@ -6,8 +6,30 @@ import {
   handlePaperDetail,
   handleFulltext,
 } from "@/lib/backend";
+import type { LLMConfig } from "@/lib/backend";
 import { LLMServiceError } from "@/lib/backend/llm-client";
 import type { SearchRequest } from "@/lib/backend/types";
+
+/**
+ * Extract BYOK config from request headers.
+ * Returns undefined if BYOK headers are not present.
+ */
+export function extractBYOKConfig(headerStore: Headers): LLMConfig | undefined {
+  const provider = headerStore.get("x-byok-provider");
+  const key = headerStore.get("x-byok-key");
+  const model = headerStore.get("x-byok-model");
+
+  if (!key || !provider || !model) return undefined;
+
+  // Validate provider
+  if (!["anthropic", "openai", "google"].includes(provider)) return undefined;
+
+  return {
+    provider: provider as LLMConfig["provider"],
+    apiKey: key,
+    model,
+  };
+}
 
 /**
  * Authenticate user, deduct credits, and execute backend logic directly.
@@ -18,7 +40,13 @@ export async function authenticatedProxy(
   backendPath: string,
   fetchOptions?: RequestInit,
   referenceId?: string,
+  byokConfig?: LLMConfig,
 ) {
+  // If BYOK config is provided, skip auth & credit deduction
+  if (byokConfig) {
+    return executeBYOKRequest(operation, backendPath, fetchOptions, byokConfig);
+  }
+
   // 1. Verify auth
   const supabase = await createClient();
   const {
@@ -83,6 +111,36 @@ export async function authenticatedProxy(
 }
 
 /**
+ * Execute backend logic for BYOK requests.
+ * No credit deduction, uses user-provided API key.
+ */
+async function executeBYOKRequest(
+  operation: CreditOperation,
+  backendPath: string,
+  fetchOptions?: RequestInit,
+  config?: LLMConfig,
+): Promise<Response> {
+  try {
+    const result = await executeBackendLogic(operation, backendPath, fetchOptions, config);
+    return Response.json({ ...result, byok: true });
+  } catch (err) {
+    if (err instanceof LLMServiceError) {
+      const statusCode = err.code === "invalid_key" ? 401 : 503;
+      return Response.json(
+        { error: "byok_error", code: err.code, message: err.message },
+        { status: statusCode },
+      );
+    }
+
+    const statusCode = err instanceof BackendError ? err.statusCode : 500;
+    return Response.json(
+      { error: err instanceof Error ? err.message : "Backend error" },
+      { status: statusCode },
+    );
+  }
+}
+
+/**
  * Execute backend logic for trial (unauthenticated) searches.
  * No credit deduction.
  */
@@ -104,13 +162,14 @@ async function executeBackendLogic(
   operation: CreditOperation,
   backendPath: string,
   fetchOptions?: RequestInit,
+  config?: LLMConfig,
 ): Promise<Record<string, unknown>> {
   switch (operation) {
     case "search": {
       const body = fetchOptions?.body;
       if (!body) throw new BackendError("Missing request body", 400);
       const request: SearchRequest = JSON.parse(body as string);
-      const result = await handleSearch(request);
+      const result = await handleSearch(request, config);
       return result as unknown as Record<string, unknown>;
     }
 
@@ -121,7 +180,7 @@ async function executeBackendLogic(
       const paperId = decodeURIComponent(match[1]);
       const url = new URL(`http://dummy${backendPath}`);
       const language = url.searchParams.get("language") || "ja";
-      const result = await handlePaperDetail(paperId, language);
+      const result = await handlePaperDetail(paperId, language, config);
       return result as unknown as Record<string, unknown>;
     }
 
@@ -133,7 +192,7 @@ async function executeBackendLogic(
       const url = new URL(`http://dummy${backendPath}`);
       const language = url.searchParams.get("language") || "ja";
       const difficulty = url.searchParams.get("difficulty") || "layperson";
-      const result = await handleFulltext(paperId, language, difficulty);
+      const result = await handleFulltext(paperId, language, difficulty, config);
       return result as unknown as Record<string, unknown>;
     }
 

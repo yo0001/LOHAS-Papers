@@ -1,3 +1,5 @@
+import { getBYOKHeaders } from "@/hooks/useBYOK";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 // ── Types ──
@@ -241,16 +243,37 @@ export function getSummaryForLocale(
 
 // ── Auth-aware API (via Next.js proxy with credit deduction) ──
 
+export class BYOKError extends Error {
+  constructor(public code: string, message: string) {
+    super(message);
+    this.name = "BYOKError";
+  }
+}
+
 async function authRequest<T>(path: string, options?: RequestInit): Promise<T> {
-  const headers: Record<string, string> = { ...options?.headers as Record<string, string> };
+  const byokHeaders = getBYOKHeaders();
+  const headers: Record<string, string> = {
+    ...options?.headers as Record<string, string>,
+    ...byokHeaders,
+  };
   if (options?.body) {
     headers["Content-Type"] = "application/json";
   }
+  const isBYOK = !!byokHeaders["X-BYOK-Key"];
   const res = await fetch(path, { ...options, headers });
 
-  if (res.status === 401) throw new AuthRequiredError();
+  // BYOK-specific error handling
+  if (isBYOK && !res.ok) {
+    const data = await res.json().catch(() => ({}));
+    if (data.error === "byok_error") {
+      throw new BYOKError(data.code || "unknown", data.message || "BYOK error");
+    }
+  }
+
+  if (res.status === 401 && !isBYOK) throw new AuthRequiredError();
+  if (res.status === 401 && isBYOK) throw new BYOKError("invalid_key", "Invalid API key");
   if (res.status === 402) {
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     throw new InsufficientCreditsError(data.required || 0);
   }
   if (res.status === 503) {

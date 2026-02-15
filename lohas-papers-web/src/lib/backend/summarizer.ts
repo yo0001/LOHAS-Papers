@@ -1,4 +1,4 @@
-import { llmChat } from "./llm-client";
+import { llmChat, type LLMConfig } from "./llm-client";
 
 // ── Prompts ──
 
@@ -160,6 +160,7 @@ const DIFFICULTY_PROMPTS: Record<string, string> = {
 export async function translateTitlesBatch(
   titles: string[],
   language: string,
+  config?: LLMConfig,
 ): Promise<string[]> {
   if (language === "en" || titles.length === 0) return titles;
 
@@ -170,7 +171,7 @@ export async function translateTitlesBatch(
   try {
     const result = await llmChat(TITLE_TRANSLATION_SYSTEM_PROMPT, userMessage, {
       maxTokens: 2048,
-    });
+    }, config);
     const lines = result
       .trim()
       .split("\n")
@@ -204,12 +205,13 @@ export async function generatePaperSummary(
   abstract: string,
   language: string,
   title: string = "",
+  config?: LLMConfig,
 ): Promise<string> {
   const langName = LANGUAGE_NAMES[language] ?? language;
   const userMessage = `言語: ${langName} (${language})\n\n論文タイトル: ${title}\n\nアブストラクト:\n${abstract}`;
 
   try {
-    return await llmChat(SUMMARY_SYSTEM_PROMPT, userMessage, { maxTokens: 1024 });
+    return await llmChat(SUMMARY_SYSTEM_PROMPT, userMessage, { maxTokens: 1024 }, config);
   } catch (err) {
     console.error(`Summary generation failed for language ${language}`, err);
     return "";
@@ -220,6 +222,7 @@ export async function generateAiOverview(
   userQuery: string,
   language: string,
   papersContext: string,
+  config?: LLMConfig,
 ): Promise<string> {
   const langName = LANGUAGE_NAMES[language] ?? language;
   const userMessage =
@@ -230,7 +233,7 @@ export async function generateAiOverview(
   try {
     return await llmChat(AI_SUMMARY_SYSTEM_PROMPT, userMessage, {
       maxTokens: 1500,
-    });
+    }, config);
   } catch (err) {
     console.error("AI overview generation failed", err);
     return "";
@@ -244,6 +247,7 @@ export async function translateAbstract(
   language: string,
   difficulty: string,
   title: string = "",
+  config?: LLMConfig,
 ): Promise<string> {
   const prompt = DIFFICULTY_PROMPTS[difficulty] ?? LAYPERSON_TRANSLATION_PROMPT;
   const langName = LANGUAGE_NAMES[language] ?? language;
@@ -254,7 +258,7 @@ export async function translateAbstract(
     `アブストラクト:\n${abstract}`;
 
   try {
-    return await llmChat(prompt, userMessage, { maxTokens: 2048 });
+    return await llmChat(prompt, userMessage, { maxTokens: 2048 }, config);
   } catch (err) {
     console.error(
       `Abstract translation failed (difficulty=${difficulty}, lang=${language})`,
@@ -268,10 +272,11 @@ export async function translateAbstractAllLevels(
   abstract: string,
   language: string,
   title: string = "",
+  config?: LLMConfig,
 ): Promise<Record<string, string>> {
   const difficulties = ["expert", "layperson", "children"];
   const tasks = difficulties.map((d) =>
-    translateAbstract(abstract, language, d, title),
+    translateAbstract(abstract, language, d, title, config),
   );
   const results = await Promise.allSettled(tasks);
 
@@ -299,6 +304,7 @@ export async function translateFulltextSection(
   language: string,
   difficulty: string,
   sectionName: string = "",
+  config?: LLMConfig,
 ): Promise<string> {
   const difficultyPrompt =
     DIFFICULTY_PROMPTS[difficulty] ?? LAYPERSON_TRANSLATION_PROMPT;
@@ -313,7 +319,7 @@ export async function translateFulltextSection(
     text;
 
   try {
-    return await llmChat(systemPrompt, userMessage, { maxTokens: 8192 });
+    return await llmChat(systemPrompt, userMessage, { maxTokens: 8192 }, config);
   } catch (err) {
     console.error(
       `Fulltext section translation failed (section=${sectionName}, difficulty=${difficulty}, lang=${language})`,
@@ -327,9 +333,10 @@ export async function translateFulltextSections(
   sections: Array<{ name: string; text: string }>,
   language: string,
   difficulty: string,
+  config?: LLMConfig,
 ): Promise<Array<{ section_name: string; original: string; translated: string }>> {
   const tasks = sections.map((s) =>
-    translateFulltextSection(s.text, language, difficulty, s.name),
+    translateFulltextSection(s.text, language, difficulty, s.name, config),
   );
   const results = await Promise.allSettled(tasks);
 

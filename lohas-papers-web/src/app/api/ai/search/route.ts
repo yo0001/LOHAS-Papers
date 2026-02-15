@@ -1,5 +1,7 @@
-import { authenticatedProxy, executeTrialSearch } from "@/lib/api-proxy";
+import { authenticatedProxy, executeTrialSearch, extractBYOKConfig } from "@/lib/api-proxy";
 import { LLMServiceError } from "@/lib/backend/llm-client";
+import { handleSearch } from "@/lib/backend";
+import type { SearchRequest } from "@/lib/backend/types";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { cookies, headers } from "next/headers";
@@ -11,7 +13,60 @@ const TRIAL_COOKIE = "lohas_trial";
 const TRIAL_IP_MAX = 3;
 const TRIAL_IP_WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
 
+const BYOK_IP_MAX = 30;
+const BYOK_IP_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 export async function POST(request: Request) {
+  const headerStore = await headers();
+
+  // Check for BYOK headers
+  const byokConfig = extractBYOKConfig(new Headers({
+    "x-byok-provider": headerStore.get("x-byok-provider") ?? "",
+    "x-byok-key": headerStore.get("x-byok-key") ?? "",
+    "x-byok-model": headerStore.get("x-byok-model") ?? "",
+  }));
+
+  // BYOK path: use user's own API key, no credit deduction
+  if (byokConfig) {
+    const ip =
+      headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      headerStore.get("x-real-ip") ||
+      "unknown";
+
+    // IP rate limit for BYOK to prevent abuse
+    const rateCheck = checkRateLimit(
+      `byok:${ip}`,
+      BYOK_IP_MAX,
+      BYOK_IP_WINDOW_MS,
+    );
+
+    if (!rateCheck.allowed) {
+      return Response.json(
+        { error: "Rate limit exceeded. Please try again later." },
+        { status: 429 },
+      );
+    }
+
+    try {
+      const body = await request.text();
+      const searchRequest: SearchRequest = JSON.parse(body);
+      const result = await handleSearch(searchRequest, byokConfig);
+      return Response.json({ ...result, byok: true });
+    } catch (err) {
+      if (err instanceof LLMServiceError) {
+        const statusCode = err.code === "invalid_key" ? 401 : 503;
+        return Response.json(
+          { error: "byok_error", code: err.code, message: err.message },
+          { status: statusCode },
+        );
+      }
+      return Response.json(
+        { error: err instanceof Error ? err.message : "Backend error" },
+        { status: 500 },
+      );
+    }
+  }
+
   // 1. Check if user is authenticated
   const supabase = await createClient();
   const {
@@ -39,7 +94,6 @@ export async function POST(request: Request) {
   }
 
   // IP-based rate limit to prevent cookie-clearing abuse
-  const headerStore = await headers();
   const ip =
     headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     headerStore.get("x-real-ip") ||

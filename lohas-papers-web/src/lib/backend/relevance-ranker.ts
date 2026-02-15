@@ -1,4 +1,4 @@
-import { llmChatJson } from "./llm-client";
+import { llmChatJson, type LLMConfig } from "./llm-client";
 import type { RankedPaper, UnifiedPaper } from "./types";
 
 const SYSTEM_PROMPT = `あなたは学術論文の関連度評価エンジンです。
@@ -34,6 +34,7 @@ export async function rankPapers(
   userQuery: string,
   interpretedIntent: string,
   papers: UnifiedPaper[],
+  config?: LLMConfig,
 ): Promise<RankedPaper[]> {
   if (papers.length === 0) return [];
 
@@ -71,7 +72,7 @@ export async function rankPapers(
     const data = await llmChatJson(SYSTEM_PROMPT, userMessage, {
       maxTokens: 4096,
       retries: 1,
-    });
+    }, config);
     const rankings = (data.rankings ?? []) as RankedPaper[];
     return rankings;
   } catch (err) {

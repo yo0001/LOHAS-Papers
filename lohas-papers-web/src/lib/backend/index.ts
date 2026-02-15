@@ -6,6 +6,7 @@ export {
   handleFulltext,
   handleBatchSummary,
 } from "./paper-handler";
+export type { LLMConfig } from "./llm-client";
 export type {
   SearchRequest,
   SearchResponse,

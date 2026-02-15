@@ -8,6 +8,7 @@ import * as paperSearcher from "./paper-searcher";
 import * as queryTransformer from "./query-transformer";
 import * as relevanceRanker from "./relevance-ranker";
 import * as summarizer from "./summarizer";
+import type { LLMConfig } from "./llm-client";
 import type {
   AISummary,
   PaperResult,
@@ -22,7 +23,7 @@ import type {
 // Timeout per individual summary/overview task (milliseconds)
 const SUMMARY_TIMEOUT_MS = 15_000;
 
-export async function handleSearch(request: SearchRequest): Promise<SearchResponse> {
+export async function handleSearch(request: SearchRequest, config?: LLMConfig): Promise<SearchResponse> {
   const {
     query,
     language = "ja",
@@ -39,7 +40,7 @@ export async function handleSearch(request: SearchRequest): Promise<SearchRespon
   }
 
   // 2. Transform query (with cache)
-  const transformResult = await getOrTransformQuery(query, language);
+  const transformResult = await getOrTransformQuery(query, language, config);
 
   // 3. Search all sources in parallel
   const allPapers = await paperSearcher.searchAllSources(transformResult, {
@@ -63,10 +64,11 @@ export async function handleSearch(request: SearchRequest): Promise<SearchRespon
 
   // 4. Run ranking + title translation in parallel
   const [rankingResult, translationResult] = await Promise.allSettled([
-    relevanceRanker.rankPapers(query, transformResult.interpreted_intent, allPapers),
+    relevanceRanker.rankPapers(query, transformResult.interpreted_intent, allPapers, config),
     summarizer.translateTitlesBatch(
       allPapers.map((p) => p.title),
       language,
+      config,
     ),
   ]);
 
@@ -115,7 +117,7 @@ export async function handleSearch(request: SearchRequest): Promise<SearchRespon
   const summaryTasks = pagePapers.map((paper) =>
     paper.abstract
       ? withTimeout(
-          getOrGenerateSummary(paper.id, paper.abstract, language, paper.title),
+          getOrGenerateSummary(paper.id, paper.abstract, language, paper.title, config),
           SUMMARY_TIMEOUT_MS,
         )
       : Promise.resolve(""),
@@ -123,7 +125,7 @@ export async function handleSearch(request: SearchRequest): Promise<SearchRespon
 
   const papersContext = buildPapersContext(pagePapers.slice(0, 5));
   const aiOverviewTask = withTimeout(
-    summarizer.generateAiOverview(query, language, papersContext),
+    summarizer.generateAiOverview(query, language, papersContext, config),
     SUMMARY_TIMEOUT_MS,
   );
 
@@ -219,11 +221,12 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
 async function getOrTransformQuery(
   query: string,
   language: string,
+  config?: LLMConfig,
 ): Promise<QueryTransformResult> {
   const cached = await cache.getCachedTransform(query);
   if (cached) return cached as unknown as QueryTransformResult;
 
-  const result = await queryTransformer.transformQuery(query, language);
+  const result = await queryTransformer.transformQuery(query, language, config);
   await cache.setCachedTransform(query, result as unknown as Record<string, unknown>);
   return result;
 }
@@ -233,11 +236,12 @@ async function getOrGenerateSummary(
   abstract: string,
   language: string,
   title: string = "",
+  config?: LLMConfig,
 ): Promise<string> {
   const cached = await cache.getCachedSummary(paperId, language);
   if (cached) return cached;
 
-  const summary = await summarizer.generatePaperSummary(abstract, language, title);
+  const summary = await summarizer.generatePaperSummary(abstract, language, title, config);
   if (summary) {
     await cache.setCachedSummary(paperId, language, summary);
   }
