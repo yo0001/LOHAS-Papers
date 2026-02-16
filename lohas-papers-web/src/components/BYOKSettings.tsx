@@ -15,7 +15,7 @@ import {
 const BYOK_LABELS: Record<string, Record<string, string>> = {
   ja: {
     title: "BYOK設定（自分のAPIキーを使う）",
-    description: "自分のAPIキーを使うと、クレジット消費なしでAI検索を利用できます。キーはブラウザにのみ保存され、サーバーには保存されません。",
+    description: "自分のAPIキーを使うと、クレジット消費なしでAI検索を利用できます。",
     provider: "プロバイダー",
     apiKey: "APIキー",
     model: "モデル",
@@ -30,11 +30,11 @@ const BYOK_LABELS: Record<string, Record<string, string>> = {
     inputPrice: "入力",
     outputPrice: "出力",
     perMTok: "/MTok",
-    securityNote: "🔒 キーはブラウザのlocalStorageにのみ保存されます",
+    securityNote: "🔒 ログイン中はキーが安全にクラウド同期され、どのデバイスからでも利用できます。未ログインの場合はブラウザにのみ保存されます",
   },
   en: {
     title: "BYOK Settings (Bring Your Own Key)",
-    description: "Use your own API key for AI search without consuming credits. Keys are stored only in your browser, never on our servers.",
+    description: "Use your own API key for AI search without consuming credits.",
     provider: "Provider",
     apiKey: "API Key",
     model: "Model",
@@ -49,7 +49,7 @@ const BYOK_LABELS: Record<string, Record<string, string>> = {
     inputPrice: "Input",
     outputPrice: "Output",
     perMTok: "/MTok",
-    securityNote: "🔒 Keys are stored only in your browser's localStorage",
+    securityNote: "🔒 When logged in, keys are securely synced to the cloud and available on all your devices. When not logged in, keys are stored only in your browser",
   },
 };
 
