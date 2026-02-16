@@ -17,7 +17,9 @@ export default function Header() {
           LOHAS Papers
         </Link>
         <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-          <ModelSelector />
+          <div className="hidden sm:block">
+            <ModelSelector />
+          </div>
           <Link
             href="/favorites"
             className="hidden sm:inline text-sm text-gray-600 hover:text-navy-700 transition-colors"
