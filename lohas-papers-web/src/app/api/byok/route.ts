@@ -19,6 +19,10 @@ export async function GET() {
     .single();
 
   if (error) {
+    // Column may not exist yet — return null gracefully
+    if (error.message?.includes("does not exist")) {
+      return Response.json({ byok_config: null });
+    }
     return Response.json({ error: "Failed to fetch BYOK config" }, { status: 500 });
   }
 
@@ -61,10 +65,14 @@ export async function PUT(request: NextRequest) {
     .eq("id", user.id);
 
   if (error) {
+    // Column may not exist yet — save succeeded from client's perspective (localStorage is primary)
+    if (error.message?.includes("does not exist")) {
+      return Response.json({ success: true, synced: false });
+    }
     return Response.json({ error: "Failed to save BYOK config" }, { status: 500 });
   }
 
-  return Response.json({ success: true });
+  return Response.json({ success: true, synced: true });
 }
 
 export async function DELETE() {
@@ -84,8 +92,11 @@ export async function DELETE() {
     .eq("id", user.id);
 
   if (error) {
+    if (error.message?.includes("does not exist")) {
+      return Response.json({ success: true, synced: false });
+    }
     return Response.json({ error: "Failed to delete BYOK config" }, { status: 500 });
   }
 
-  return Response.json({ success: true });
+  return Response.json({ success: true, synced: true });
 }
