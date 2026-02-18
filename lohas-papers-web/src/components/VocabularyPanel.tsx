@@ -1,7 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import type { VocabularyWord, VocabularyAnalysisResponse } from "@/lib/api";
+import {
+  getPaperKnownMap,
+  setPaperWordKnown,
+} from "@/lib/vocabulary-storage";
+import FlashcardView from "./FlashcardView";
 
 interface VocabularyPanelProps {
   data: VocabularyAnalysisResponse;
@@ -9,6 +14,7 @@ interface VocabularyPanelProps {
 
 type SortKey = "difficulty" | "frequency" | "alphabetical";
 type CategoryFilter = "all" | "medical" | "academic" | "general";
+type KnownFilter = "all" | "known" | "unknown" | "unsorted";
 
 const DIFFICULTY_LABELS: Record<number, string> = {
   1: "基礎",
@@ -58,7 +64,11 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-function DifficultyBar({ distribution }: { distribution: Record<string, number> }) {
+function DifficultyBar({
+  distribution,
+}: {
+  distribution: Record<string, number>;
+}) {
   const total = Object.values(distribution).reduce((sum, n) => sum + n, 0);
   if (total === 0) return null;
 
@@ -98,42 +108,92 @@ function WordRow({
   word,
   isExpanded,
   onToggle,
+  knownStatus,
+  onMarkKnown,
+  onMarkUnknown,
 }: {
   word: VocabularyWord;
   isExpanded: boolean;
   onToggle: () => void;
+  knownStatus: boolean | undefined;
+  onMarkKnown: () => void;
+  onMarkUnknown: () => void;
 }) {
   return (
     <div className="border-b border-gray-100 last:border-0">
-      <button
-        onClick={onToggle}
-        className="w-full text-left py-3 px-1 hover:bg-gray-50 transition-colors flex items-center gap-3"
-      >
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-gray-900">{word.word}</span>
-            <span className="text-sm text-gray-500">{word.definition}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-gray-400">{word.partOfSpeech}</span>
-          <DifficultyBadge level={word.difficulty} />
-          <span className="text-xs text-gray-400 w-6 text-right">
-            ×{word.frequency}
-          </span>
-          <svg
-            className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <div className="flex items-center">
+        {/* Known/Unknown buttons */}
+        <div className="flex flex-col gap-0.5 px-1.5 py-2 shrink-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onMarkKnown();
+            }}
+            className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-all ${
+              knownStatus === true
+                ? "bg-green-500 text-white shadow-sm"
+                : "bg-gray-100 text-gray-400 hover:bg-green-100 hover:text-green-600"
+            }`}
+            title="知ってる"
+            aria-label="知ってる"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+            ✓
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onMarkUnknown();
+            }}
+            className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-all ${
+              knownStatus === false
+                ? "bg-red-500 text-white shadow-sm"
+                : "bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600"
+            }`}
+            title="知らない"
+            aria-label="知らない"
+          >
+            ✗
+          </button>
         </div>
-      </button>
+
+        {/* Word content (clickable for expand) */}
+        <button
+          onClick={onToggle}
+          className="flex-1 text-left py-3 px-1 hover:bg-gray-50 transition-colors flex items-center gap-3 min-w-0"
+        >
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-semibold text-gray-900">{word.word}</span>
+              <span className="text-sm text-gray-500 truncate">
+                {word.definition}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-xs text-gray-400">{word.partOfSpeech}</span>
+            <DifficultyBadge level={word.difficulty} />
+            <span className="text-xs text-gray-400 w-6 text-right">
+              ×{word.frequency}
+            </span>
+            <svg
+              className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
 
       {isExpanded && (
-        <div className="px-4 pb-4 space-y-2">
+        <div className="px-4 pb-4 ml-10 space-y-2">
           <div className="flex items-center gap-3 text-sm">
             <CategoryBadge category={word.category} />
             {word.subcategory && (
@@ -148,7 +208,9 @@ function WordRow({
 
           {word.contexts.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-xs font-medium text-gray-500">論文中の使用例:</p>
+              <p className="text-xs font-medium text-gray-500">
+                論文中の使用例:
+              </p>
               {word.contexts.map((ctx, i) => (
                 <p
                   key={i}
@@ -170,7 +232,10 @@ function highlightWord(text: string, word: string) {
   const parts = text.split(regex);
   return parts.map((part, i) =>
     regex.test(part) ? (
-      <span key={i} className="font-bold text-navy-700 underline underline-offset-2">
+      <span
+        key={i}
+        className="font-bold text-navy-700 underline underline-offset-2"
+      >
         {part}
       </span>
     ) : (
@@ -184,27 +249,100 @@ function escapeRegex(str: string): string {
 }
 
 export default function VocabularyPanel({ data }: VocabularyPanelProps) {
+  const paperId = data.paper_id;
+
   const [sortBy, setSortBy] = useState<SortKey>("difficulty");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [difficultyFilter, setDifficultyFilter] = useState<number | null>(null);
+  const [knownFilter, setKnownFilter] = useState<KnownFilter>("all");
   const [expandedWord, setExpandedWord] = useState<string | null>(null);
   const [showAllWords, setShowAllWords] = useState(false);
+  const [showFlashcard, setShowFlashcard] = useState(false);
+
+  // Known/unknown state from localStorage
+  const [knownMap, setKnownMap] = useState<Record<string, boolean>>({});
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    setKnownMap(getPaperKnownMap(paperId));
+  }, [paperId]);
+
+  const handleMarkKnown = useCallback(
+    (word: string) => {
+      const current = knownMap[word.toLowerCase()];
+      if (current === true) {
+        const newMap = { ...knownMap };
+        delete newMap[word.toLowerCase()];
+        setKnownMap(newMap);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            `vocab-known-${paperId}`,
+            JSON.stringify(newMap),
+          );
+        }
+      } else {
+        setPaperWordKnown(paperId, word, true);
+        setKnownMap((prev) => ({ ...prev, [word.toLowerCase()]: true }));
+      }
+    },
+    [knownMap, paperId],
+  );
+
+  const handleMarkUnknown = useCallback(
+    (word: string) => {
+      const current = knownMap[word.toLowerCase()];
+      if (current === false) {
+        const newMap = { ...knownMap };
+        delete newMap[word.toLowerCase()];
+        setKnownMap(newMap);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            `vocab-known-${paperId}`,
+            JSON.stringify(newMap),
+          );
+        }
+      } else {
+        setPaperWordKnown(paperId, word, false);
+        setKnownMap((prev) => ({ ...prev, [word.toLowerCase()]: false }));
+      }
+    },
+    [knownMap, paperId],
+  );
+
+  const unknownCount = useMemo(
+    () => Object.values(knownMap).filter((v) => v === false).length,
+    [knownMap],
+  );
+
+  const knownCount = useMemo(
+    () => Object.values(knownMap).filter((v) => v === true).length,
+    [knownMap],
+  );
 
   const filteredAndSorted = useMemo(() => {
     let words = [...data.words];
 
-    // Apply filters
     if (categoryFilter !== "all") {
       words = words.filter((w) => w.category === categoryFilter);
     }
     if (difficultyFilter !== null) {
       words = words.filter((w) => w.difficulty === difficultyFilter);
     }
+    if (knownFilter !== "all") {
+      words = words.filter((w) => {
+        const status = knownMap[w.word.toLowerCase()];
+        if (knownFilter === "known") return status === true;
+        if (knownFilter === "unknown") return status === false;
+        if (knownFilter === "unsorted") return status === undefined;
+        return true;
+      });
+    }
 
-    // Apply sort
     switch (sortBy) {
       case "difficulty":
-        words.sort((a, b) => b.difficulty - a.difficulty || b.frequency - a.frequency);
+        words.sort(
+          (a, b) => b.difficulty - a.difficulty || b.frequency - a.frequency,
+        );
         break;
       case "frequency":
         words.sort((a, b) => b.frequency - a.frequency);
@@ -215,11 +353,37 @@ export default function VocabularyPanel({ data }: VocabularyPanelProps) {
     }
 
     return words;
-  }, [data.words, sortBy, categoryFilter, difficultyFilter]);
+  }, [data.words, sortBy, categoryFilter, difficultyFilter, knownFilter, knownMap]);
+
+  const unknownWords = useMemo(
+    () =>
+      data.words.filter(
+        (w) => knownMap[w.word.toLowerCase()] === false,
+      ),
+    [data.words, knownMap],
+  );
 
   const displayedWords = showAllWords
     ? filteredAndSorted
     : filteredAndSorted.slice(0, 50);
+
+  const handleFlashcardComplete = useCallback(() => {
+    setKnownMap(getPaperKnownMap(paperId));
+  }, [paperId]);
+
+  if (showFlashcard) {
+    return (
+      <FlashcardView
+        words={unknownWords}
+        paperId={paperId}
+        onClose={() => {
+          setShowFlashcard(false);
+          handleFlashcardComplete();
+        }}
+        onComplete={handleFlashcardComplete}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -228,20 +392,16 @@ export default function VocabularyPanel({ data }: VocabularyPanelProps) {
         <div className="bg-navy-50 rounded-lg p-3">
           <p className="text-xs text-navy-600">抽出単語数</p>
           <p className="text-xl font-bold text-navy-800">{data.unique_words}</p>
-          <p className="text-xs text-gray-400">総語数: {data.total_words.toLocaleString()}</p>
+          <p className="text-xs text-gray-400">
+            総語数: {data.total_words.toLocaleString()}
+          </p>
         </div>
         <div className="bg-navy-50 rounded-lg p-3">
           <p className="text-xs text-navy-600">カテゴリ内訳</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs">
-              🏥 {data.summary.medical}
-            </span>
-            <span className="text-xs">
-              📖 {data.summary.academic}
-            </span>
-            <span className="text-xs">
-              📝 {data.summary.general}
-            </span>
+            <span className="text-xs">🏥 {data.summary.medical}</span>
+            <span className="text-xs">📖 {data.summary.academic}</span>
+            <span className="text-xs">📝 {data.summary.general}</span>
           </div>
         </div>
       </div>
@@ -252,9 +412,44 @@ export default function VocabularyPanel({ data }: VocabularyPanelProps) {
         <DifficultyBar distribution={data.summary.difficulty_distribution} />
       </div>
 
+      {/* Known/Unknown Summary + Flashcard Button */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-gray-700">仕分け状況</h3>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              知ってる {knownCount}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-red-500" />
+              知らない{" "}
+              <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1 bg-red-100 text-red-700 rounded-full font-medium">
+                {unknownCount}
+              </span>
+            </span>
+            <span className="flex items-center gap-1 text-gray-400">
+              未仕分け {data.words.length - knownCount - unknownCount}
+            </span>
+          </div>
+        </div>
+
+        {unknownCount > 0 && (
+          <button
+            onClick={() => setShowFlashcard(true)}
+            className="w-full py-3 bg-navy-600 text-white rounded-xl font-medium hover:bg-navy-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <span>📚</span>
+            <span>フラッシュカードで学習</span>
+            <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
+              {unknownCount}語
+            </span>
+          </button>
+        )}
+      </div>
+
       {/* Filters & Sort */}
       <div className="flex flex-wrap items-center gap-2">
-        {/* Sort */}
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as SortKey)}
@@ -265,7 +460,6 @@ export default function VocabularyPanel({ data }: VocabularyPanelProps) {
           <option value="alphabetical">アルファベット順</option>
         </select>
 
-        {/* Category filter */}
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
@@ -277,7 +471,6 @@ export default function VocabularyPanel({ data }: VocabularyPanelProps) {
           <option value="general">📝 一般語</option>
         </select>
 
-        {/* Difficulty filter */}
         <select
           value={difficultyFilter ?? "all"}
           onChange={(e) => {
@@ -292,6 +485,17 @@ export default function VocabularyPanel({ data }: VocabularyPanelProps) {
           <option value="3">Lv.3 上級</option>
           <option value="4">Lv.4 医学用語</option>
           <option value="5">Lv.5 高度専門</option>
+        </select>
+
+        <select
+          value={knownFilter}
+          onChange={(e) => setKnownFilter(e.target.value as KnownFilter)}
+          className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-700"
+        >
+          <option value="all">全ステータス</option>
+          <option value="unknown">✗ 知らない</option>
+          <option value="known">✓ 知ってる</option>
+          <option value="unsorted">未仕分け</option>
         </select>
 
         <span className="text-xs text-gray-400 ml-auto">
@@ -309,11 +513,13 @@ export default function VocabularyPanel({ data }: VocabularyPanelProps) {
             onToggle={() =>
               setExpandedWord(expandedWord === word.word ? null : word.word)
             }
+            knownStatus={knownMap[word.word.toLowerCase()]}
+            onMarkKnown={() => handleMarkKnown(word.word)}
+            onMarkUnknown={() => handleMarkUnknown(word.word)}
           />
         ))}
       </div>
 
-      {/* Show more */}
       {!showAllWords && filteredAndSorted.length > 50 && (
         <button
           onClick={() => setShowAllWords(true)}
