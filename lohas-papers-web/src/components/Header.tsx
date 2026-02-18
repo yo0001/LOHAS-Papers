@@ -1,11 +1,53 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/lib/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
 import UserMenu from "./UserMenu";
 import ModelSelector from "./ModelSelector";
+import { getDueCount } from "@/lib/vocabulary-storage";
+
+function VocabularyNavLink() {
+  const [dueCount, setDueCount] = useState(0);
+
+  useEffect(() => {
+    setDueCount(getDueCount());
+  }, []);
+
+  return (
+    <>
+      {/* Desktop */}
+      <Link
+        href="/vocabulary"
+        className="hidden sm:inline-flex items-center gap-1 text-sm text-gray-600 hover:text-navy-700 transition-colors relative"
+      >
+        📚 単語帳
+        {dueCount > 0 && (
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-red-500 text-white rounded-full leading-none">
+            {dueCount > 99 ? "99+" : dueCount}
+          </span>
+        )}
+      </Link>
+      {/* Mobile */}
+      <Link
+        href="/vocabulary"
+        className="sm:hidden text-gray-600 hover:text-navy-700 transition-colors relative"
+        aria-label="マイ単語帳"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        {dueCount > 0 && (
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[14px] h-[14px] px-0.5 text-[9px] font-bold bg-red-500 text-white rounded-full leading-none">
+            {dueCount > 99 ? "99+" : dueCount}
+          </span>
+        )}
+      </Link>
+    </>
+  );
+}
 
 export default function Header() {
   const { locale } = useLanguage();
@@ -20,6 +62,7 @@ export default function Header() {
           <div className="hidden sm:block">
             <ModelSelector />
           </div>
+          <VocabularyNavLink />
           <Link
             href="/favorites"
             className="hidden sm:inline text-sm text-gray-600 hover:text-navy-700 transition-colors"

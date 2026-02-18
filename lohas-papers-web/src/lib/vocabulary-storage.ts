@@ -257,3 +257,114 @@ export function getUnknownCount(paperId: string): number {
 export function markWordAsKnown(word: string): void {
   updateProgress(word, { isKnown: true });
 }
+
+// ── Phase 3: Extended query functions ──
+
+/**
+ * Get all words as an array with word key included
+ */
+export function getAllWords(): Array<{ word: string } & WordProgress> {
+  const all = getAllProgress();
+  return Object.entries(all).map(([word, progress]) => ({
+    word,
+    ...progress,
+  }));
+}
+
+/**
+ * Get words filtered by mastery level
+ */
+export function getWordsByMastery(
+  level: MasteryLevel,
+): Array<{ word: string } & WordProgress> {
+  return getAllWords().filter((w) => w.masteryLevel === level);
+}
+
+/**
+ * Get words encountered in a specific paper
+ */
+export function getWordsByPaper(
+  paperId: string,
+): Array<{ word: string } & WordProgress> {
+  return getAllWords().filter((w) => w.paperId === paperId);
+}
+
+/**
+ * Get words that are due for review (nextReviewDate <= now, excluding mastered)
+ */
+export function getDueWords(): Array<{ word: string } & WordProgress> {
+  return getAllWords()
+    .filter(
+      (w) =>
+        !w.isKnown &&
+        w.masteryLevel !== "mastered" &&
+        isDueForReview(w.nextReviewDate),
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.nextReviewDate).getTime() -
+        new Date(b.nextReviewDate).getTime(),
+    );
+}
+
+/**
+ * Get number of words due for review
+ */
+export function getDueCount(): number {
+  if (typeof window === "undefined") return 0;
+  const all = getAllProgress();
+  let count = 0;
+  for (const p of Object.values(all)) {
+    if (!p.isKnown && p.masteryLevel !== "mastered" && isDueForReview(p.nextReviewDate)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/**
+ * Get mastery level statistics
+ */
+export function getMasteryStats(): {
+  new: number;
+  learning: number;
+  reviewing: number;
+  mastered: number;
+  total: number;
+} {
+  const all = getAllProgress();
+  const stats = { new: 0, learning: 0, reviewing: 0, mastered: 0, total: 0 };
+  for (const p of Object.values(all)) {
+    stats[p.masteryLevel]++;
+    stats.total++;
+  }
+  return stats;
+}
+
+/**
+ * Delete a word from progress
+ */
+export function deleteWord(word: string): void {
+  const all = getAllProgress();
+  delete all[word.toLowerCase()];
+  saveAllProgress(all);
+}
+
+/**
+ * Clear all vocabulary progress data
+ */
+export function clearAll(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(PROGRESS_KEY);
+  // Also clear paper-level known maps
+  const keysToRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith("vocab-known-")) {
+      keysToRemove.push(key);
+    }
+  }
+  for (const key of keysToRemove) {
+    localStorage.removeItem(key);
+  }
+}

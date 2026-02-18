@@ -25,6 +25,7 @@ import DifficultyTabs from "@/components/DifficultyTabs";
 import FulltextViewer from "@/components/FulltextViewer";
 import VocabularyButton from "@/components/VocabularyButton";
 import VocabularyPanel from "@/components/VocabularyPanel";
+import DueReviewBanner from "@/components/DueReviewBanner";
 import EvidenceBadge from "@/components/EvidenceBadge";
 import LoginModal from "@/components/LoginModal";
 import { useAuth } from "@/contexts/AuthContext";
@@ -224,6 +225,9 @@ function PaperDetailContent() {
           <p className="text-sm text-gray-400">{detail.title_original}</p>
         )}
       </div>
+
+      {/* Due Review Banner */}
+      <DueReviewBanner />
 
       {/* Authors & Meta */}
       <div className="space-y-2 text-sm text-gray-600">
