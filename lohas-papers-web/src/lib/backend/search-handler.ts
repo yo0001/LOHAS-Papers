@@ -198,8 +198,9 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
     language,
   );
 
-  // 10. Background: precache top 5 papers in all languages (fire and forget)
-  precacheTopPapers(pagePapers.slice(0, 5)).catch(() => {});
+  // 10. Precaching disabled — was burning ~40 Claude API calls per search
+  // (5 papers × 8 languages). Re-enable when usage justifies cost.
+  // precacheTopPapers(pagePapers.slice(0, 5)).catch(() => {});
 
   return response;
 }
