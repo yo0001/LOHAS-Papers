@@ -171,6 +171,36 @@ export interface UnifiedPaper {
 
 // ── Semantic Scholar raw types ──
 
+// ── Vocabulary Analysis ──
+
+export interface VocabularyWord {
+  word: string;
+  definition: string;
+  partOfSpeech: string;
+  difficulty: number; // 1-5
+  category: "medical" | "academic" | "general";
+  subcategory?: string;
+  frequency: number;
+  contexts: string[];
+  pronunciation?: string;
+}
+
+export interface VocabularyAnalysisResponse {
+  paper_id: string;
+  total_words: number;
+  unique_words: number;
+  words: VocabularyWord[];
+  summary: {
+    medical: number;
+    academic: number;
+    general: number;
+    difficulty_distribution: Record<string, number>;
+  };
+  cached?: boolean;
+}
+
+// ── Semantic Scholar raw types ──
+
 export interface SemanticScholarPaperData {
   paperId?: string;
   title?: string;

@@ -8,10 +8,12 @@ import { t } from "@/lib/i18n";
 import {
   getPaperDetailWithAI,
   getFulltextTranslationWithAI,
+  getVocabularyAnalysis,
   AuthRequiredError,
   InsufficientCreditsError,
   type PaperDetailResponse,
   type FulltextSection,
+  type VocabularyAnalysisResponse,
 } from "@/lib/api";
 import {
   addFavorite,
@@ -21,6 +23,8 @@ import {
 } from "@/lib/favorites";
 import DifficultyTabs from "@/components/DifficultyTabs";
 import FulltextViewer from "@/components/FulltextViewer";
+import VocabularyButton from "@/components/VocabularyButton";
+import VocabularyPanel from "@/components/VocabularyPanel";
 import EvidenceBadge from "@/components/EvidenceBadge";
 import LoginModal from "@/components/LoginModal";
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,6 +51,11 @@ function PaperDetailContent() {
   const [fulltextLoading, setFulltextLoading] = useState(false);
   const [fulltextDifficulty, setFulltextDifficulty] = useState<Difficulty>("layperson");
   const [fulltextError, setFulltextError] = useState<string | null>(null);
+
+  // Vocabulary
+  const [vocabularyData, setVocabularyData] = useState<VocabularyAnalysisResponse | null>(null);
+  const [vocabularyLoading, setVocabularyLoading] = useState(false);
+  const [vocabularyError, setVocabularyError] = useState<string | null>(null);
 
   const fetchDetail = useCallback(async () => {
     if (!paperId) return;
@@ -136,6 +145,30 @@ function PaperDetailContent() {
       }
     } finally {
       setFulltextLoading(false);
+    }
+  };
+
+  const loadVocabulary = async () => {
+    setVocabularyLoading(true);
+    setVocabularyError(null);
+    try {
+      const res = await getVocabularyAnalysis(paperId);
+      setVocabularyData(res);
+      refreshCredits();
+    } catch (e: unknown) {
+      if (e instanceof AuthRequiredError) {
+        setShowLogin(true);
+        setVocabularyLoading(false);
+        return;
+      }
+      if (e instanceof InsufficientCreditsError) {
+        setVocabularyError(t(locale, "insufficientCredits"));
+        setVocabularyLoading(false);
+        return;
+      }
+      setVocabularyError("語彙分析に失敗しました。もう一度お試しください。");
+    } finally {
+      setVocabularyLoading(false);
     }
   };
 
@@ -304,6 +337,28 @@ function PaperDetailContent() {
             </button>
             {fulltextError && (
               <p className="text-sm text-red-500">{fulltextError}</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Vocabulary Analysis */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+        <h2 className="font-semibold text-gray-900">📚 語彙分析</h2>
+
+        {vocabularyData ? (
+          <VocabularyPanel data={vocabularyData} />
+        ) : (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-500">
+              この論文に出てくる英単語を抽出し、日本語訳・難易度・カテゴリを分析します。
+            </p>
+            <VocabularyButton
+              onClick={loadVocabulary}
+              loading={vocabularyLoading}
+            />
+            {vocabularyError && (
+              <p className="text-sm text-red-500">{vocabularyError}</p>
             )}
           </div>
         )}

@@ -324,3 +324,41 @@ export async function getFulltextTranslationWithAI(
     `/api/ai/paper/${encodedId}/fulltext?language=${language}&difficulty=${difficulty}`,
   );
 }
+
+// ── Vocabulary Analysis ──
+
+export interface VocabularyWord {
+  word: string;
+  definition: string;
+  partOfSpeech: string;
+  difficulty: number;
+  category: "medical" | "academic" | "general";
+  subcategory?: string;
+  frequency: number;
+  contexts: string[];
+  pronunciation?: string;
+}
+
+export interface VocabularyAnalysisResponse {
+  paper_id: string;
+  total_words: number;
+  unique_words: number;
+  words: VocabularyWord[];
+  summary: {
+    medical: number;
+    academic: number;
+    general: number;
+    difficulty_distribution: Record<string, number>;
+  };
+  cached?: boolean;
+  credits_remaining?: number;
+}
+
+export async function getVocabularyAnalysis(
+  paperId: string,
+): Promise<VocabularyAnalysisResponse> {
+  const encodedId = encodeURIComponent(paperId);
+  return authRequest<VocabularyAnalysisResponse>(
+    `/api/ai/paper/${encodedId}/vocabulary`,
+  );
+}

@@ -6,6 +6,7 @@ export {
   handleFulltext,
   handleBatchSummary,
 } from "./paper-handler";
+export { handleVocabularyAnalysis } from "./vocabulary-handler";
 export type { LLMConfig } from "./llm-client";
 export type {
   SearchRequest,
@@ -13,4 +14,5 @@ export type {
   PaperDetailResponse,
   PaperSummaryResponse,
   FulltextTranslationResponse,
+  VocabularyAnalysisResponse,
 } from "./types";

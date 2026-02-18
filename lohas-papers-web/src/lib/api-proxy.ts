@@ -5,6 +5,7 @@ import {
   handleSearch,
   handlePaperDetail,
   handleFulltext,
+  handleVocabularyAnalysis,
 } from "@/lib/backend";
 import type { LLMConfig } from "@/lib/backend";
 import { LLMServiceError } from "@/lib/backend/llm-client";
@@ -193,6 +194,15 @@ async function executeBackendLogic(
       const language = url.searchParams.get("language") || "ja";
       const difficulty = url.searchParams.get("difficulty") || "layperson";
       const result = await handleFulltext(paperId, language, difficulty, config);
+      return result as unknown as Record<string, unknown>;
+    }
+
+    case "vocabulary": {
+      // Parse paper ID from path like /paper/{id}/vocabulary
+      const match = backendPath.match(/\/paper\/([^/]+)\/vocabulary/);
+      if (!match) throw new BackendError("Invalid path", 400);
+      const paperId = decodeURIComponent(match[1]);
+      const result = await handleVocabularyAnalysis(paperId, config);
       return result as unknown as Record<string, unknown>;
     }
 

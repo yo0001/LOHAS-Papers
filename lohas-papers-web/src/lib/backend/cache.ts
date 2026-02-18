@@ -122,6 +122,18 @@ export async function setCachedPaperMetadata(
   set(key, JSON.stringify(data), ttl);
 }
 
+// ── Vocabulary analysis cache ──
+
+export async function getCachedVocabulary(paperId: string): Promise<string | null> {
+  const key = `vocabulary:${paperId}`;
+  return get(key);
+}
+
+export async function setCachedVocabulary(paperId: string, data: string): Promise<void> {
+  const key = `vocabulary:${paperId}`;
+  set(key, data); // No TTL — vocabulary doesn't change for a paper
+}
+
 // ── Fulltext translation cache ──
 
 export async function getCachedFulltext(
