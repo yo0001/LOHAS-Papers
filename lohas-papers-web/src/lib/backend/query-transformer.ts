@@ -93,14 +93,128 @@ export async function transformQuery(
     return result;
   } catch (err) {
     console.error(`Query transformation failed for: ${sanitized}`, err);
+    // Use dictionary-based fallback for Japanese queries
+    const englishQuery = jaToEnFallback(sanitized);
     return {
       ...FALLBACK_RESULT,
       original_query: sanitized,
       academic_queries: [
-        `${sanitized} systematic review`,
-        `${sanitized} meta-analysis`,
-        `${sanitized} randomized controlled trial`,
+        englishQuery,
+        `${englishQuery} treatment`,
+        `${englishQuery} systematic review`,
       ],
     };
   }
+}
+
+// ── Fallback Japanese-to-English medical dictionary ──
+// Used when Claude API is unavailable (billing, rate limit, etc.)
+const JA_EN_MEDICAL: Record<string, string> = {
+  // Common diseases
+  "双極性障害": "bipolar disorder",
+  "うつ病": "depression",
+  "うつ症状": "depressive symptoms",
+  "統合失調症": "schizophrenia",
+  "不安障害": "anxiety disorder",
+  "パニック障害": "panic disorder",
+  "強迫性障害": "obsessive-compulsive disorder",
+  "PTSD": "PTSD",
+  "自閉症": "autism spectrum disorder",
+  "ADHD": "ADHD",
+  "注意欠如多動症": "ADHD",
+  "認知症": "dementia",
+  "アルツハイマー": "Alzheimer disease",
+  "てんかん": "epilepsy",
+  "パーキンソン病": "Parkinson disease",
+  "糖尿病": "diabetes mellitus",
+  "高血圧": "hypertension",
+  "脂質異常症": "dyslipidemia",
+  "肥満": "obesity",
+  "睡眠時無呼吸": "sleep apnea",
+  "不眠症": "insomnia",
+  "喘息": "asthma",
+  "アレルギー": "allergy",
+  "がん": "cancer",
+  "白血病": "leukemia",
+  "心筋梗塞": "myocardial infarction",
+  "脳卒中": "stroke",
+  "腎臓病": "kidney disease",
+  "肝臓病": "liver disease",
+  "関節リウマチ": "rheumatoid arthritis",
+  "骨粗鬆症": "osteoporosis",
+  "甲状腺": "thyroid",
+  "貧血": "anemia",
+  "花粉症": "hay fever",
+  "インフルエンザ": "influenza",
+  "新型コロナ": "COVID-19",
+  "コロナ": "COVID-19",
+  "ワクチン": "vaccine",
+  "妊娠": "pregnancy",
+  "出産": "childbirth",
+  "小児": "pediatric",
+  "新生児": "neonatal",
+  // Symptoms
+  "頭痛": "headache",
+  "腰痛": "low back pain",
+  "発熱": "fever",
+  "疲労": "fatigue",
+  "めまい": "dizziness",
+  "吐き気": "nausea",
+  "下痢": "diarrhea",
+  "便秘": "constipation",
+  "咳": "cough",
+  "息切れ": "dyspnea",
+  "動悸": "palpitation",
+  "浮腫": "edema",
+  "痛み": "pain",
+  "炎症": "inflammation",
+  // Treatment / general
+  "治療": "treatment",
+  "薬物療法": "pharmacotherapy",
+  "手術": "surgery",
+  "リハビリ": "rehabilitation",
+  "予防": "prevention",
+  "診断": "diagnosis",
+  "予後": "prognosis",
+  "副作用": "adverse effects",
+  "エビデンス": "evidence",
+  "ガイドライン": "clinical guidelines",
+  "生活習慣": "lifestyle",
+  "食事": "diet",
+  "運動": "exercise",
+  "睡眠": "sleep",
+  "ストレス": "stress",
+  "メンタルヘルス": "mental health",
+  "リチウム": "lithium",
+  "抗うつ薬": "antidepressants",
+  "抗精神病薬": "antipsychotics",
+  "気分安定薬": "mood stabilizers",
+  "認知行動療法": "cognitive behavioral therapy",
+  "CBT": "CBT",
+  // Drug names
+  "ゼップバウンド": "tirzepatide",
+  "マンジャロ": "tirzepatide",
+  "オゼンピック": "semaglutide",
+  "リベルサス": "semaglutide",
+  "エビリファイ": "aripiprazole",
+  "ラミクタール": "lamotrigine",
+  "デパケン": "valproate",
+  "セロクエル": "quetiapine",
+};
+
+/**
+ * Dictionary-based fallback: replace known Japanese medical terms with English equivalents.
+ * Handles partial matches by sorting longer terms first.
+ */
+function jaToEnFallback(query: string): string {
+  let result = query;
+  // Sort by length (longest first) to avoid partial replacement issues
+  const entries = Object.entries(JA_EN_MEDICAL).sort((a, b) => b[0].length - a[0].length);
+  for (const [ja, en] of entries) {
+    result = result.replace(new RegExp(ja, "g"), en);
+  }
+  // Remove any remaining Japanese characters (hiragana, katakana, kanji)
+  result = result.replace(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\uff00-\uffef]/g, " ");
+  result = result.replace(/\s+/g, " ").trim();
+  return result || query; // Return original if nothing translatable
 }
