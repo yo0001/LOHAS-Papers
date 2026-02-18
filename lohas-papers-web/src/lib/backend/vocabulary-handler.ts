@@ -12,8 +12,9 @@ import { fetchPaper } from "./semantic-scholar";
 import { extractVocabulary, getTopWords } from "./vocabulary-parser";
 import type { VocabularyWord, VocabularyAnalysisResponse } from "./types";
 
-const BATCH_SIZE = 20;
-const MAX_WORDS = 300; // Maximum words to analyze
+const BATCH_SIZE = 25;
+const MAX_WORDS = 200; // Maximum words to analyze
+const MAX_PARALLEL_BATCHES = 3; // Parallel Claude API calls
 
 const SYSTEM_PROMPT = `You are a medical English vocabulary expert. Analyze the following English words from a medical research paper. For each word, provide:
 
@@ -42,12 +43,21 @@ interface LLMWordResult {
   pronunciation?: string;
 }
 
+export interface VocabularyAnalysisOptions {
+  /** Pre-fetched abstract text (avoids Semantic Scholar API call) */
+  abstract?: string;
+  /** Pre-fetched PDF URL (avoids Semantic Scholar API call) */
+  pdfUrl?: string;
+}
+
 /**
  * Analyze vocabulary for a given paper.
+ * Accepts optional pre-fetched data to avoid redundant Semantic Scholar API calls.
  */
 export async function handleVocabularyAnalysis(
   paperId: string,
   config?: LLMConfig,
+  options?: VocabularyAnalysisOptions,
 ): Promise<VocabularyAnalysisResponse> {
   // Check cache first
   const cachedData = await cache.getCachedVocabulary(paperId);
@@ -56,27 +66,47 @@ export async function handleVocabularyAnalysis(
     return { ...parsed, cached: true };
   }
 
-  // Fetch paper data
-  const paperData = await fetchPaper(paperId);
-  if (!paperData) {
-    throw new Error("Paper not found");
-  }
+  // Try to get text: prefer pre-fetched data, fallback to Semantic Scholar
+  let text: string = "";
+  const hintAbstract = options?.abstract;
+  const hintPdfUrl = options?.pdfUrl;
 
-  // Try to get full text from PDF, fallback to abstract
-  let text: string;
-  const oaPdf = paperData.openAccessPdf;
-  const pdfUrl = oaPdf && typeof oaPdf === "object" ? oaPdf.url ?? null : null;
-
+  // 1. Try PDF if URL is provided (from frontend or S2)
+  const pdfUrl = hintPdfUrl ?? null;
   if (pdfUrl) {
     try {
       text = await extractTextFromUrl(pdfUrl);
     } catch (err) {
       console.warn(`PDF extraction failed for ${paperId}, falling back to abstract:`, err);
+    }
+  }
+
+  // 2. Use pre-fetched abstract if available
+  if (!text.trim() && hintAbstract) {
+    text = hintAbstract;
+  }
+
+  // 3. Last resort: fetch from Semantic Scholar
+  if (!text.trim()) {
+    console.info(`Fetching paper ${paperId} from Semantic Scholar (no pre-fetched data)`);
+    const paperData = await fetchPaper(paperId);
+    if (!paperData) {
+      throw new Error("Paper not found");
+    }
+
+    const oaPdf = paperData.openAccessPdf;
+    const s2PdfUrl = oaPdf && typeof oaPdf === "object" ? oaPdf.url ?? null : null;
+
+    if (s2PdfUrl && !pdfUrl) {
+      try {
+        text = await extractTextFromUrl(s2PdfUrl);
+      } catch (err) {
+        console.warn(`S2 PDF extraction failed for ${paperId}:`, err);
+        text = paperData.abstract ?? "";
+      }
+    } else {
       text = paperData.abstract ?? "";
     }
-  } else {
-    // Not open access — use abstract only
-    text = paperData.abstract ?? "";
   }
 
   if (!text.trim()) {
@@ -153,55 +183,75 @@ export async function handleVocabularyAnalysis(
 }
 
 /**
+ * Analyze a single batch of words using Claude API.
+ */
+async function analyzeSingleBatch(
+  batch: string[],
+  batchIndex: number,
+  totalBatches: number,
+  config?: LLMConfig,
+): Promise<LLMWordResult[]> {
+  const results: LLMWordResult[] = [];
+  try {
+    const userMessage = `Words: ${JSON.stringify(batch)}`;
+    const responseText = await llmChat(
+      SYSTEM_PROMPT,
+      userMessage,
+      { expectJson: true, maxTokens: 4096 },
+      config,
+    );
+
+    const parsed = JSON.parse(responseText) as LLMWordResult[];
+    if (Array.isArray(parsed)) {
+      for (const item of parsed) {
+        if (item.word && item.definition && item.pos && item.difficulty && item.category) {
+          const validCategories = ["medical", "academic", "general"];
+          if (!validCategories.includes(item.category)) {
+            item.category = "general";
+          }
+          results.push(item);
+        }
+      }
+    }
+
+    console.info(`Batch ${batchIndex + 1}/${totalBatches}: analyzed ${parsed.length} words`);
+  } catch (err) {
+    console.error(`Batch ${batchIndex + 1}/${totalBatches} failed:`, err);
+  }
+  return results;
+}
+
+/**
  * Analyze words in batches using Claude API.
- * Continues to next batch even if one fails.
+ * Runs batches in parallel (up to MAX_PARALLEL_BATCHES at a time).
+ * Continues even if individual batches fail.
  */
 async function batchAnalyzeWords(
   words: string[],
   config?: LLMConfig,
 ): Promise<LLMWordResult[]> {
-  const results: LLMWordResult[] = [];
   const batches: string[][] = [];
 
-  // Split into batches
   for (let i = 0; i < words.length; i += BATCH_SIZE) {
     batches.push(words.slice(i, i + BATCH_SIZE));
   }
 
-  console.info(`Vocabulary analysis: ${words.length} words in ${batches.length} batches`);
+  console.info(`Vocabulary analysis: ${words.length} words in ${batches.length} batches (parallel=${MAX_PARALLEL_BATCHES})`);
 
-  for (let i = 0; i < batches.length; i++) {
-    const batch = batches[i];
-    try {
-      const userMessage = `Words: ${JSON.stringify(batch)}`;
-      const responseText = await llmChat(
-        SYSTEM_PROMPT,
-        userMessage,
-        { expectJson: true, maxTokens: 4096 },
-        config,
-      );
+  const allResults: LLMWordResult[] = [];
 
-      const parsed = JSON.parse(responseText) as LLMWordResult[];
-      if (Array.isArray(parsed)) {
-        // Validate and normalize each result
-        for (const item of parsed) {
-          if (item.word && item.definition && item.pos && item.difficulty && item.category) {
-            // Normalize category value
-            const validCategories = ["medical", "academic", "general"];
-            if (!validCategories.includes(item.category)) {
-              item.category = "general";
-            }
-            results.push(item);
-          }
-        }
-      }
+  // Process batches in parallel chunks
+  for (let i = 0; i < batches.length; i += MAX_PARALLEL_BATCHES) {
+    const chunk = batches.slice(i, i + MAX_PARALLEL_BATCHES);
+    const promises = chunk.map((batch, j) =>
+      analyzeSingleBatch(batch, i + j, batches.length, config),
+    );
 
-      console.info(`Batch ${i + 1}/${batches.length}: analyzed ${parsed.length} words`);
-    } catch (err) {
-      console.error(`Batch ${i + 1}/${batches.length} failed:`, err);
-      // Continue with next batch — don't fail the whole operation
+    const chunkResults = await Promise.all(promises);
+    for (const results of chunkResults) {
+      allResults.push(...results);
     }
   }
 
-  return results;
+  return allResults;
 }

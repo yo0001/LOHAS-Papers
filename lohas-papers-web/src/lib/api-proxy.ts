@@ -202,7 +202,31 @@ async function executeBackendLogic(
       const match = backendPath.match(/\/paper\/([^/]+)\/vocabulary/);
       if (!match) throw new BackendError("Invalid path", 400);
       const paperId = decodeURIComponent(match[1]);
-      const result = await handleVocabularyAnalysis(paperId, config);
+
+      // Extract pre-fetched data from query params or POST body
+      let vocabAbstract: string | undefined;
+      let vocabPdfUrl: string | undefined;
+
+      // Try query params first
+      try {
+        const url = new URL(`http://dummy${backendPath}`);
+        vocabAbstract = url.searchParams.get("abstract") || undefined;
+        vocabPdfUrl = url.searchParams.get("pdf_url") || undefined;
+      } catch { /* ignore */ }
+
+      // Also try POST body
+      if (!vocabAbstract && fetchOptions?.body) {
+        try {
+          const body = JSON.parse(fetchOptions.body as string);
+          vocabAbstract = body.abstract || vocabAbstract;
+          vocabPdfUrl = body.pdf_url || vocabPdfUrl;
+        } catch { /* ignore */ }
+      }
+
+      const result = await handleVocabularyAnalysis(paperId, config, {
+        abstract: vocabAbstract,
+        pdfUrl: vocabPdfUrl,
+      });
       return result as unknown as Record<string, unknown>;
     }
 

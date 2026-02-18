@@ -356,9 +356,17 @@ export interface VocabularyAnalysisResponse {
 
 export async function getVocabularyAnalysis(
   paperId: string,
+  options?: { abstract?: string; pdfUrl?: string },
 ): Promise<VocabularyAnalysisResponse> {
   const encodedId = encodeURIComponent(paperId);
   return authRequest<VocabularyAnalysisResponse>(
     `/api/ai/paper/${encodedId}/vocabulary`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        abstract: options?.abstract,
+        pdf_url: options?.pdfUrl,
+      }),
+    },
   );
 }

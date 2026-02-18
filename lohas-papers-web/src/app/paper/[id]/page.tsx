@@ -11,6 +11,8 @@ import {
   getVocabularyAnalysis,
   AuthRequiredError,
   InsufficientCreditsError,
+  ServiceUnavailableError,
+  BYOKError,
   type PaperDetailResponse,
   type FulltextSection,
   type VocabularyAnalysisResponse,
@@ -153,7 +155,11 @@ function PaperDetailContent() {
     setVocabularyLoading(true);
     setVocabularyError(null);
     try {
-      const res = await getVocabularyAnalysis(paperId);
+      // Pass abstract and PDF URL to avoid redundant Semantic Scholar API calls
+      const res = await getVocabularyAnalysis(paperId, {
+        abstract: detail?.abstract_original || undefined,
+        pdfUrl: detail?.pdf_url || undefined,
+      });
       setVocabularyData(res);
       refreshCredits();
     } catch (e: unknown) {
@@ -167,6 +173,17 @@ function PaperDetailContent() {
         setVocabularyLoading(false);
         return;
       }
+      if (e instanceof ServiceUnavailableError) {
+        setVocabularyError("AIサービスが一時的に利用できません。しばらく待ってからお試しください。");
+        setVocabularyLoading(false);
+        return;
+      }
+      if (e instanceof BYOKError) {
+        setVocabularyError(`APIキーエラー: ${e.message}`);
+        setVocabularyLoading(false);
+        return;
+      }
+      console.error("Vocabulary analysis failed:", e);
       setVocabularyError("語彙分析に失敗しました。もう一度お試しください。");
     } finally {
       setVocabularyLoading(false);
