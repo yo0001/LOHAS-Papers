@@ -6,7 +6,8 @@ import Script from "next/script";
 const content = {
   ja: {
     title: "医師監修について",
-    description: "LOHAS Papersは、日本の医師免許を持つ医師の監修のもとで運営されています。",
+    description:
+      "LOHAS Papersは、日本の医師免許を持つ医師の監修のもとで運営されています。",
     supervisionTitle: "監修方針",
     supervisionPoints: [
       "AI要約の医学的正確性の確認",
@@ -22,7 +23,8 @@ const content = {
   },
   en: {
     title: "Medical Supervision",
-    description: "LOHAS Papers is operated under the supervision of a physician licensed in Japan.",
+    description:
+      "LOHAS Papers is operated under the supervision of a physician licensed in Japan.",
     supervisionTitle: "Supervision Policy",
     supervisionPoints: [
       "Verification of medical accuracy in AI-generated summaries",
@@ -50,7 +52,27 @@ const orgJsonLd = {
   "@type": "Organization",
   name: "LOHAS Inc.",
   url: "https://lohas-papers.com",
-  description: "Physician-supervised AI-powered academic paper search and summarization platform.",
+  description:
+    "Physician-supervised AI-powered academic paper search and summarization platform.",
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "ホーム",
+      item: "https://lohas-papers.com",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "医師監修について",
+      item: "https://lohas-papers.com/supervisor",
+    },
+  ],
 };
 
 export default function SupervisorPage() {
@@ -63,6 +85,11 @@ export default function SupervisorPage() {
         id="org-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+      <Script
+        id="breadcrumb-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="max-w-3xl mx-auto px-4 py-12">
         {/* Header */}

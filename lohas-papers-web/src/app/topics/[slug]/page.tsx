@@ -7,7 +7,11 @@ import {
   getRelatedTopics,
   CATEGORY_LABELS,
 } from "@/data/topics";
-import { getTopicContent, DISCLAIMER, AI_GENERATION_NOTE } from "@/data/topic-content";
+import {
+  getTopicContent,
+  DISCLAIMER,
+  AI_GENERATION_NOTE,
+} from "@/data/topic-content";
 
 export const revalidate = 604800; // 7 days
 
@@ -30,6 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: {
+      canonical: `/topics/${slug}`,
+    },
     openGraph: {
       title,
       description,
@@ -58,7 +65,9 @@ async function fetchTopicData(queryEn: string) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
 
-    const fetchHeaders: Record<string, string> = { "Content-Type": "application/json" };
+    const fetchHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
     if (BACKEND_API_KEY) {
       fetchHeaders["X-API-Key"] = BACKEND_API_KEY;
     }

@@ -5,7 +5,9 @@ interface Props {
   searchParams: Promise<{ q?: string; lang?: string }>;
 }
 
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: Props): Promise<Metadata> {
   const params = await searchParams;
   const query = params.q || "";
   const lang = params.lang || "ja";
@@ -38,6 +40,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return {
     title,
     description,
+    alternates: {
+      canonical: "/results",
+    },
     openGraph: {
       title,
       description,
@@ -54,5 +59,32 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default function ResultsPage() {
-  return <ResultsContent />;
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "ホーム",
+        item: "https://lohas-papers.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "検索結果",
+        item: "https://lohas-papers.com/results",
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <ResultsContent />
+    </>
+  );
 }
