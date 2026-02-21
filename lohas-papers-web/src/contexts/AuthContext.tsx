@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { trackEvent } from "@/lib/posthog";
 import type { User } from "@supabase/supabase-js";
 
 interface AuthContextType {
@@ -66,6 +67,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase, fetchCredits]);
 
   const signInWithGoogle = async (redirectTo?: string) => {
+    trackEvent("login_started", {
+      provider: "google",
+      redirect_to: redirectTo,
+    });
     const callbackUrl = new URL("/auth/callback", window.location.origin);
     if (redirectTo) {
       callbackUrl.searchParams.set("next", redirectTo);
@@ -77,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    trackEvent("logout");
     await supabase.auth.signOut();
     setUser(null);
     setCredits(0);
@@ -88,7 +94,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, credits, loading, signInWithGoogle, signOut, refreshCredits }}
+      value={{
+        user,
+        credits,
+        loading,
+        signInWithGoogle,
+        signOut,
+        refreshCredits,
+      }}
     >
       {children}
     </AuthContext.Provider>

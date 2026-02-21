@@ -1,4 +1,12 @@
-export type Locale = "ja" | "en" | "ko" | "zh-Hans" | "es" | "pt-BR" | "th" | "vi";
+export type Locale =
+  | "ja"
+  | "en"
+  | "ko"
+  | "zh-Hans"
+  | "es"
+  | "pt-BR"
+  | "th"
+  | "vi";
 
 export const LOCALES: { code: Locale; name: string }[] = [
   { code: "ja", name: "日本語" },
@@ -54,7 +62,8 @@ const translations: Record<Locale, Record<string, string>> = {
     viewOnSemanticScholar: "Semantic Scholarで見る",
     // Fulltext
     fulltextTranslation: "全文を翻訳する",
-    fulltextNotAvailable: "この論文はオープンアクセスではないため全文翻訳できません",
+    fulltextNotAvailable:
+      "この論文はオープンアクセスではないため全文翻訳できません",
     fulltextPdfError: "PDFからテキストを抽出できませんでした",
     fulltextLoading: "全文を翻訳中...（初回は30秒ほどかかります）",
     fulltextShowOriginal: "原文を表示",
@@ -63,10 +72,12 @@ const translations: Record<Locale, Record<string, string>> = {
     language: "表示言語",
     about: "このアプリについて",
     disclaimer: "免責事項",
-    disclaimerText: "このアプリは医療アドバイスを提供するものではありません。健康上の判断は必ず医師にご相談ください。",
+    disclaimerText:
+      "このアプリは医療アドバイスを提供するものではありません。健康上の判断は必ず医師にご相談ください。",
     // Common
     errorNetwork: "ネットワークエラーが発生しました",
-    serviceUnavailable: "AI検索サービスが一時的に利用できません。しばらくお待ちください。",
+    serviceUnavailable:
+      "AI検索サービスが一時的に利用できません。しばらくお待ちください。",
     errorGeneric: "エラーが発生しました",
     retry: "再試行",
     cancel: "キャンセル",
@@ -113,49 +124,60 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "取引履歴",
     noTransactions: "取引履歴はありません",
     // Landing Page
-    heroTitle: "論文を、あなたの言語で、あなたのレベルで",
-    heroDescription: "PubMedとSemantic Scholarを同時に検索。AIが8言語・3難易度で論文を要約します。",
-    heroCta: "無料で試す",
-    heroBonus: "新規登録で1クレジットプレゼント",
-    howItWorksTitle: "使い方はかんたん",
+    heroTitle: "英語論文、もう一人で読まなくていい",
+    heroDescription:
+      "PubMed・Semantic Scholarの最新エビデンスを、AIが日本語で、明日の外来で使える形に要約。医師が作った、医師のための論文検索AI。",
+    heroCta: "無料で試してみる",
+    heroBonus: "登録30秒・無料クレジット付き",
+    howItWorksTitle: "30秒で使い始められる",
     step1Title: "Googleでログイン",
-    step1Desc: "ワンクリックで無料アカウント作成",
-    step2Title: "論文を検索",
-    step2Desc: "知りたいことを入力するだけ",
-    step3Title: "AI要約を読む",
-    step3Desc: "あなたの言語・レベルで理解",
-    featuresTitle: "主な機能",
-    feature1Title: "8言語対応",
-    feature1Desc: "日本語・英語・韓国語・中国語・スペイン語・ポルトガル語・タイ語・ベトナム語",
-    feature2Title: "3段階の難易度",
-    feature2Desc: "専門家・一般向け・こども向けの3レベル",
-    feature3Title: "2大DB横断検索",
-    feature3Desc: "PubMedとSemantic Scholarを同時検索",
-    feature4Title: "AI総合回答",
-    feature4Desc: "複数論文を統合したAIによる回答",
-    audienceTitle: "こんな方におすすめ",
-    audience1Title: "医師・医療従事者",
-    audience1Desc: "最新のエビデンスを素早くキャッチアップ",
-    audience2Title: "研究者",
-    audience2Desc: "多言語文献を母国語で効率的にレビュー",
+    step1Desc: "ワンクリック、30秒で完了",
+    step2Title: "知りたいことを入力",
+    step2Desc: "「2型糖尿病 SGLT2阻害薬 最新」など日本語でOK",
+    step3Title: "AIが日本語で要約",
+    step3Desc: "明日の外来で使えるレベルで理解",
+    featuresTitle: "なぜ医師に選ばれるのか",
+    feature1Title: "英語論文を日本語で読める",
+    feature1Desc:
+      "PubMed・Semantic Scholarの英語論文を、臨床で使える日本語に即座に翻訳・要約",
+    feature2Title: "臨床に直結する要約",
+    feature2Desc:
+      "「結局、明日の外来で何が変わるのか」を軸にAIが要約。専門家・一般・入門の3レベル",
+    feature3Title: "3,600万件を一括検索",
+    feature3Desc:
+      "PubMedとSemantic Scholarを同時に横断検索。漏れのない文献レビューを数秒で",
+    feature4Title: "複数論文の統合回答",
+    feature4Desc:
+      "「この治療法のエビデンスは？」に対して、複数論文を横断した総合的なAI回答を生成",
+    audienceTitle: "こんな方に使われています",
+    audience1Title: "研修医・若手医師",
+    audience1Desc:
+      "英語論文に不慣れでも大丈夫。AIが日本語で要約するから、エビデンスの確認が30秒に",
+    audience2Title: "指導医・専門医",
+    audience2Desc:
+      "カンファ準備の文献検索を高速化。最新エビデンスを漏れなくカバー",
     audience3Title: "医学生",
-    audience3Desc: "難しい論文もわかりやすいレベルで理解",
-    audience4Title: "一般の方",
-    audience4Desc: "健康情報を正確な論文から得る",
-    bottomCta: "今すぐ無料で始めましょう",
-    bottomCtaDesc: "登録は無料。Googleアカウントで今すぐ始められます。",
+    audience3Desc: "CBT・卒試・国試対策に。難解な原著論文もわかりやすく要約",
+    audience4Title: "看護師・コメディカル",
+    audience4Desc:
+      "看護研究・症例報告の文献検索に。専門外の英語論文もAIがサポート",
+    bottomCta: "まずは無料で検索してみてください",
+    bottomCtaDesc: "登録30秒。Googleアカウントで今すぐ始められます。",
     footerPricing: "料金プラン",
     footerLegal: "特定商取引法に基づく表記",
     welcomeMessage: "ようこそ！LOHAS Papersへ",
-    welcomeCredits: "1クレジットをプレゼントしました。さっそく論文を検索してみましょう！",
-    maintenanceBanner: "現在クレジットによるAI検索を一時停止しております。ご自身のAPIキーをお持ちの方は設定画面よりご利用いただけます。",
+    welcomeCredits:
+      "1クレジットをプレゼントしました。さっそく論文を検索してみましょう！",
+    maintenanceBanner:
+      "現在クレジットによるAI検索を一時停止しております。ご自身のAPIキーをお持ちの方は設定画面よりご利用いただけます。",
     supervisedBadge: "医師監修",
     supervisedName: "LOHAS Inc. 医療監修チーム",
     supervisedAffiliation: "医師",
     footerSupervised: "医師監修",
     // Trial
     trialBannerTitle: "もっと論文を検索しませんか？",
-    trialBannerDesc: "無料アカウントを作成すると、無制限に論文を検索・AI要約できます。",
+    trialBannerDesc:
+      "無料アカウントを作成すると、無制限に論文を検索・AI要約できます。",
     trialBannerCta: "無料で始める",
     trialSearchHint: "登録不要で1回お試し検索",
     // Topics
@@ -169,17 +191,23 @@ const translations: Record<Locale, Record<string, string>> = {
     // FAQ
     faqTitle: "よくある質問",
     faqQ1: "LOHAS Papersとは？",
-    faqA1: "LOHAS Papersは、PubMedとSemantic Scholarを同時検索し、AIが論文を8言語・3難易度で要約する医師監修の論文検索プラットフォームです。",
+    faqA1:
+      "LOHAS Papersは、PubMedとSemantic Scholarを同時検索し、AIが論文を8言語・3難易度で要約する医師監修の論文検索プラットフォームです。",
     faqQ2: "無料で使えますか？",
-    faqA2: "はい、新規登録で1クレジットが付与され、1回の検索をお試しいただけます。また、登録不要で1回のお試し検索もご利用いただけます。追加クレジットは有料で購入できます。",
+    faqA2:
+      "はい、新規登録で1クレジットが付与され、1回の検索をお試しいただけます。また、登録不要で1回のお試し検索もご利用いただけます。追加クレジットは有料で購入できます。",
     faqQ3: "どのデータベースを検索できますか？",
-    faqA3: "PubMed（生物医学文献3,600万件以上）とSemantic Scholar（学術文献2億件以上）を同時に横断検索できます。",
+    faqA3:
+      "PubMed（生物医学文献3,600万件以上）とSemantic Scholar（学術文献2億件以上）を同時に横断検索できます。",
     faqQ4: "対応言語は？",
-    faqA4: "日本語・英語・韓国語・中国語・スペイン語・ポルトガル語・タイ語・ベトナム語の8言語に対応しています。",
+    faqA4:
+      "日本語・英語・韓国語・中国語・スペイン語・ポルトガル語・タイ語・ベトナム語の8言語に対応しています。",
     faqQ5: "AI要約の精度は？",
-    faqA5: "最新のLLM技術を使用し、原文に忠実な要約を生成します。すべてのAI出力は医師の監修を受けており、原文へのリンクも必ず提供されます。",
+    faqA5:
+      "最新のLLM技術を使用し、原文に忠実な要約を生成します。すべてのAI出力は医師の監修を受けており、原文へのリンクも必ず提供されます。",
     faqQ6: "医師監修とは？",
-    faqA6: "AI要約の品質と正確性を医師が監修しています。ただし、個別の医療アドバイスではありませんので、健康上の判断は必ず担当医にご相談ください。",
+    faqA6:
+      "AI要約の品質と正確性を医師が監修しています。ただし、個別の医療アドバイスではありませんので、健康上の判断は必ず担当医にご相談ください。",
   },
   en: {
     appName: "LOHAS Papers",
@@ -218,7 +246,8 @@ const translations: Record<Locale, Record<string, string>> = {
     viewOnPubMed: "View on PubMed",
     viewOnSemanticScholar: "View on Semantic Scholar",
     fulltextTranslation: "Translate Full Text",
-    fulltextNotAvailable: "Full text translation is not available (not open access)",
+    fulltextNotAvailable:
+      "Full text translation is not available (not open access)",
     fulltextPdfError: "Could not extract text from PDF",
     fulltextLoading: "Translating full text... (first time may take ~30s)",
     fulltextShowOriginal: "Show Original",
@@ -226,9 +255,11 @@ const translations: Record<Locale, Record<string, string>> = {
     language: "Language",
     about: "About",
     disclaimer: "Disclaimer",
-    disclaimerText: "This app does not provide medical advice. Always consult a healthcare professional for health decisions.",
+    disclaimerText:
+      "This app does not provide medical advice. Always consult a healthcare professional for health decisions.",
     errorNetwork: "A network error occurred",
-    serviceUnavailable: "AI search service is temporarily unavailable. Please try again later.",
+    serviceUnavailable:
+      "AI search service is temporarily unavailable. Please try again later.",
     errorGeneric: "An error occurred",
     retry: "Retry",
     cancel: "Cancel",
@@ -272,7 +303,8 @@ const translations: Record<Locale, Record<string, string>> = {
     noTransactions: "No transactions yet",
     // Landing Page
     heroTitle: "Academic papers, in your language, at your level",
-    heroDescription: "Search PubMed and Semantic Scholar simultaneously. AI summarizes papers in 8 languages at 3 difficulty levels.",
+    heroDescription:
+      "Search PubMed and Semantic Scholar simultaneously. AI summarizes papers in 8 languages at 3 difficulty levels.",
     heroCta: "Try for free",
     heroBonus: "1 free credit on sign up",
     howItWorksTitle: "How it works",
@@ -284,7 +316,8 @@ const translations: Record<Locale, Record<string, string>> = {
     step3Desc: "Understand in your language and level",
     featuresTitle: "Key Features",
     feature1Title: "8 Languages",
-    feature1Desc: "Japanese, English, Korean, Chinese, Spanish, Portuguese, Thai, Vietnamese",
+    feature1Desc:
+      "Japanese, English, Korean, Chinese, Spanish, Portuguese, Thai, Vietnamese",
     feature2Title: "3 Difficulty Levels",
     feature2Desc: "Expert, General, and Kids levels",
     feature3Title: "Dual Database Search",
@@ -295,47 +328,59 @@ const translations: Record<Locale, Record<string, string>> = {
     audience1Title: "Physicians & Healthcare Professionals",
     audience1Desc: "Quickly catch up on the latest evidence",
     audience2Title: "Researchers",
-    audience2Desc: "Efficiently review multilingual literature in your language",
+    audience2Desc:
+      "Efficiently review multilingual literature in your language",
     audience3Title: "Medical Students",
     audience3Desc: "Understand complex papers at an accessible level",
     audience4Title: "General Public",
     audience4Desc: "Get health information from reliable academic sources",
     bottomCta: "Start for free now",
-    bottomCtaDesc: "Registration is free. Start instantly with your Google account.",
+    bottomCtaDesc:
+      "Registration is free. Start instantly with your Google account.",
     footerPricing: "Pricing",
     footerLegal: "Legal Notice",
     welcomeMessage: "Welcome to LOHAS Papers!",
-    welcomeCredits: "You've received 1 free credit. Start searching papers now!",
-    maintenanceBanner: "Credit-based AI search is temporarily unavailable. If you have your own API key, you can use it via Settings.",
+    welcomeCredits:
+      "You've received 1 free credit. Start searching papers now!",
+    maintenanceBanner:
+      "Credit-based AI search is temporarily unavailable. If you have your own API key, you can use it via Settings.",
     supervisedBadge: "Physician Supervised",
     supervisedName: "LOHAS Inc. Medical Team",
     supervisedAffiliation: "Physician",
     footerSupervised: "Physician Supervised",
     trialBannerTitle: "Want to search more papers?",
-    trialBannerDesc: "Create a free account to unlock unlimited AI-powered paper search and summaries.",
+    trialBannerDesc:
+      "Create a free account to unlock unlimited AI-powered paper search and summaries.",
     trialBannerCta: "Get started for free",
     trialSearchHint: "Try one free search — no sign up required",
     topicsTitle: "Popular Topics",
     topicsViewAll: "View all topics",
     topicsPageTitle: "Research Topics",
-    topicsPageDesc: "Explore AI-summarized research topics from the latest papers",
+    topicsPageDesc:
+      "Explore AI-summarized research topics from the latest papers",
     topicSearchCta: "Search on LOHAS Papers",
     topicRelated: "Related Topics",
     footerTopics: "Topics",
     // FAQ
     faqTitle: "Frequently Asked Questions",
     faqQ1: "What is LOHAS Papers?",
-    faqA1: "LOHAS Papers is a physician-supervised academic paper search platform that simultaneously searches PubMed and Semantic Scholar, with AI-powered summaries in 8 languages at 3 difficulty levels.",
+    faqA1:
+      "LOHAS Papers is a physician-supervised academic paper search platform that simultaneously searches PubMed and Semantic Scholar, with AI-powered summaries in 8 languages at 3 difficulty levels.",
     faqQ2: "Is it free to use?",
-    faqA2: "Yes, you get 1 free credit on sign up for one search. You can also try one free search without registration. Additional credits can be purchased as needed.",
+    faqA2:
+      "Yes, you get 1 free credit on sign up for one search. You can also try one free search without registration. Additional credits can be purchased as needed.",
     faqQ3: "Which databases can I search?",
-    faqA3: "You can search PubMed (36M+ biomedical articles) and Semantic Scholar (200M+ academic papers) simultaneously in a single query.",
+    faqA3:
+      "You can search PubMed (36M+ biomedical articles) and Semantic Scholar (200M+ academic papers) simultaneously in a single query.",
     faqQ4: "What languages are supported?",
-    faqA4: "Japanese, English, Korean, Chinese, Spanish, Portuguese, Thai, and Vietnamese — 8 languages in total.",
+    faqA4:
+      "Japanese, English, Korean, Chinese, Spanish, Portuguese, Thai, and Vietnamese — 8 languages in total.",
     faqQ5: "How accurate are the AI summaries?",
-    faqA5: "We use state-of-the-art LLM technology to generate faithful summaries. All AI outputs are supervised by a physician, and direct links to original papers are always provided.",
+    faqA5:
+      "We use state-of-the-art LLM technology to generate faithful summaries. All AI outputs are supervised by a physician, and direct links to original papers are always provided.",
     faqQ6: "What does physician-supervised mean?",
-    faqA6: "The quality and accuracy of AI summaries are supervised by a licensed physician. However, this is not individual medical advice — always consult your doctor for health decisions.",
+    faqA6:
+      "The quality and accuracy of AI summaries are supervised by a licensed physician. However, this is not individual medical advice — always consult your doctor for health decisions.",
   },
   ko: {
     appName: "LOHAS Papers",
@@ -374,7 +419,8 @@ const translations: Record<Locale, Record<string, string>> = {
     viewOnPubMed: "PubMed에서 보기",
     viewOnSemanticScholar: "Semantic Scholar에서 보기",
     fulltextTranslation: "전문 번역",
-    fulltextNotAvailable: "이 논문은 오픈 액세스가 아니므로 전문 번역이 불가합니다",
+    fulltextNotAvailable:
+      "이 논문은 오픈 액세스가 아니므로 전문 번역이 불가합니다",
     fulltextPdfError: "PDF에서 텍스트를 추출할 수 없습니다",
     fulltextLoading: "전문 번역 중... (최초 약 30초 소요)",
     fulltextShowOriginal: "원문 보기",
@@ -382,9 +428,11 @@ const translations: Record<Locale, Record<string, string>> = {
     language: "표시 언어",
     about: "정보",
     disclaimer: "면책 조항",
-    disclaimerText: "이 앱은 의료 조언을 제공하지 않습니다. 건강 관련 결정은 반드시 의사와 상담하세요.",
+    disclaimerText:
+      "이 앱은 의료 조언을 제공하지 않습니다. 건강 관련 결정은 반드시 의사와 상담하세요.",
     errorNetwork: "네트워크 오류가 발생했습니다",
-    serviceUnavailable: "AI 검색 서비스를 일시적으로 이용할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+    serviceUnavailable:
+      "AI 검색 서비스를 일시적으로 이용할 수 없습니다. 잠시 후 다시 시도해 주세요.",
     errorGeneric: "오류가 발생했습니다",
     retry: "재시도",
     cancel: "취소",
@@ -427,7 +475,8 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "거래 내역",
     noTransactions: "거래 내역이 없습니다",
     heroTitle: "학술 논문을 당신의 언어와 수준으로",
-    heroDescription: "PubMed과 Semantic Scholar를 동시에 검색. AI가 8개 언어, 3가지 난이도로 논문을 요약합니다.",
+    heroDescription:
+      "PubMed과 Semantic Scholar를 동시에 검색. AI가 8개 언어, 3가지 난이도로 논문을 요약합니다.",
     heroCta: "무료로 체험하기",
     heroBonus: "가입 시 무료 크레딧 1개 제공",
     howItWorksTitle: "사용 방법",
@@ -439,7 +488,8 @@ const translations: Record<Locale, Record<string, string>> = {
     step3Desc: "당신의 언어와 수준으로 이해",
     featuresTitle: "주요 기능",
     feature1Title: "8개 언어 지원",
-    feature1Desc: "일본어, 영어, 한국어, 중국어, 스페인어, 포르투갈어, 태국어, 베트남어",
+    feature1Desc:
+      "일본어, 영어, 한국어, 중국어, 스페인어, 포르투갈어, 태국어, 베트남어",
     feature2Title: "3단계 난이도",
     feature2Desc: "전문가, 일반인, 어린이용 3가지 레벨",
     feature3Title: "2대 DB 통합 검색",
@@ -460,14 +510,17 @@ const translations: Record<Locale, Record<string, string>> = {
     footerPricing: "요금제",
     footerLegal: "법적 고지",
     welcomeMessage: "LOHAS Papers에 오신 것을 환영합니다!",
-    welcomeCredits: "무료 크레딧 1개를 드렸습니다. 지금 바로 논문을 검색해 보세요!",
-    maintenanceBanner: "현재 크레딧 기반 AI 검색을 일시 중지하고 있습니다. 본인의 API 키가 있으시면 설정에서 이용하실 수 있습니다.",
+    welcomeCredits:
+      "무료 크레딧 1개를 드렸습니다. 지금 바로 논문을 검색해 보세요!",
+    maintenanceBanner:
+      "현재 크레딧 기반 AI 검색을 일시 중지하고 있습니다. 본인의 API 키가 있으시면 설정에서 이용하실 수 있습니다.",
     supervisedBadge: "의사 감수",
     supervisedName: "LOHAS Inc. 의료팀",
     supervisedAffiliation: "의사",
     footerSupervised: "의사 감수",
     trialBannerTitle: "더 많은 논문을 검색해 보세요",
-    trialBannerDesc: "무료 계정을 만들면 무제한으로 논문을 검색하고 AI 요약을 받을 수 있습니다.",
+    trialBannerDesc:
+      "무료 계정을 만들면 무제한으로 논문을 검색하고 AI 요약을 받을 수 있습니다.",
     trialBannerCta: "무료로 시작하기",
     trialSearchHint: "가입 없이 1회 무료 검색",
     topicsTitle: "인기 토픽",
@@ -568,7 +621,8 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "交易记录",
     noTransactions: "暂无交易记录",
     heroTitle: "用你的语言和水平阅读学术论文",
-    heroDescription: "同时搜索PubMed和Semantic Scholar。AI以8种语言、3种难度总结论文。",
+    heroDescription:
+      "同时搜索PubMed和Semantic Scholar。AI以8种语言、3种难度总结论文。",
     heroCta: "免费试用",
     heroBonus: "注册即送1个免费积分",
     howItWorksTitle: "使用方法",
@@ -602,7 +656,8 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "法律声明",
     welcomeMessage: "欢迎来到LOHAS Papers！",
     welcomeCredits: "已赠送1个免费积分。现在就开始搜索论文吧！",
-    maintenanceBanner: "基于积分的AI搜索暂时停止服务。如果您有自己的API密钥，可以在设置中使用。",
+    maintenanceBanner:
+      "基于积分的AI搜索暂时停止服务。如果您有自己的API密钥，可以在设置中使用。",
     supervisedBadge: "医师监修",
     supervisedName: "LOHAS Inc. 医疗监修团队",
     supervisedAffiliation: "医师",
@@ -656,17 +711,21 @@ const translations: Record<Locale, Record<string, string>> = {
     viewOnPubMed: "Ver en PubMed",
     viewOnSemanticScholar: "Ver en Semantic Scholar",
     fulltextTranslation: "Traducir texto completo",
-    fulltextNotAvailable: "Este artículo no es de acceso abierto, no se puede traducir el texto completo",
+    fulltextNotAvailable:
+      "Este artículo no es de acceso abierto, no se puede traducir el texto completo",
     fulltextPdfError: "No se pudo extraer texto del PDF",
-    fulltextLoading: "Traduciendo texto completo... (la primera vez puede tardar ~30s)",
+    fulltextLoading:
+      "Traduciendo texto completo... (la primera vez puede tardar ~30s)",
     fulltextShowOriginal: "Mostrar original",
     settings: "Configuración",
     language: "Idioma",
     about: "Acerca de",
     disclaimer: "Aviso legal",
-    disclaimerText: "Esta aplicación no proporciona asesoramiento médico. Consulte siempre a un profesional de la salud para decisiones de salud.",
+    disclaimerText:
+      "Esta aplicación no proporciona asesoramiento médico. Consulte siempre a un profesional de la salud para decisiones de salud.",
     errorNetwork: "Error de red",
-    serviceUnavailable: "El servicio de búsqueda con IA no está disponible temporalmente. Inténtelo más tarde.",
+    serviceUnavailable:
+      "El servicio de búsqueda con IA no está disponible temporalmente. Inténtelo más tarde.",
     errorGeneric: "Se produjo un error",
     retry: "Reintentar",
     cancel: "Cancelar",
@@ -709,7 +768,8 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "Historial de transacciones",
     noTransactions: "Sin transacciones todavía",
     heroTitle: "Artículos académicos, en tu idioma, a tu nivel",
-    heroDescription: "Busca en PubMed y Semantic Scholar simultáneamente. La IA resume artículos en 8 idiomas a 3 niveles de dificultad.",
+    heroDescription:
+      "Busca en PubMed y Semantic Scholar simultáneamente. La IA resume artículos en 8 idiomas a 3 niveles de dificultad.",
     heroCta: "Prueba gratis",
     heroBonus: "1 crédito gratis al registrarte",
     howItWorksTitle: "Cómo funciona",
@@ -721,7 +781,8 @@ const translations: Record<Locale, Record<string, string>> = {
     step3Desc: "Entiende en tu idioma y nivel",
     featuresTitle: "Características principales",
     feature1Title: "8 idiomas",
-    feature1Desc: "Japonés, inglés, coreano, chino, español, portugués, tailandés, vietnamita",
+    feature1Desc:
+      "Japonés, inglés, coreano, chino, español, portugués, tailandés, vietnamita",
     feature2Title: "3 niveles de dificultad",
     feature2Desc: "Experto, general y niños",
     feature3Title: "Búsqueda en 2 bases de datos",
@@ -736,20 +797,25 @@ const translations: Record<Locale, Record<string, string>> = {
     audience3Title: "Estudiantes de medicina",
     audience3Desc: "Comprende artículos complejos a un nivel accesible",
     audience4Title: "Público general",
-    audience4Desc: "Obtén información de salud de fuentes académicas confiables",
+    audience4Desc:
+      "Obtén información de salud de fuentes académicas confiables",
     bottomCta: "Comienza gratis ahora",
-    bottomCtaDesc: "El registro es gratuito. Comienza al instante con tu cuenta de Google.",
+    bottomCtaDesc:
+      "El registro es gratuito. Comienza al instante con tu cuenta de Google.",
     footerPricing: "Precios",
     footerLegal: "Aviso legal",
     welcomeMessage: "¡Bienvenido a LOHAS Papers!",
-    welcomeCredits: "Has recibido 1 crédito gratis. ¡Empieza a buscar artículos ahora!",
-    maintenanceBanner: "La búsqueda con IA basada en créditos no está disponible temporalmente. Si tiene su propia clave API, puede usarla desde Configuración.",
+    welcomeCredits:
+      "Has recibido 1 crédito gratis. ¡Empieza a buscar artículos ahora!",
+    maintenanceBanner:
+      "La búsqueda con IA basada en créditos no está disponible temporalmente. Si tiene su propia clave API, puede usarla desde Configuración.",
     supervisedBadge: "Supervisado por médico",
     supervisedName: "LOHAS Inc. Medical Team",
     supervisedAffiliation: "Médico",
     footerSupervised: "Supervisado por médico",
     trialBannerTitle: "Busca más artículos",
-    trialBannerDesc: "Crea una cuenta gratuita para buscar y resumir artículos con IA sin límites.",
+    trialBannerDesc:
+      "Crea una cuenta gratuita para buscar y resumir artículos con IA sin límites.",
     trialBannerCta: "Empieza gratis",
     trialSearchHint: "Prueba una búsqueda gratis — sin registro",
     topicsTitle: "Temas populares",
@@ -797,17 +863,21 @@ const translations: Record<Locale, Record<string, string>> = {
     viewOnPubMed: "Ver no PubMed",
     viewOnSemanticScholar: "Ver no Semantic Scholar",
     fulltextTranslation: "Traduzir texto completo",
-    fulltextNotAvailable: "Este artigo não é de acesso aberto, não é possível traduzir o texto completo",
+    fulltextNotAvailable:
+      "Este artigo não é de acesso aberto, não é possível traduzir o texto completo",
     fulltextPdfError: "Não foi possível extrair texto do PDF",
-    fulltextLoading: "Traduzindo texto completo... (a primeira vez pode levar ~30s)",
+    fulltextLoading:
+      "Traduzindo texto completo... (a primeira vez pode levar ~30s)",
     fulltextShowOriginal: "Mostrar original",
     settings: "Configurações",
     language: "Idioma",
     about: "Sobre",
     disclaimer: "Aviso legal",
-    disclaimerText: "Este aplicativo não fornece aconselhamento médico. Sempre consulte um profissional de saúde para decisões de saúde.",
+    disclaimerText:
+      "Este aplicativo não fornece aconselhamento médico. Sempre consulte um profissional de saúde para decisões de saúde.",
     errorNetwork: "Erro de rede",
-    serviceUnavailable: "O serviço de busca com IA está temporariamente indisponível. Tente novamente mais tarde.",
+    serviceUnavailable:
+      "O serviço de busca com IA está temporariamente indisponível. Tente novamente mais tarde.",
     errorGeneric: "Ocorreu um erro",
     retry: "Tentar novamente",
     cancel: "Cancelar",
@@ -850,7 +920,8 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "Histórico de transações",
     noTransactions: "Nenhuma transação ainda",
     heroTitle: "Artigos acadêmicos, no seu idioma, no seu nível",
-    heroDescription: "Pesquise PubMed e Semantic Scholar simultaneamente. A IA resume artigos em 8 idiomas em 3 níveis de dificuldade.",
+    heroDescription:
+      "Pesquise PubMed e Semantic Scholar simultaneamente. A IA resume artigos em 8 idiomas em 3 níveis de dificuldade.",
     heroCta: "Experimente grátis",
     heroBonus: "1 crédito grátis ao se cadastrar",
     howItWorksTitle: "Como funciona",
@@ -862,7 +933,8 @@ const translations: Record<Locale, Record<string, string>> = {
     step3Desc: "Entenda no seu idioma e nível",
     featuresTitle: "Recursos principais",
     feature1Title: "8 idiomas",
-    feature1Desc: "Japonês, inglês, coreano, chinês, espanhol, português, tailandês, vietnamita",
+    feature1Desc:
+      "Japonês, inglês, coreano, chinês, espanhol, português, tailandês, vietnamita",
     feature2Title: "3 níveis de dificuldade",
     feature2Desc: "Especialista, geral e crianças",
     feature3Title: "Busca em 2 bancos de dados",
@@ -877,20 +949,25 @@ const translations: Record<Locale, Record<string, string>> = {
     audience3Title: "Estudantes de medicina",
     audience3Desc: "Entenda artigos complexos em um nível acessível",
     audience4Title: "Público geral",
-    audience4Desc: "Obtenha informações de saúde de fontes acadêmicas confiáveis",
+    audience4Desc:
+      "Obtenha informações de saúde de fontes acadêmicas confiáveis",
     bottomCta: "Comece grátis agora",
-    bottomCtaDesc: "O cadastro é gratuito. Comece instantaneamente com sua conta Google.",
+    bottomCtaDesc:
+      "O cadastro é gratuito. Comece instantaneamente com sua conta Google.",
     footerPricing: "Preços",
     footerLegal: "Aviso legal",
     welcomeMessage: "Bem-vindo ao LOHAS Papers!",
-    welcomeCredits: "Você recebeu 1 crédito grátis. Comece a pesquisar artigos agora!",
-    maintenanceBanner: "A busca com IA baseada em créditos está temporariamente indisponível. Se você tem sua própria chave API, pode usá-la em Configurações.",
+    welcomeCredits:
+      "Você recebeu 1 crédito grátis. Comece a pesquisar artigos agora!",
+    maintenanceBanner:
+      "A busca com IA baseada em créditos está temporariamente indisponível. Se você tem sua própria chave API, pode usá-la em Configurações.",
     supervisedBadge: "Supervisionado por médico",
     supervisedName: "LOHAS Inc. Medical Team",
     supervisedAffiliation: "Médico",
     footerSupervised: "Supervisionado por médico",
     trialBannerTitle: "Quer buscar mais artigos?",
-    trialBannerDesc: "Crie uma conta gratuita para buscar e resumir artigos com IA sem limites.",
+    trialBannerDesc:
+      "Crie uma conta gratuita para buscar e resumir artigos com IA sem limites.",
     trialBannerCta: "Comece grátis",
     trialSearchHint: "Experimente uma busca grátis — sem cadastro",
     topicsTitle: "Temas populares",
@@ -938,17 +1015,21 @@ const translations: Record<Locale, Record<string, string>> = {
     viewOnPubMed: "ดูใน PubMed",
     viewOnSemanticScholar: "ดูใน Semantic Scholar",
     fulltextTranslation: "แปลเนื้อหาทั้งหมด",
-    fulltextNotAvailable: "บทความนี้ไม่ใช่แบบเข้าถึงฟรี ไม่สามารถแปลเนื้อหาทั้งหมดได้",
+    fulltextNotAvailable:
+      "บทความนี้ไม่ใช่แบบเข้าถึงฟรี ไม่สามารถแปลเนื้อหาทั้งหมดได้",
     fulltextPdfError: "ไม่สามารถดึงข้อความจาก PDF ได้",
-    fulltextLoading: "กำลังแปลเนื้อหาทั้งหมด... (ครั้งแรกอาจใช้เวลา ~30 วินาที)",
+    fulltextLoading:
+      "กำลังแปลเนื้อหาทั้งหมด... (ครั้งแรกอาจใช้เวลา ~30 วินาที)",
     fulltextShowOriginal: "แสดงต้นฉบับ",
     settings: "ตั้งค่า",
     language: "ภาษา",
     about: "เกี่ยวกับ",
     disclaimer: "ข้อจำกัดความรับผิดชอบ",
-    disclaimerText: "แอปนี้ไม่ได้ให้คำแนะนำทางการแพทย์ กรุณาปรึกษาแพทย์สำหรับการตัดสินใจด้านสุขภาพ",
+    disclaimerText:
+      "แอปนี้ไม่ได้ให้คำแนะนำทางการแพทย์ กรุณาปรึกษาแพทย์สำหรับการตัดสินใจด้านสุขภาพ",
     errorNetwork: "เกิดข้อผิดพลาดของเครือข่าย",
-    serviceUnavailable: "บริการค้นหา AI ไม่สามารถใช้งานได้ชั่วคราว กรุณาลองใหม่ภายหลัง",
+    serviceUnavailable:
+      "บริการค้นหา AI ไม่สามารถใช้งานได้ชั่วคราว กรุณาลองใหม่ภายหลัง",
     errorGeneric: "เกิดข้อผิดพลาด",
     retry: "ลองอีกครั้ง",
     cancel: "ยกเลิก",
@@ -991,7 +1072,8 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "ประวัติธุรกรรม",
     noTransactions: "ยังไม่มีธุรกรรม",
     heroTitle: "บทความวิชาการ ในภาษาของคุณ ในระดับของคุณ",
-    heroDescription: "ค้นหา PubMed และ Semantic Scholar พร้อมกัน AI สรุปบทความใน 8 ภาษา 3 ระดับความยาก",
+    heroDescription:
+      "ค้นหา PubMed และ Semantic Scholar พร้อมกัน AI สรุปบทความใน 8 ภาษา 3 ระดับความยาก",
     heroCta: "ทดลองใช้ฟรี",
     heroBonus: "รับ 1 เครดิตฟรีเมื่อสมัคร",
     howItWorksTitle: "วิธีใช้งาน",
@@ -1025,7 +1107,8 @@ const translations: Record<Locale, Record<string, string>> = {
     footerLegal: "ข้อกำหนดทางกฎหมาย",
     welcomeMessage: "ยินดีต้อนรับสู่ LOHAS Papers!",
     welcomeCredits: "คุณได้รับ 1 เครดิตฟรี เริ่มค้นหาบทความได้เลย!",
-    maintenanceBanner: "ฟังก์ชันค้นหา AI แบบเครดิตหยุดให้บริการชั่วคราว หากคุณมี API key ของตัวเอง สามารถใช้งานได้ที่หน้าตั้งค่า",
+    maintenanceBanner:
+      "ฟังก์ชันค้นหา AI แบบเครดิตหยุดให้บริการชั่วคราว หากคุณมี API key ของตัวเอง สามารถใช้งานได้ที่หน้าตั้งค่า",
     supervisedBadge: "แพทย์กำกับดูแล",
     supervisedName: "LOHAS Inc. Medical Team",
     supervisedAffiliation: "แพทย์",
@@ -1079,7 +1162,8 @@ const translations: Record<Locale, Record<string, string>> = {
     viewOnPubMed: "Xem trên PubMed",
     viewOnSemanticScholar: "Xem trên Semantic Scholar",
     fulltextTranslation: "Dịch toàn văn",
-    fulltextNotAvailable: "Bài báo này không phải truy cập mở, không thể dịch toàn văn",
+    fulltextNotAvailable:
+      "Bài báo này không phải truy cập mở, không thể dịch toàn văn",
     fulltextPdfError: "Không thể trích xuất văn bản từ PDF",
     fulltextLoading: "Đang dịch toàn văn... (lần đầu có thể mất ~30 giây)",
     fulltextShowOriginal: "Hiển thị bản gốc",
@@ -1087,9 +1171,11 @@ const translations: Record<Locale, Record<string, string>> = {
     language: "Ngôn ngữ",
     about: "Giới thiệu",
     disclaimer: "Miễn trừ trách nhiệm",
-    disclaimerText: "Ứng dụng này không cung cấp tư vấn y tế. Luôn tham khảo ý kiến chuyên gia y tế cho các quyết định sức khỏe.",
+    disclaimerText:
+      "Ứng dụng này không cung cấp tư vấn y tế. Luôn tham khảo ý kiến chuyên gia y tế cho các quyết định sức khỏe.",
     errorNetwork: "Lỗi mạng",
-    serviceUnavailable: "Dịch vụ tìm kiếm AI tạm thời không khả dụng. Vui lòng thử lại sau.",
+    serviceUnavailable:
+      "Dịch vụ tìm kiếm AI tạm thời không khả dụng. Vui lòng thử lại sau.",
     errorGeneric: "Đã xảy ra lỗi",
     retry: "Thử lại",
     cancel: "Hủy",
@@ -1132,7 +1218,8 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "Lịch sử giao dịch",
     noTransactions: "Chưa có giao dịch",
     heroTitle: "Bài báo học thuật, bằng ngôn ngữ của bạn, ở trình độ của bạn",
-    heroDescription: "Tìm kiếm PubMed và Semantic Scholar đồng thời. AI tóm tắt bài báo bằng 8 ngôn ngữ ở 3 mức độ khó.",
+    heroDescription:
+      "Tìm kiếm PubMed và Semantic Scholar đồng thời. AI tóm tắt bài báo bằng 8 ngôn ngữ ở 3 mức độ khó.",
     heroCta: "Dùng thử miễn phí",
     heroBonus: "Nhận 1 tín dụng miễn phí khi đăng ký",
     howItWorksTitle: "Cách sử dụng",
@@ -1161,18 +1248,22 @@ const translations: Record<Locale, Record<string, string>> = {
     audience4Title: "Công chúng",
     audience4Desc: "Lấy thông tin sức khỏe từ nguồn học thuật đáng tin cậy",
     bottomCta: "Bắt đầu miễn phí ngay",
-    bottomCtaDesc: "Đăng ký miễn phí. Bắt đầu ngay với tài khoản Google của bạn.",
+    bottomCtaDesc:
+      "Đăng ký miễn phí. Bắt đầu ngay với tài khoản Google của bạn.",
     footerPricing: "Bảng giá",
     footerLegal: "Thông báo pháp lý",
     welcomeMessage: "Chào mừng đến với LOHAS Papers!",
-    welcomeCredits: "Bạn đã nhận 1 tín dụng miễn phí. Hãy bắt đầu tìm kiếm bài báo ngay!",
-    maintenanceBanner: "Chức năng tìm kiếm AI bằng tín dụng tạm thời ngừng hoạt động. Nếu bạn có API key riêng, bạn có thể sử dụng tại Cài đặt.",
+    welcomeCredits:
+      "Bạn đã nhận 1 tín dụng miễn phí. Hãy bắt đầu tìm kiếm bài báo ngay!",
+    maintenanceBanner:
+      "Chức năng tìm kiếm AI bằng tín dụng tạm thời ngừng hoạt động. Nếu bạn có API key riêng, bạn có thể sử dụng tại Cài đặt.",
     supervisedBadge: "Bác sĩ giám sát",
     supervisedName: "LOHAS Inc. Medical Team",
     supervisedAffiliation: "Bác sĩ",
     footerSupervised: "Bác sĩ giám sát",
     trialBannerTitle: "Muốn tìm thêm bài báo?",
-    trialBannerDesc: "Tạo tài khoản miễn phí để tìm kiếm và tóm tắt bài báo bằng AI không giới hạn.",
+    trialBannerDesc:
+      "Tạo tài khoản miễn phí để tìm kiếm và tóm tắt bài báo bằng AI không giới hạn.",
     trialBannerCta: "Bắt đầu miễn phí",
     trialSearchHint: "Thử tìm kiếm miễn phí 1 lần — không cần đăng ký",
     topicsTitle: "Chủ đề phổ biến",
@@ -1185,12 +1276,16 @@ const translations: Record<Locale, Record<string, string>> = {
   },
 };
 
-export function t(locale: Locale, key: string, replacements?: Record<string, string | number>): string {
+export function t(
+  locale: Locale,
+  key: string,
+  replacements?: Record<string, string | number>,
+): string {
   const value = translations[locale]?.[key] ?? translations.en[key] ?? key;
   if (!replacements) return value;
   return Object.entries(replacements).reduce(
     (str, [k, v]) => str.replace(`{${k}}`, String(v)),
-    value
+    value,
   );
 }
 

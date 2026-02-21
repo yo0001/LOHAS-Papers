@@ -12,7 +12,12 @@ import {
   ServiceUnavailableError,
   type SearchResponse,
 } from "@/lib/api";
-import { addSearchHistory, getCachedResult, setCachedResult } from "@/lib/favorites";
+import {
+  addSearchHistory,
+  getCachedResult,
+  setCachedResult,
+} from "@/lib/favorites";
+import { trackEvent } from "@/lib/posthog";
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import SearchProgress from "@/components/SearchProgress";
@@ -31,8 +36,18 @@ function TrialBanner() {
       {/* Glass banner */}
       <div className="relative z-20 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl shadow-xl p-8 text-center">
         <div className="w-12 h-12 mx-auto mb-4 bg-gray-900 rounded-xl flex items-center justify-center">
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          <svg
+            className="w-6 h-6 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
           </svg>
         </div>
         <h3 className="text-xl font-bold text-gray-900">
@@ -52,9 +67,7 @@ function TrialBanner() {
         >
           {t(locale, "trialBannerCta")}
         </Link>
-        <p className="mt-3 text-xs text-gray-400">
-          {t(locale, "loginBonus")}
-        </p>
+        <p className="mt-3 text-xs text-gray-400">{t(locale, "loginBonus")}</p>
       </div>
     </div>
   );
@@ -110,10 +123,18 @@ function ResultsInner() {
       setIsTrial(false);
       try {
         addSearchHistory(query);
+        trackEvent("search_started", { query, locale });
         const res = await searchWithAI(query, locale);
         if (!cancelled) {
           setResult(res);
           setCachedResult(query, locale, res);
+          const paperCount = res.papers?.length ?? 0;
+          trackEvent("search_completed", {
+            query,
+            locale,
+            paper_count: paperCount,
+            is_trial: !!(res as unknown as Record<string, unknown>).is_trial,
+          });
           if ((res as unknown as Record<string, unknown>).is_trial) {
             setIsTrial(true);
           } else {
@@ -123,12 +144,16 @@ function ResultsInner() {
       } catch (e) {
         if (cancelled) return;
         if (e instanceof AuthRequiredError) {
+          trackEvent("search_auth_required", { query });
           setShowLogin(true);
         } else if (e instanceof InsufficientCreditsError) {
+          trackEvent("search_insufficient_credits", { query });
           setError("insufficientCredits");
         } else if (e instanceof ServiceUnavailableError) {
+          trackEvent("search_error", { query, error: "service_unavailable" });
           setError("serviceUnavailable");
         } else {
+          trackEvent("search_error", { query, error: "network" });
           setError(t(locale, "errorNetwork"));
         }
       } finally {
@@ -137,7 +162,9 @@ function ResultsInner() {
     };
 
     doSearch();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, locale]);
 
@@ -150,7 +177,9 @@ function ResultsInner() {
     lastSearchRef.current = "";
     setError(null);
     setResult(null);
-    router.push(`/results?q=${encodeURIComponent(query)}&lang=${locale}&t=${Date.now()}`);
+    router.push(
+      `/results?q=${encodeURIComponent(query)}&lang=${locale}&t=${Date.now()}`,
+    );
   };
 
   return (
@@ -161,7 +190,9 @@ function ResultsInner() {
 
       {error && (
         <div className="text-center py-12">
-          <p className={`mb-4 ${error === "serviceUnavailable" ? "text-amber-600" : "text-red-500"}`}>
+          <p
+            className={`mb-4 ${error === "serviceUnavailable" ? "text-amber-600" : "text-red-500"}`}
+          >
             {error === "insufficientCredits"
               ? t(locale, "insufficientCredits")
               : error === "serviceUnavailable"

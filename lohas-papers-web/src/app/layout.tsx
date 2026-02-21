@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import MaintenanceBanner from "@/components/MaintenanceBanner";
 import Footer from "@/components/Footer";
+import PostHogProvider from "@/components/PostHogProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -41,17 +42,35 @@ const BASE_URL = "https://lohas-papers.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "LOHAS Papers - AI論文検索・多言語要約 | AI Academic Paper Search",
+  title: "LOHAS Papers - 英語論文をAIが日本語要約 | 医師が作った論文検索AI",
   description:
-    "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で論文を要約。医師監修の論文検索プラットフォーム。新規登録で無料クレジット付与。Search PubMed & Semantic Scholar simultaneously with AI summaries in 8 languages.",
+    "英語論文、もう一人で読まなくていい。PubMed・Semantic Scholarの最新エビデンスを、AIが日本語で、明日の外来で使える形に要約。研修医・医学生・医師のための論文検索AI。Search PubMed & Semantic Scholar with AI summaries in 8 languages.",
   keywords: [
-    "論文検索", "AI要約", "PubMed検索", "医学論文", "多言語要約",
-    "論文翻訳", "医師監修", "学術論文", "エビデンス", "Semantic Scholar",
-    "論文要約AI", "医療論文", "研究論文", "文献検索", "オープンアクセス",
-    "academic paper search", "AI paper summary", "PubMed search",
-    "multilingual paper translation", "medical literature search",
-    "Semantic Scholar search", "evidence-based medicine", "research paper AI",
-    "scientific paper summary", "open access papers",
+    "論文検索",
+    "AI要約",
+    "PubMed検索",
+    "医学論文",
+    "英語論文 日本語",
+    "論文翻訳",
+    "研修医 論文",
+    "エビデンス 検索",
+    "医学論文 AI要約",
+    "Semantic Scholar",
+    "論文要約AI",
+    "医療論文 翻訳",
+    "文献検索 AI",
+    "医学生 論文",
+    "EBM 検索",
+    "academic paper search",
+    "AI paper summary",
+    "PubMed search",
+    "multilingual paper translation",
+    "medical literature search",
+    "Semantic Scholar search",
+    "evidence-based medicine",
+    "research paper AI",
+    "scientific paper summary",
+    "open access papers",
   ],
   alternates: {
     canonical: BASE_URL,
@@ -73,20 +92,27 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "LOHAS Papers - AI論文検索・多言語要約",
+    title: "LOHAS Papers - 英語論文をAIが日本語要約",
     description:
-      "PubMed・Semantic Scholarを同時検索し、AIが8言語・3難易度で論文を要約。医師監修の論文検索プラットフォーム。",
+      "英語論文、もう一人で読まなくていい。PubMed・Semantic Scholarの最新エビデンスを、AIが日本語で、明日の外来で使える形に要約。",
     url: BASE_URL,
     siteName: "LOHAS Papers",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "LOHAS Papers - AI論文検索" }],
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "LOHAS Papers - AI論文検索",
+      },
+    ],
     locale: "ja_JP",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "LOHAS Papers - AI論文検索・多言語要約",
+    title: "LOHAS Papers - 英語論文をAIが日本語要約",
     description:
-      "PubMed・Semantic Scholarを同時検索、AIが8言語・3難易度で論文を要約。医師監修。",
+      "英語論文、もう一人で読まなくていい。研修医・医師のためのAI論文検索。医師が作った、医師のためのツール。",
     images: ["/og-image.png"],
     site: "@lohas_inc",
     creator: "@lohas_inc",
@@ -149,10 +175,9 @@ export default function RootLayout({
       name: "LOHAS Inc.",
       url: BASE_URL,
       logo: `${BASE_URL}/icon.png`,
-      description: "AI-powered academic paper search and multilingual summarization platform.",
-      sameAs: [
-        "https://twitter.com/lohas_inc",
-      ],
+      description:
+        "AI-powered academic paper search and multilingual summarization platform.",
+      sameAs: ["https://twitter.com/lohas_inc"],
       founder: {
         "@type": "Organization",
         name: "LOHAS Inc.",
@@ -188,6 +213,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <LanguageProvider>
+            <PostHogProvider />
             <Header />
             <MaintenanceBanner />
             <main className="flex-1">{children}</main>
