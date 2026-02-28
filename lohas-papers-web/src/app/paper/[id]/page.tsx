@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PaperDetailClient from "./PaperDetailClient";
 import type { PaperDetailResponse } from "@/lib/api";
+import { fetchPaper } from "@/lib/backend/semantic-scholar";
 
 export const revalidate = 86400; // 1 day ISR
 
@@ -8,35 +9,49 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-async function fetchPaperDetail(
+// Lightweight metadata fetch from Semantic Scholar (no Claude API calls)
+async function fetchPaperMetadata(
   paperId: string,
 ): Promise<PaperDetailResponse | null> {
-  const FASTAPI_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-  const BACKEND_API_KEY = process.env.BACKEND_API_KEY || "";
-
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const data = await fetchPaper(paperId);
+    if (!data) return null;
 
-    const fetchHeaders: Record<string, string> = {};
-    if (BACKEND_API_KEY) {
-      fetchHeaders["X-API-Key"] = BACKEND_API_KEY;
-    }
+    const authors = (data.authors ?? []).map((a) => ({
+      name: a.name ?? "",
+      affiliation: a.affiliations?.[0] ?? null,
+    }));
 
-    const encodedId = encodeURIComponent(paperId);
-    const res = await fetch(
-      `${FASTAPI_URL}/paper/${encodedId}/detail?language=ja`,
-      {
-        headers: fetchHeaders,
-        next: { revalidate: 86400 },
-        signal: controller.signal,
-      },
-    );
+    const journalInfo = data.journal;
+    const journal =
+      journalInfo && typeof journalInfo === "object"
+        ? (journalInfo.name ?? null)
+        : null;
 
-    clearTimeout(timeout);
-    if (!res.ok) return null;
-    return res.json();
+    const externalIds = data.externalIds ?? {};
+    const doi = externalIds.DOI ?? null;
+    const pmid = externalIds.PubMed ?? null;
+
+    return {
+      paper_id: paperId,
+      title_original: data.title ?? paperId,
+      title_translated: null,
+      authors,
+      journal,
+      year: data.year ?? null,
+      doi,
+      abstract_original: data.abstract ?? null,
+      abstract_translated: null,
+      abstract_translations: null,
+      summary: null,
+      key_findings: [],
+      citation_count: data.citationCount ?? 0,
+      references_count: data.referenceCount ?? 0,
+      is_open_access: data.isOpenAccess ?? false,
+      pdf_url: data.openAccessPdf?.url ?? null,
+      semantic_scholar_url: `https://www.semanticscholar.org/paper/${paperId}`,
+      pubmed_url: pmid ? `https://pubmed.ncbi.nlm.nih.gov/${pmid}/` : null,
+    };
   } catch {
     return null;
   }
@@ -45,7 +60,7 @@ async function fetchPaperDetail(
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const paperId = decodeURIComponent(id);
-  const detail = await fetchPaperDetail(paperId);
+  const detail = await fetchPaperMetadata(paperId);
 
   if (!detail) {
     return {
@@ -98,7 +113,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PaperDetailPage({ params }: Props) {
   const { id } = await params;
   const paperId = decodeURIComponent(id);
-  const detail = await fetchPaperDetail(paperId);
+  const detail = await fetchPaperMetadata(paperId);
 
   // JSON-LD for SEO
   const jsonLd = detail
