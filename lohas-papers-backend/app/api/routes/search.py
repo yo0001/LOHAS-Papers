@@ -192,8 +192,10 @@ async def search(request: SearchRequest) -> SearchResponse:
         language=request.language,
     )
 
-    # 10. Background: precache top 5 papers in all languages
-    asyncio.create_task(_precache_top_papers(page_papers[:5]))
+    # 10. Do NOT precache other languages on initial search.
+    # Generate summaries only for the currently requested language
+    # to avoid unnecessary token burn.
+    # (Language switching is handled separately via /summary/batch.)
 
     return response
 
