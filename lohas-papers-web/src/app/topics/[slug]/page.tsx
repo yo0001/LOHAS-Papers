@@ -373,9 +373,10 @@ export default async function TopicPage({ params }: Props) {
                 citation_count: number;
                 is_open_access: boolean;
               }) => (
-                <div
+                <Link
                   key={paper.id}
-                  className="bg-white/60 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-sm"
+                  href={`/paper/${encodeURIComponent(paper.id)}`}
+                  className="block bg-white/60 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
                 >
                   <h3 className="font-medium text-gray-900 leading-snug">
                     {paper.title_translated || paper.title}
@@ -417,7 +418,7 @@ export default async function TopicPage({ params }: Props) {
                       </span>
                     )}
                   </div>
-                </div>
+                </Link>
               ),
             )}
           </div>

@@ -26,8 +26,12 @@ function WelcomeBanner() {
 
   return (
     <div className="mb-6 bg-white/60 backdrop-blur-xl border border-white/30 rounded-2xl p-4 text-center shadow-lg">
-      <p className="text-gray-900 font-semibold">{t(locale, "welcomeMessage")}</p>
-      <p className="text-gray-500 text-sm mt-1">{t(locale, "welcomeCredits")}</p>
+      <p className="text-gray-900 font-semibold">
+        {t(locale, "welcomeMessage")}
+      </p>
+      <p className="text-gray-500 text-sm mt-1">
+        {t(locale, "welcomeCredits")}
+      </p>
       <button
         onClick={() => setShow(false)}
         className="mt-2 text-xs text-gray-400 hover:text-gray-600"
@@ -73,7 +77,9 @@ function AuthenticatedHome() {
         {history.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-gray-500">{t(locale, "recentSearches")}</h2>
+              <h2 className="text-sm font-medium text-gray-500">
+                {t(locale, "recentSearches")}
+              </h2>
               <button
                 onClick={handleClearHistory}
                 className="text-xs text-gray-400 hover:text-red-500 transition-colors"
@@ -159,16 +165,35 @@ function LandingPage() {
           </h2>
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-10">
             {[
-              { num: "1", title: t(locale, "step1Title"), desc: t(locale, "step1Desc"), icon: "01" },
-              { num: "2", title: t(locale, "step2Title"), desc: t(locale, "step2Desc"), icon: "02" },
-              { num: "3", title: t(locale, "step3Title"), desc: t(locale, "step3Desc"), icon: "03" },
+              {
+                num: "1",
+                title: t(locale, "step1Title"),
+                desc: t(locale, "step1Desc"),
+                icon: "01",
+              },
+              {
+                num: "2",
+                title: t(locale, "step2Title"),
+                desc: t(locale, "step2Desc"),
+                icon: "02",
+              },
+              {
+                num: "3",
+                title: t(locale, "step3Title"),
+                desc: t(locale, "step3Desc"),
+                icon: "03",
+              },
             ].map((step) => (
               <div key={step.num} className="text-center group">
                 <div className="w-16 h-16 mx-auto bg-white rounded-2xl shadow-md shadow-navy-600/10 border border-gray-100 flex items-center justify-center text-lg font-black text-navy-600 group-hover:shadow-lg group-hover:shadow-navy-600/15 group-hover:-translate-y-0.5 transition-all">
                   {step.icon}
                 </div>
-                <h3 className="mt-5 text-lg font-bold text-gray-900">{step.title}</h3>
-                <p className="mt-2 text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+                <h3 className="mt-5 text-lg font-bold text-gray-900">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-gray-500 text-sm leading-relaxed">
+                  {step.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -183,17 +208,38 @@ function LandingPage() {
           </h2>
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
-              { title: t(locale, "feature1Title"), desc: t(locale, "feature1Desc"), emoji: "🌐" },
-              { title: t(locale, "feature2Title"), desc: t(locale, "feature2Desc"), emoji: "📊" },
-              { title: t(locale, "feature3Title"), desc: t(locale, "feature3Desc"), emoji: "🔍" },
-              { title: t(locale, "feature4Title"), desc: t(locale, "feature4Desc"), emoji: "🤖" },
+              {
+                title: t(locale, "feature1Title"),
+                desc: t(locale, "feature1Desc"),
+                emoji: "🌐",
+              },
+              {
+                title: t(locale, "feature2Title"),
+                desc: t(locale, "feature2Desc"),
+                emoji: "📊",
+              },
+              {
+                title: t(locale, "feature3Title"),
+                desc: t(locale, "feature3Desc"),
+                emoji: "🔍",
+              },
+              {
+                title: t(locale, "feature4Title"),
+                desc: t(locale, "feature4Desc"),
+                emoji: "🤖",
+              },
             ].map((feat) => (
-              <div key={feat.title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md shadow-gray-200/60 hover:shadow-xl hover:shadow-navy-600/8 hover:-translate-y-0.5 hover:border-navy-100 transition-all">
+              <div
+                key={feat.title}
+                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-md shadow-gray-200/60 hover:shadow-xl hover:shadow-navy-600/8 hover:-translate-y-0.5 hover:border-navy-100 transition-all"
+              >
                 <div className="flex items-start gap-4">
                   <span className="text-2xl">{feat.emoji}</span>
                   <div>
                     <h3 className="font-bold text-gray-900">{feat.title}</h3>
-                    <p className="mt-2 text-gray-500 text-sm leading-relaxed">{feat.desc}</p>
+                    <p className="mt-2 text-gray-500 text-sm leading-relaxed">
+                      {feat.desc}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -232,7 +278,9 @@ function LandingPage() {
                     {locale === "ja" ? topic.title_ja : topic.title_en}
                   </h3>
                   <p className="mt-1 text-xs text-gray-400 line-clamp-2 leading-relaxed">
-                    {locale === "ja" ? topic.description_ja : topic.description_en}
+                    {locale === "ja"
+                      ? topic.description_ja
+                      : topic.description_en}
                   </p>
                 </Link>
               );
@@ -249,15 +297,38 @@ function LandingPage() {
           </h2>
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: t(locale, "audience1Title"), desc: t(locale, "audience1Desc"), emoji: "🩺" },
-              { title: t(locale, "audience2Title"), desc: t(locale, "audience2Desc"), emoji: "🔬" },
-              { title: t(locale, "audience3Title"), desc: t(locale, "audience3Desc"), emoji: "📚" },
-              { title: t(locale, "audience4Title"), desc: t(locale, "audience4Desc"), emoji: "👨‍👩‍👧" },
+              {
+                title: t(locale, "audience1Title"),
+                desc: t(locale, "audience1Desc"),
+                emoji: "🩺",
+              },
+              {
+                title: t(locale, "audience2Title"),
+                desc: t(locale, "audience2Desc"),
+                emoji: "🔬",
+              },
+              {
+                title: t(locale, "audience3Title"),
+                desc: t(locale, "audience3Desc"),
+                emoji: "📚",
+              },
+              {
+                title: t(locale, "audience4Title"),
+                desc: t(locale, "audience4Desc"),
+                emoji: "👨‍👩‍👧",
+              },
             ].map((aud) => (
-              <div key={aud.title} className="text-center p-6 rounded-2xl border border-gray-100 bg-white shadow-md shadow-gray-200/60 hover:shadow-xl hover:shadow-navy-600/8 hover:-translate-y-0.5 transition-all">
+              <div
+                key={aud.title}
+                className="text-center p-6 rounded-2xl border border-gray-100 bg-white shadow-md shadow-gray-200/60 hover:shadow-xl hover:shadow-navy-600/8 hover:-translate-y-0.5 transition-all"
+              >
                 <span className="text-3xl">{aud.emoji}</span>
-                <h3 className="mt-3 font-bold text-gray-900 text-sm">{aud.title}</h3>
-                <p className="mt-2 text-gray-500 text-xs leading-relaxed">{aud.desc}</p>
+                <h3 className="mt-3 font-bold text-gray-900 text-sm">
+                  {aud.title}
+                </h3>
+                <p className="mt-2 text-gray-500 text-xs leading-relaxed">
+                  {aud.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -313,29 +384,28 @@ function LandingPage() {
 }
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-100 rounded-xl overflow-hidden bg-white shadow-sm">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors"
-      >
+    <details className="group border border-gray-100 rounded-xl overflow-hidden bg-white shadow-sm">
+      <summary className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors cursor-pointer list-none [&::-webkit-details-marker]:hidden">
         <span className="font-semibold text-gray-900 pr-4">{question}</span>
         <svg
-          className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          className="w-5 h-5 text-gray-400 flex-shrink-0 transition-transform group-open:rotate-180"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
-      </button>
-      {open && (
-        <div className="px-6 pb-4 text-sm text-gray-600 leading-relaxed">
-          {answer}
-        </div>
-      )}
-    </div>
+      </summary>
+      <div className="px-6 pb-4 text-sm text-gray-600 leading-relaxed">
+        {answer}
+      </div>
+    </details>
   );
 }
 
@@ -385,13 +455,9 @@ function FAQSection({ locale }: { locale: Locale }) {
 export default function HomePage() {
   const { user, loading } = useAuth();
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
-      </div>
-    );
-  }
+  // Show AuthenticatedHome only when confirmed logged in.
+  // Default to LandingPage so GoogleBot always sees the full content.
+  if (!loading && user) return <AuthenticatedHome />;
 
-  return user ? <AuthenticatedHome /> : <LandingPage />;
+  return <LandingPage />;
 }

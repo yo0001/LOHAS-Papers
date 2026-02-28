@@ -87,9 +87,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "it_vQGwCanHwiy4Py-p5aUx1a2WrJtbbf7dZlGqHSrM",
-    other: {
-      "msvalidate.01": "TODO_BING_CODE",
-    },
   },
   openGraph: {
     title: "LOHAS Papers - 英語論文をAIが日本語要約",
