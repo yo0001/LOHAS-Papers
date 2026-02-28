@@ -37,8 +37,11 @@ export async function getCachedSearch(
   page: number,
   perPage: number,
   language: string = "",
+  sortBy: string = "",
+  filters: Record<string, unknown> = {},
 ): Promise<Record<string, unknown> | null> {
-  const key = makeKey("search", query.toLowerCase().trim(), String(page), String(perPage), language);
+  const filtersBlob = JSON.stringify(filters, Object.keys(filters).sort());
+  const key = makeKey("search", query.toLowerCase().trim(), String(page), String(perPage), language, sortBy.toLowerCase().trim(), filtersBlob);
   const data = get(key);
   return data ? JSON.parse(data) : null;
 }
@@ -50,15 +53,21 @@ export async function setCachedSearch(
   data: Record<string, unknown>,
   ttl: number = 21600,
   language: string = "",
+  sortBy: string = "",
+  filters: Record<string, unknown> = {},
 ): Promise<void> {
-  const key = makeKey("search", query.toLowerCase().trim(), String(page), String(perPage), language);
+  const filtersBlob = JSON.stringify(filters, Object.keys(filters).sort());
+  const key = makeKey("search", query.toLowerCase().trim(), String(page), String(perPage), language, sortBy.toLowerCase().trim(), filtersBlob);
   set(key, JSON.stringify(data), ttl);
 }
 
 // ── Query transform cache ──
 
-export async function getCachedTransform(query: string): Promise<Record<string, unknown> | null> {
-  const key = makeKey("transform", query.toLowerCase().trim());
+export async function getCachedTransform(
+  query: string,
+  language: string = "",
+): Promise<Record<string, unknown> | null> {
+  const key = makeKey("transform", query.toLowerCase().trim(), language.toLowerCase().trim());
   const data = get(key);
   return data ? JSON.parse(data) : null;
 }
@@ -67,8 +76,9 @@ export async function setCachedTransform(
   query: string,
   data: Record<string, unknown>,
   ttl: number = 86400,
+  language: string = "",
 ): Promise<void> {
-  const key = makeKey("transform", query.toLowerCase().trim());
+  const key = makeKey("transform", query.toLowerCase().trim(), language.toLowerCase().trim());
   set(key, JSON.stringify(data), ttl);
 }
 

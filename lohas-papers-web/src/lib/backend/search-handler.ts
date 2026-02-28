@@ -15,6 +15,7 @@ import type {
   PaperSummaryMap,
   QueryTransformResult,
   RankedPaper,
+  SearchFilters,
   SearchRequest,
   SearchResponse,
   UnifiedPaper,
@@ -23,17 +24,80 @@ import type {
 // Timeout per individual summary/overview task (milliseconds)
 const SUMMARY_TIMEOUT_MS = 15_000;
 
+function normalizeStudyType(studyType?: string | null): string {
+  if (!studyType) return "";
+  const t = studyType.trim().toLowerCase().replaceAll("_", "-");
+  if (t === "systematic review" || t === "systematicreview") return "systematic-review";
+  if (t === "meta analysis" || t === "metaanalysis") return "meta-analysis";
+  if (t === "randomized" || t === "randomised" || t === "rct") return "rct";
+  return t;
+}
+
+function relevanceScore(paperId: string, rankingMap: Map<string, RankedPaper>): number {
+  return rankingMap.get(paperId)?.relevance_score ?? 0;
+}
+
+function sortPapers(
+  papers: UnifiedPaper[],
+  rankingMap: Map<string, RankedPaper>,
+  sortBy: string,
+): UnifiedPaper[] {
+  const mode = (sortBy || "relevance").trim().toLowerCase();
+
+  if (["citations", "citation", "citation_count", "most_cited"].includes(mode)) {
+    return [...papers].sort(
+      (a, b) =>
+        (b.citation_count ?? 0) - (a.citation_count ?? 0) ||
+        relevanceScore(b.id, rankingMap) - relevanceScore(a.id, rankingMap),
+    );
+  }
+
+  if (["newest", "latest", "year", "year_desc"].includes(mode)) {
+    return [...papers].sort(
+      (a, b) =>
+        (b.year ?? 0) - (a.year ?? 0) ||
+        relevanceScore(b.id, rankingMap) - relevanceScore(a.id, rankingMap) ||
+        (b.citation_count ?? 0) - (a.citation_count ?? 0),
+    );
+  }
+
+  if (["oldest", "year_asc"].includes(mode)) {
+    return [...papers].sort(
+      (a, b) =>
+        (a.year ?? 9999) - (b.year ?? 9999) ||
+        relevanceScore(a.id, rankingMap) - relevanceScore(b.id, rankingMap) ||
+        (a.citation_count ?? 0) - (b.citation_count ?? 0),
+    );
+  }
+
+  // default: relevance
+  return [...papers].sort(
+    (a, b) =>
+      relevanceScore(b.id, rankingMap) - relevanceScore(a.id, rankingMap) ||
+      (b.citation_count ?? 0) - (a.citation_count ?? 0) ||
+      (b.year ?? 0) - (a.year ?? 0),
+  );
+}
+
 export async function handleSearch(request: SearchRequest, config?: LLMConfig): Promise<SearchResponse> {
   const {
     query,
     language = "ja",
     page = 1,
     per_page = 50,
+    sort_by = "relevance",
     filters = {},
   } = request;
 
+  const filterPayload: Record<string, unknown> = {
+    year_from: filters.year_from ?? null,
+    year_to: filters.year_to ?? null,
+    study_type: filters.study_type ?? null,
+    open_access_only: Boolean(filters.open_access_only),
+  };
+
   // 1. Check search result cache
-  const cached = await cache.getCachedSearch(query, page, per_page, language);
+  const cached = await cache.getCachedSearch(query, page, per_page, language, sort_by, filterPayload);
   if (cached) {
     cached.cached = true;
     return cached as unknown as SearchResponse;
@@ -43,10 +107,15 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
   const transformResult = await getOrTransformQuery(query, language, config);
 
   // 3. Search all sources in parallel
-  const allPapers = await paperSearcher.searchAllSources(transformResult, {
+  let allPapers = await paperSearcher.searchAllSources(transformResult, {
     yearFrom: filters.year_from ?? null,
     yearTo: filters.year_to ?? null,
   });
+
+  // Apply open-access filter before ranking
+  if (filters.open_access_only) {
+    allPapers = allPapers.filter((p) => p.is_open_access);
+  }
 
   if (allPapers.length === 0) {
     return {
@@ -90,28 +159,20 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
   // 5. Build ranked paper lookup
   const rankingMap = new Map<string, RankedPaper>();
   for (const r of rankings) rankingMap.set(r.paper_id, r);
-  const paperMap = new Map<string, UnifiedPaper>();
-  for (const p of allPapers) paperMap.set(p.id, p);
 
-  // Sort papers by relevance score
-  const rankedIds = [...rankings]
-    .sort((a, b) => b.relevance_score - a.relevance_score)
-    .map((r) => r.paper_id);
+  // Apply study_type filter after ranking
+  const requestedStudyType = normalizeStudyType(filters.study_type);
+  const filteredByStudyType = requestedStudyType
+    ? allPapers.filter((p) => normalizeStudyType(rankingMap.get(p.id)?.study_type) === requestedStudyType)
+    : allPapers;
 
-  // Add un-ranked papers at the end
-  for (const p of allPapers) {
-    if (!rankingMap.has(p.id)) rankedIds.push(p.id);
-  }
+  // 6. Sort + paginate
+  const sortedPapers = sortPapers(filteredByStudyType, rankingMap, sort_by);
+  const totalResults = sortedPapers.length;
 
-  const totalResults = rankedIds.length;
-
-  // 6. Paginate
   const start = (page - 1) * per_page;
   const end = start + per_page;
-  const pageIds = rankedIds.slice(start, end);
-  const pagePapers = pageIds
-    .map((pid) => paperMap.get(pid))
-    .filter((p): p is UnifiedPaper => p !== undefined);
+  const pagePapers = sortedPapers.slice(start, end);
 
   // 7. Generate summaries + AI overview in parallel (with per-task timeout)
   const summaryTasks = pagePapers.map((paper) =>
@@ -188,7 +249,7 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
     per_page,
   };
 
-  // 9. Cache the result
+  // 9. Cache the result with sort/filter aware key
   await cache.setCachedSearch(
     query,
     page,
@@ -196,6 +257,8 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
     response as unknown as Record<string, unknown>,
     21600,
     language,
+    sort_by,
+    filterPayload,
   );
 
   // 10. Precaching disabled — was burning ~40 Claude API calls per search
@@ -224,11 +287,11 @@ async function getOrTransformQuery(
   language: string,
   config?: LLMConfig,
 ): Promise<QueryTransformResult> {
-  const cached = await cache.getCachedTransform(query);
+  const cached = await cache.getCachedTransform(query, language);
   if (cached) return cached as unknown as QueryTransformResult;
 
   const result = await queryTransformer.transformQuery(query, language, config);
-  await cache.setCachedTransform(query, result as unknown as Record<string, unknown>);
+  await cache.setCachedTransform(query, result as unknown as Record<string, unknown>, 86400, language);
   return result;
 }
 

@@ -66,8 +66,24 @@ def _set(key: str, value: str, ttl: int | None = None) -> None:
 # ── Search result cache ──
 
 
-async def get_cached_search(query: str, page: int, per_page: int, language: str = "") -> dict | None:
-    key = _make_key("search", query.lower().strip(), str(page), str(per_page), language)
+async def get_cached_search(
+    query: str,
+    page: int,
+    per_page: int,
+    language: str = "",
+    sort_by: str = "",
+    filters: dict | None = None,
+) -> dict | None:
+    filters_blob = json.dumps(filters or {}, ensure_ascii=False, sort_keys=True)
+    key = _make_key(
+        "search",
+        query.lower().strip(),
+        str(page),
+        str(per_page),
+        language,
+        sort_by.lower().strip(),
+        filters_blob,
+    )
     try:
         data = _get(key)
         return json.loads(data) if data else None
@@ -77,9 +93,25 @@ async def get_cached_search(query: str, page: int, per_page: int, language: str 
 
 
 async def set_cached_search(
-    query: str, page: int, per_page: int, data: dict, ttl: int = 21600, language: str = ""
+    query: str,
+    page: int,
+    per_page: int,
+    data: dict,
+    ttl: int = 21600,
+    language: str = "",
+    sort_by: str = "",
+    filters: dict | None = None,
 ) -> None:
-    key = _make_key("search", query.lower().strip(), str(page), str(per_page), language)
+    filters_blob = json.dumps(filters or {}, ensure_ascii=False, sort_keys=True)
+    key = _make_key(
+        "search",
+        query.lower().strip(),
+        str(page),
+        str(per_page),
+        language,
+        sort_by.lower().strip(),
+        filters_blob,
+    )
     try:
         _set(key, json.dumps(data, ensure_ascii=False), ttl)
     except Exception:
@@ -89,8 +121,8 @@ async def set_cached_search(
 # ── Query transform cache ──
 
 
-async def get_cached_transform(query: str) -> dict | None:
-    key = _make_key("transform", query.lower().strip())
+async def get_cached_transform(query: str, language: str = "") -> dict | None:
+    key = _make_key("transform", query.lower().strip(), language.lower().strip())
     try:
         data = _get(key)
         return json.loads(data) if data else None
@@ -98,8 +130,13 @@ async def get_cached_transform(query: str) -> dict | None:
         return None
 
 
-async def set_cached_transform(query: str, data: dict, ttl: int = 86400) -> None:
-    key = _make_key("transform", query.lower().strip())
+async def set_cached_transform(
+    query: str,
+    data: dict,
+    ttl: int = 86400,
+    language: str = "",
+) -> None:
+    key = _make_key("transform", query.lower().strip(), language.lower().strip())
     try:
         _set(key, json.dumps(data, ensure_ascii=False), ttl)
     except Exception:

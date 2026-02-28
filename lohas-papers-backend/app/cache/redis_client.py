@@ -37,12 +37,28 @@ def _make_key(prefix: str, *parts: str) -> str:
 # ── Search result cache ──
 
 
-async def get_cached_search(query: str, page: int, per_page: int) -> dict | None:
+async def get_cached_search(
+    query: str,
+    page: int,
+    per_page: int,
+    language: str = "",
+    sort_by: str = "",
+    filters: dict | None = None,
+) -> dict | None:
     r = await get_redis()
     if r is None:
         return None
 
-    key = _make_key("search", query.lower().strip(), str(page), str(per_page))
+    filters_blob = json.dumps(filters or {}, ensure_ascii=False, sort_keys=True)
+    key = _make_key(
+        "search",
+        query.lower().strip(),
+        str(page),
+        str(per_page),
+        language,
+        sort_by.lower().strip(),
+        filters_blob,
+    )
     try:
         data = await r.get(key)
         return json.loads(data) if data else None
@@ -52,13 +68,29 @@ async def get_cached_search(query: str, page: int, per_page: int) -> dict | None
 
 
 async def set_cached_search(
-    query: str, page: int, per_page: int, data: dict, ttl: int = 21600
+    query: str,
+    page: int,
+    per_page: int,
+    data: dict,
+    ttl: int = 21600,
+    language: str = "",
+    sort_by: str = "",
+    filters: dict | None = None,
 ) -> None:
     r = await get_redis()
     if r is None:
         return
 
-    key = _make_key("search", query.lower().strip(), str(page), str(per_page))
+    filters_blob = json.dumps(filters or {}, ensure_ascii=False, sort_keys=True)
+    key = _make_key(
+        "search",
+        query.lower().strip(),
+        str(page),
+        str(per_page),
+        language,
+        sort_by.lower().strip(),
+        filters_blob,
+    )
     try:
         await r.set(key, json.dumps(data, ensure_ascii=False), ex=ttl)
     except Exception:
@@ -68,12 +100,12 @@ async def set_cached_search(
 # ── Query transform cache ──
 
 
-async def get_cached_transform(query: str) -> dict | None:
+async def get_cached_transform(query: str, language: str = "") -> dict | None:
     r = await get_redis()
     if r is None:
         return None
 
-    key = _make_key("transform", query.lower().strip())
+    key = _make_key("transform", query.lower().strip(), language.lower().strip())
     try:
         data = await r.get(key)
         return json.loads(data) if data else None
@@ -81,12 +113,17 @@ async def get_cached_transform(query: str) -> dict | None:
         return None
 
 
-async def set_cached_transform(query: str, data: dict, ttl: int = 86400) -> None:
+async def set_cached_transform(
+    query: str,
+    data: dict,
+    ttl: int = 86400,
+    language: str = "",
+) -> None:
     r = await get_redis()
     if r is None:
         return
 
-    key = _make_key("transform", query.lower().strip())
+    key = _make_key("transform", query.lower().strip(), language.lower().strip())
     try:
         await r.set(key, json.dumps(data, ensure_ascii=False), ex=ttl)
     except Exception:

@@ -23,13 +23,75 @@ router = APIRouter()
 _SUMMARY_TIMEOUT = 15.0
 
 
+def _normalize_study_type(study_type: str | None) -> str:
+    if not study_type:
+        return ""
+    t = study_type.strip().lower().replace("_", "-")
+    # normalize loose values
+    if t in {"systematic review", "systematicreview"}:
+        return "systematic-review"
+    if t in {"meta analysis", "metaanalysis"}:
+        return "meta-analysis"
+    if t in {"randomized", "randomised", "rct"}:
+        return "rct"
+    return t
+
+
+def _relevance_score(paper_id: str, ranking_map: dict[str, RankedPaper]) -> float:
+    info = ranking_map.get(paper_id)
+    return info.relevance_score if info else 0.0
+
+
+def _sort_papers(
+    papers: list[UnifiedPaper],
+    ranking_map: dict[str, RankedPaper],
+    sort_by: str,
+) -> list[UnifiedPaper]:
+    mode = (sort_by or "relevance").strip().lower()
+
+    if mode in {"citations", "citation", "citation_count", "most_cited"}:
+        return sorted(
+            papers,
+            key=lambda p: (p.citation_count or 0, _relevance_score(p.id, ranking_map)),
+            reverse=True,
+        )
+
+    if mode in {"newest", "latest", "year", "year_desc"}:
+        return sorted(
+            papers,
+            key=lambda p: ((p.year or 0), _relevance_score(p.id, ranking_map), (p.citation_count or 0)),
+            reverse=True,
+        )
+
+    if mode in {"oldest", "year_asc"}:
+        return sorted(
+            papers,
+            key=lambda p: ((p.year or 9999), -_relevance_score(p.id, ranking_map), -(p.citation_count or 0)),
+            reverse=False,
+        )
+
+    # default: relevance
+    return sorted(
+        papers,
+        key=lambda p: (_relevance_score(p.id, ranking_map), (p.citation_count or 0), (p.year or 0)),
+        reverse=True,
+    )
+
+
 @router.post("/search", response_model=SearchResponse)
 async def search(request: SearchRequest) -> SearchResponse:
     """Main search endpoint: query transform -> paper search -> rank -> summarize."""
 
+    filters_payload = request.filters.model_dump() if request.filters else {}
+
     # 1. Check search result cache
     cached = await redis_client.get_cached_search(
-        request.query, request.page, request.per_page, request.language
+        request.query,
+        request.page,
+        request.per_page,
+        request.language,
+        request.sort_by,
+        filters_payload,
     )
     if cached:
         cached["cached"] = True
@@ -45,6 +107,10 @@ async def search(request: SearchRequest) -> SearchResponse:
         year_to=request.filters.year_to,
     )
 
+    # Apply open-access filter BEFORE ranking (cheaper + semantically correct)
+    if request.filters.open_access_only:
+        all_papers = [p for p in all_papers if p.is_open_access]
+
     if not all_papers:
         return SearchResponse(
             ai_summary=AISummary(
@@ -59,7 +125,6 @@ async def search(request: SearchRequest) -> SearchResponse:
         )
 
     # 4. Run ranking + title translation in parallel
-    #    (both only need the paper list, not each other's results)
     ranking_task = relevance_ranker.rank_papers(
         request.query, transform_result.interpreted_intent, all_papers
     )
@@ -71,7 +136,11 @@ async def search(request: SearchRequest) -> SearchResponse:
     )
 
     rankings = ranking_result if not isinstance(ranking_result, Exception) else []
-    all_translated_titles = translation_result if not isinstance(translation_result, Exception) else [p.title for p in all_papers]
+    all_translated_titles = (
+        translation_result
+        if not isinstance(translation_result, Exception)
+        else [p.title for p in all_papers]
+    )
 
     # Build title translation lookup
     title_translation_map: dict[str, str] = {}
@@ -81,22 +150,25 @@ async def search(request: SearchRequest) -> SearchResponse:
 
     # 5. Build ranked paper lookup
     ranking_map: dict[str, RankedPaper] = {r.paper_id: r for r in rankings}
-    paper_map: dict[str, UnifiedPaper] = {p.id: p for p in all_papers}
 
-    # Sort papers by relevance score
-    ranked_ids = [r.paper_id for r in sorted(rankings, key=lambda r: r.relevance_score, reverse=True)]
-    # Add un-ranked papers at the end
-    for p in all_papers:
-        if p.id not in ranking_map:
-            ranked_ids.append(p.id)
+    # Apply study_type filter AFTER ranking (needs rank output)
+    filtered_papers = all_papers
+    requested_study_type = _normalize_study_type(request.filters.study_type)
+    if requested_study_type:
+        filtered_papers = [
+            p
+            for p in filtered_papers
+            if _normalize_study_type((ranking_map.get(p.id).study_type if ranking_map.get(p.id) else None))
+            == requested_study_type
+        ]
 
-    total_results = len(ranked_ids)
+    # 6. Sort + paginate
+    sorted_papers = _sort_papers(filtered_papers, ranking_map, request.sort_by)
+    total_results = len(sorted_papers)
 
-    # 6. Paginate
     start = (request.page - 1) * request.per_page
     end = start + request.per_page
-    page_ids = ranked_ids[start:end]
-    page_papers = [paper_map[pid] for pid in page_ids if pid in paper_map]
+    page_papers = sorted_papers[start:end]
 
     # 7. Generate summaries + AI overview in parallel (with per-task timeout)
     summary_tasks = []
@@ -104,7 +176,9 @@ async def search(request: SearchRequest) -> SearchResponse:
         if paper.abstract:
             summary_tasks.append(
                 _with_timeout(
-                    _get_or_generate_summary(paper.id, paper.abstract, request.language, paper.title),
+                    _get_or_generate_summary(
+                        paper.id, paper.abstract, request.language, paper.title
+                    ),
                     _SUMMARY_TIMEOUT,
                 )
             )
@@ -117,7 +191,6 @@ async def search(request: SearchRequest) -> SearchResponse:
         _SUMMARY_TIMEOUT,
     )
 
-    # Run all in parallel
     all_tasks = [ai_overview_task] + summary_tasks
     results = await asyncio.gather(*all_tasks, return_exceptions=True)
 
@@ -128,7 +201,9 @@ async def search(request: SearchRequest) -> SearchResponse:
     paper_results: list[PaperResult] = []
     for i, paper in enumerate(page_papers):
         rank_info = ranking_map.get(paper.id)
-        summary_text = paper_summaries[i] if not isinstance(paper_summaries[i], Exception) else ""
+        summary_text = (
+            paper_summaries[i] if not isinstance(paper_summaries[i], Exception) else ""
+        )
 
         summary_map = PaperSummaryMap()
         if summary_text:
@@ -183,13 +258,15 @@ async def search(request: SearchRequest) -> SearchResponse:
         per_page=request.per_page,
     )
 
-    # 9. Cache the result
+    # 9. Cache the result with sort/filter-aware key
     await redis_client.set_cached_search(
         request.query,
         request.page,
         request.per_page,
         response.model_dump(by_alias=True),
         language=request.language,
+        sort_by=request.sort_by,
+        filters=filters_payload,
     )
 
     # 10. Do NOT precache other languages on initial search.
@@ -211,12 +288,12 @@ async def _with_timeout(coro, timeout: float):
 
 async def _get_or_transform_query(query: str, language: str) -> QueryTransformResult:
     """Get cached transform or generate new one."""
-    cached = await redis_client.get_cached_transform(query)
+    cached = await redis_client.get_cached_transform(query, language)
     if cached:
         return QueryTransformResult(**cached)
 
     result = await query_transformer.transform_query(query, language)
-    await redis_client.set_cached_transform(query, result.model_dump())
+    await redis_client.set_cached_transform(query, result.model_dump(), language=language)
     return result
 
 
@@ -252,7 +329,7 @@ def _build_papers_context(papers: list[UnifiedPaper]) -> str:
 
 
 async def _precache_top_papers(papers: list[UnifiedPaper]) -> None:
-    """Background task to precache summaries for top papers in all 4 languages."""
+    """Background task to precache summaries for top papers in all 8 languages."""
     all_languages = ["ja", "en", "zh-Hans", "ko", "es", "pt-BR", "th", "vi"]
     for paper in papers:
         if not paper.abstract:
