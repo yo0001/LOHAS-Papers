@@ -129,17 +129,32 @@ function LandingPage() {
 
   return (
     <div className="bg-gray-50">
-      {/* Hero — white base + navy accent */}
-      <section className="relative overflow-hidden bg-white">
-        {/* Subtle accent shapes for depth */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-navy-50/60 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-navy-100/40 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
+      {/* Hero */}
+      <section
+        className="relative overflow-hidden bg-navy-700 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, rgba(5, 10, 24, 0.9), rgba(8, 13, 32, 0.82)), url('/og-image.png')",
+        }}
+      >
+        <div className="absolute inset-x-0 top-0 h-1 bg-emerald-400" />
 
-        <div className="relative max-w-5xl mx-auto px-4 py-24 sm:py-32 text-center">
-          <h1 className="font-display text-4xl sm:text-6xl font-bold text-navy-600 leading-tight tracking-tight">
+        <div className="relative max-w-5xl mx-auto px-4 py-16 sm:py-20 text-center">
+          <div className="mb-6 flex flex-wrap items-center justify-center gap-2 text-xs font-bold text-emerald-100">
+            <span className="border border-emerald-300/50 bg-emerald-300/10 px-3 py-1">
+              論文検索AI
+            </span>
+            <span className="border border-white/20 bg-white/10 px-3 py-1">
+              PubMed + Semantic Scholar
+            </span>
+            <span className="border border-white/20 bg-white/10 px-3 py-1">
+              医師監修
+            </span>
+          </div>
+          <h1 className="font-display text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
             {t(locale, "heroTitle")}
           </h1>
-          <p className="mt-5 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto font-medium">
+          <p className="mt-5 text-lg sm:text-xl text-navy-100 max-w-2xl mx-auto font-medium">
             {t(locale, "heroDescription")}
           </p>
 
@@ -147,7 +162,7 @@ function LandingPage() {
           <div className="mt-12 max-w-2xl mx-auto">
             <SearchBar onSearch={handleTrialSearch} large />
             {!maintenanceMode && (
-              <p className="mt-3 text-sm text-gray-400">
+              <p className="mt-3 text-sm text-navy-200">
                 {t(locale, "trialSearchHint")}
               </p>
             )}
@@ -166,28 +181,28 @@ function LandingPage() {
             </button>
           </div>
           {!maintenanceMode && (
-            <p className="mt-3 text-sm text-gray-400 font-medium">
+            <p className="mt-3 text-sm text-navy-200 font-medium">
               {t(locale, "heroBonus")}
             </p>
           )}
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
             <Link
               href="/paper-search-ai"
-              className="font-semibold text-navy-500 hover:text-navy-700 transition-colors"
+              className="font-semibold text-emerald-200 hover:text-white transition-colors"
             >
               論文検索AIでできること
             </Link>
-            <span className="hidden sm:inline text-gray-300">/</span>
+            <span className="hidden sm:inline text-white/30">/</span>
             <Link
               href="/supervisor"
-              className="font-semibold text-gray-500 hover:text-navy-700 transition-colors"
+              className="font-semibold text-navy-100 hover:text-white transition-colors"
             >
               医師監修とAI要約の方針
             </Link>
           </div>
         </div>
         {/* Bottom edge shadow for depth */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-navy-200/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/20" />
       </section>
 
       {/* How it Works */}
