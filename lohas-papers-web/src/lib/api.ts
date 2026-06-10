@@ -262,23 +262,28 @@ async function authRequest<T>(path: string, options?: RequestInit): Promise<T> {
   const isBYOK = !!byokHeaders["X-BYOK-Key"];
   const res = await fetch(path, { ...options, headers });
 
-  // BYOK-specific error handling
-  if (isBYOK && !res.ok) {
-    const data = await res.json().catch(() => ({}));
-    if (data.error === "byok_error") {
-      throw new BYOKError(data.code || "unknown", data.message || "BYOK error");
+  let errorData: Record<string, unknown> = {};
+  if (!res.ok) {
+    errorData = await res.json().catch(() => ({}));
+    if (errorData.error === "byok_error") {
+      throw new BYOKError(
+        typeof errorData.code === "string" ? errorData.code : "unknown",
+        typeof errorData.message === "string" ? errorData.message : "BYOK error",
+      );
     }
   }
 
   if (res.status === 401 && !isBYOK) throw new AuthRequiredError();
   if (res.status === 401 && isBYOK) throw new BYOKError("invalid_key", "Invalid API key");
   if (res.status === 402) {
-    const data = await res.json().catch(() => ({}));
-    throw new InsufficientCreditsError(data.required || 0);
+    throw new InsufficientCreditsError(
+      typeof errorData.required === "number" ? errorData.required : 0,
+    );
   }
   if (res.status === 503) {
-    const data = await res.json().catch(() => ({}));
-    throw new ServiceUnavailableError(data.code || "unknown");
+    throw new ServiceUnavailableError(
+      typeof errorData.code === "string" ? errorData.code : "unknown",
+    );
   }
   if (!res.ok) throw new APIError(res.status, `HTTP ${res.status}`);
 

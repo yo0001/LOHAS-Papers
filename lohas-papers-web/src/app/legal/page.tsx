@@ -113,7 +113,7 @@ export default function LegalPage() {
             Terms of Service
           </h2>
           <p>
-            By accessing or using LOHAS Papers ("the Service"), you agree to be
+            By accessing or using LOHAS Papers (&quot;the Service&quot;), you agree to be
             bound by these Terms of Service. If you do not agree, please do not
             use the Service.
           </p>
@@ -163,7 +163,7 @@ export default function LegalPage() {
           <p>
             LOHAS Inc. shall not be liable for any indirect, incidental, or
             consequential damages arising from use of the Service. The Service
-            is provided "as is" without warranties of any kind, either express
+            is provided &quot;as is&quot; without warranties of any kind, either express
             or implied. Our total liability shall not exceed the amount you paid
             in the 12 months preceding the claim.
           </p>
@@ -222,7 +222,7 @@ export default function LegalPage() {
             Privacy Policy
           </h2>
           <p>
-            LOHAS Inc. ("we", "us") is committed to protecting your privacy.
+            LOHAS Inc. (&quot;we&quot;, &quot;us&quot;) is committed to protecting your privacy.
             This Privacy Policy explains how we collect, use, and protect your
             personal information when you use LOHAS Papers.
           </p>

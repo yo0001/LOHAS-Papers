@@ -19,7 +19,6 @@ import type {
   FulltextTranslationResponse,
   PaperDetailResponse,
   PaperSummaryResponse,
-  SemanticScholarPaperData,
 } from "./types";
 
 // ── Paper Summary ──

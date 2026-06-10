@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  TOPICS,
   TOPIC_CATEGORIES,
   CATEGORY_LABELS,
   getTopicsByCategory,

@@ -18,7 +18,7 @@ interface Transaction {
 }
 
 export default function AccountPage() {
-  const { user, credits, loading } = useAuth();
+  const { user, loading } = useAuth();
   const { locale } = useLanguage();
   const router = useRouter();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -71,11 +71,12 @@ export default function AccountPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <div className="flex items-center gap-4">
           {user.user_metadata?.avatar_url && (
-            <img
-              src={user.user_metadata.avatar_url}
-              alt=""
-              className="w-12 h-12 rounded-full"
-              referrerPolicy="no-referrer"
+            <span
+              aria-hidden="true"
+              className="w-12 h-12 rounded-full bg-gray-100 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${user.user_metadata.avatar_url})`,
+              }}
             />
           )}
           <div>

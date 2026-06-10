@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       "unknown";
 
     // IP rate limit for BYOK to prevent abuse
-    const rateCheck = checkRateLimit(
+    const rateCheck = await checkRateLimit(
       `byok:${ip}`,
       BYOK_IP_MAX,
       BYOK_IP_WINDOW_MS,
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     headerStore.get("x-real-ip") ||
     "unknown";
 
-  const rateCheck = checkRateLimit(
+  const rateCheck = await checkRateLimit(
     `trial:${ip}`,
     TRIAL_IP_MAX,
     TRIAL_IP_WINDOW_MS,

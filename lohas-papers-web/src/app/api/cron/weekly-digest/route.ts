@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const CRON_SECRET = process.env.CRON_SECRET || "";
-
 // Weekly trending topics in medicine — curated by specialty
 const WEEKLY_TOPICS = [
   {
@@ -78,24 +75,40 @@ function buildEmailHtml(topic: (typeof WEEKLY_TOPICS)[number]): string {
 
 export async function GET(request: Request) {
   // Verify cron secret (Vercel Cron sends this header)
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    return NextResponse.json(
+      { error: "CRON_SECRET not configured" },
+      { status: 500 },
+    );
+  }
+
   const authHeader = request.headers.get("authorization");
-  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!process.env.RESEND_API_KEY) {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) {
     return NextResponse.json(
       { error: "RESEND_API_KEY not configured" },
       { status: 500 },
     );
   }
 
+  const resend = new Resend(resendApiKey);
   const admin = createAdminClient();
 
   // Get all users with email
-  const { data: authData } = await admin.auth.admin.listUsers({
+  const { data: authData, error: authError } = await admin.auth.admin.listUsers({
     perPage: 1000,
   });
+  if (authError) {
+    return NextResponse.json(
+      { error: "Failed to load users" },
+      { status: 500 },
+    );
+  }
   const users = authData?.users ?? [];
 
   const topic = getWeeklyTopic();

@@ -10,12 +10,10 @@ import * as relevanceRanker from "./relevance-ranker";
 import * as summarizer from "./summarizer";
 import type { LLMConfig } from "./llm-client";
 import type {
-  AISummary,
   PaperResult,
   PaperSummaryMap,
   QueryTransformResult,
   RankedPaper,
-  SearchFilters,
   SearchRequest,
   SearchResponse,
   UnifiedPaper,
@@ -263,7 +261,6 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
 
   // 10. Precaching disabled — was burning ~40 Claude API calls per search
   // (5 papers × 8 languages). Re-enable when usage justifies cost.
-  // precacheTopPapers(pagePapers.slice(0, 5)).catch(() => {});
 
   return response;
 }
@@ -323,28 +320,4 @@ function buildPapersContext(papers: UnifiedPaper[]): string {
       );
     })
     .join("\n");
-}
-
-async function precacheTopPapers(papers: UnifiedPaper[]): Promise<void> {
-  const allLanguages = ["ja", "en", "zh-Hans", "ko", "es", "pt-BR", "th", "vi"];
-  for (const paper of papers) {
-    if (!paper.abstract) continue;
-    for (const lang of allLanguages) {
-      const cached = await cache.getCachedSummary(paper.id, lang);
-      if (!cached) {
-        try {
-          const summary = await summarizer.generatePaperSummary(
-            paper.abstract,
-            lang,
-            paper.title,
-          );
-          if (summary) {
-            await cache.setCachedSummary(paper.id, lang, summary);
-          }
-        } catch {
-          console.warn(`Precache failed for ${paper.id}/${lang}`);
-        }
-      }
-    }
-  }
 }

@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   // --- Rate limit: 10 login attempts per IP per 15 minutes ---
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded?.split(",")[0]?.trim() || "unknown";
-  const limit = checkRateLimit(`auth:ip:${ip}`, 10, 900_000);
+  const limit = await checkRateLimit(`auth:ip:${ip}`, 10, 900_000);
   if (!limit.allowed) {
     // Redirect to home silently — don't reveal rate limit details
     return NextResponse.redirect(`${origin}/`);

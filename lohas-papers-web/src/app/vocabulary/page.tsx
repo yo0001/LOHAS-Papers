@@ -175,12 +175,9 @@ function ReviewFlashcard({ dueWords, onClose, onComplete }: ReviewFlashcardProps
   const [isFlipped, setIsFlipped] = useState(false);
   const [results, setResults] = useState<SessionResult[]>([]);
   const [isComplete, setIsComplete] = useState(false);
-  const [studyWords, setStudyWords] = useState<WordWithKey[]>([]);
-
-  useEffect(() => {
-    const shuffled = [...dueWords].sort(() => Math.random() - 0.5);
-    setStudyWords(shuffled);
-  }, [dueWords]);
+  const [studyWords, setStudyWords] = useState<WordWithKey[]>(() =>
+    [...dueWords].sort(() => Math.random() - 0.5),
+  );
 
   const currentWord = studyWords[currentIndex];
   const total = studyWords.length;
@@ -459,9 +456,11 @@ function WordRow({
 // ── Main Page ──
 
 export default function VocabularyPage() {
-  const [allWords, setAllWords] = useState<WordWithKey[]>([]);
-  const [stats, setStats] = useState({ new: 0, learning: 0, reviewing: 0, mastered: 0, total: 0 });
-  const [dueWordsList, setDueWordsList] = useState<WordWithKey[]>([]);
+  const [allWords, setAllWords] = useState<WordWithKey[]>(() => getAllWords());
+  const [stats, setStats] = useState(() => getMasteryStats());
+  const [dueWordsList, setDueWordsList] = useState<WordWithKey[]>(() =>
+    getDueWords(),
+  );
   const [filter, setFilter] = useState<MasteryFilter>("all");
   const [groupByPaper, setGroupByPaper] = useState(false);
   const [expandedWord, setExpandedWord] = useState<string | null>(null);
@@ -474,10 +473,6 @@ export default function VocabularyPage() {
     setStats(getMasteryStats());
     setDueWordsList(getDueWords());
   }, []);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
 
   const filteredWords = useMemo(() => {
     if (filter === "all") return allWords;

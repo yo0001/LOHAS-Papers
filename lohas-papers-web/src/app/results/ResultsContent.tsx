@@ -77,7 +77,7 @@ function ResultsInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { locale } = useLanguage();
-  const { refreshCredits, user, signInWithGoogle } = useAuth();
+  const { refreshCredits, signInWithGoogle } = useAuth();
 
   const query = searchParams.get("q") || "";
   const [result, setResult] = useState<SearchResponse | null>(null);
@@ -165,7 +165,6 @@ function ResultsInner() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, locale]);
 
   const handleSearch = (newQuery: string) => {

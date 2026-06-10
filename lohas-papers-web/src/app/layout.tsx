@@ -42,10 +42,13 @@ const BASE_URL = "https://lohas-papers.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "LOHAS Papers - 英語論文をAIが日本語要約 | 医師が作った論文検索AI",
+  title: "論文検索AI - PubMed・医学論文をAIで日本語要約 | LOHAS Papers",
   description:
-    "英語論文、もう一人で読まなくていい。PubMed・Semantic Scholarの最新エビデンスを、AIが日本語で、明日の外来で使える形に要約。研修医・医学生・医師のための論文検索AI。Search PubMed & Semantic Scholar with AI summaries in 8 languages.",
+    "LOHAS Papersは、PubMed・Semantic Scholarの医学論文を横断検索し、AIが日本語で要約する論文検索AIです。研修医・医学生・医師の文献検索、EBM確認、英語論文の理解を支援します。",
   keywords: [
+    "論文検索AI",
+    "論文 検索 AI",
+    "AI論文検索",
     "論文検索",
     "AI要約",
     "PubMed検索",

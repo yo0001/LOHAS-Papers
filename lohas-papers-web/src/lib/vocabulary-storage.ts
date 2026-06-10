@@ -6,7 +6,6 @@
 import {
   calculateNextReview,
   getDefaultSM2State,
-  getMasteryLevel,
   isDueForReview,
   type MasteryLevel,
   type SM2Input,

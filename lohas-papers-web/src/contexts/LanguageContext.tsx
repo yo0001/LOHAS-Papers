@@ -1,7 +1,17 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { type Locale } from "@/lib/i18n";
+
+const LANGUAGE_KEY = "lohas_language";
+const LANGUAGE_CHANGE_EVENT = "lohas-language-change";
+const DEFAULT_LOCALE: Locale = "ja";
 
 interface LanguageContextType {
   locale: Locale;
@@ -9,28 +19,51 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType>({
-  locale: "ja",
+  locale: DEFAULT_LOCALE,
   setLocale: () => {},
 });
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("ja");
-  const [mounted, setMounted] = useState(false);
+function isLocale(value: string | null): value is Locale {
+  return (
+    value === "ja" ||
+    value === "en" ||
+    value === "ko" ||
+    value === "zh-Hans" ||
+    value === "es" ||
+    value === "pt-BR" ||
+    value === "th" ||
+    value === "vi"
+  );
+}
 
-  useEffect(() => {
-    const saved = localStorage.getItem("lohas_language") as Locale | null;
-    if (saved) setLocaleState(saved);
-    setMounted(true);
-  }, []);
+function getLocaleSnapshot(): Locale {
+  if (typeof window === "undefined") return DEFAULT_LOCALE;
+  const saved = localStorage.getItem(LANGUAGE_KEY);
+  return isLocale(saved) ? saved : DEFAULT_LOCALE;
+}
 
-  const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
-    localStorage.setItem("lohas_language", newLocale);
+function subscribeToLocale(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+
+  window.addEventListener("storage", callback);
+  window.addEventListener(LANGUAGE_CHANGE_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(LANGUAGE_CHANGE_EVENT, callback);
   };
+}
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const locale = useSyncExternalStore(
+    subscribeToLocale,
+    getLocaleSnapshot,
+    () => DEFAULT_LOCALE,
+  );
+
+  const setLocale = useCallback((newLocale: Locale) => {
+    localStorage.setItem(LANGUAGE_KEY, newLocale);
+    window.dispatchEvent(new Event(LANGUAGE_CHANGE_EVENT));
+  }, []);
 
   return (
     <LanguageContext.Provider value={{ locale, setLocale }}>

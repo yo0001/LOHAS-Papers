@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   // --- IP-based rate limit: 10 checkout attempts per IP per hour ---
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded?.split(",")[0]?.trim() || "unknown";
-  const ipLimit = checkRateLimit(`checkout:ip:${ip}`, 10, 3600_000);
+  const ipLimit = await checkRateLimit(`checkout:ip:${ip}`, 10, 3600_000);
   if (!ipLimit.allowed) {
     return Response.json(GENERIC_ERROR, { status: 429 });
   }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   }
 
   // --- Per-user rate limit: 5 checkout attempts per user per hour ---
-  const userLimit = checkRateLimit(`checkout:user:${user.id}`, 5, 3600_000);
+  const userLimit = await checkRateLimit(`checkout:user:${user.id}`, 5, 3600_000);
   if (!userLimit.allowed) {
     return Response.json(GENERIC_ERROR, { status: 429 });
   }

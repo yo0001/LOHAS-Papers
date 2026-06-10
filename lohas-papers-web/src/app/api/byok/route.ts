@@ -1,8 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  buildStoredBYOKConfig,
+  parseStoredBYOKConfig,
+  toPublicBYOKConfig,
+  type BYOKInputConfig,
+} from "@/lib/byok-server";
+import type { BYOKProvider } from "@/lib/byok-models";
 import { NextRequest } from "next/server";
 
 // Auth via user session, DB ops via admin client (bypasses RLS)
+
+function isProvider(value: unknown): value is BYOKProvider {
+  return value === "anthropic" || value === "openai" || value === "google";
+}
 
 export async function GET() {
   const supabase = await createClient();
@@ -30,7 +41,24 @@ export async function GET() {
     return Response.json({ error: "Failed to fetch BYOK config" }, { status: 500 });
   }
 
-  return Response.json({ byok_config: data?.byok_config ?? null });
+  const storedConfig = parseStoredBYOKConfig(data?.byok_config);
+
+  if (storedConfig?.apiKey) {
+    try {
+      const encryptedConfig = buildStoredBYOKConfig(storedConfig);
+      await admin
+        .from("profiles")
+        .update({ byok_config: encryptedConfig })
+        .eq("id", user.id);
+      return Response.json({
+        byok_config: toPublicBYOKConfig(encryptedConfig),
+      });
+    } catch (migrationError) {
+      console.error("BYOK legacy migration error:", migrationError);
+    }
+  }
+
+  return Response.json({ byok_config: toPublicBYOKConfig(storedConfig) });
 }
 
 export async function PUT(request: NextRequest) {
@@ -51,19 +79,52 @@ export async function PUT(request: NextRequest) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const config = body as { provider?: string; apiKey?: string; model?: string; enabled?: boolean };
-  if (!config.provider || !config.apiKey || !config.model) {
+  const config = body as {
+    provider?: unknown;
+    apiKey?: unknown;
+    model?: unknown;
+    enabled?: unknown;
+  };
+  if (!isProvider(config.provider) || typeof config.model !== "string") {
     return Response.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const byokConfig = {
-    provider: config.provider,
-    apiKey: config.apiKey,
-    model: config.model,
-    enabled: config.enabled ?? true,
-  };
-
   const admin = createAdminClient();
+  const { data: existingProfile, error: existingError } = await admin
+    .from("profiles")
+    .select("byok_config")
+    .eq("id", user.id)
+    .single();
+
+  if (existingError) {
+    console.error("BYOK PUT existing config error:", existingError);
+    return Response.json({ error: "Failed to save BYOK config" }, { status: 500 });
+  }
+
+  let byokConfig;
+  try {
+    const input: BYOKInputConfig = {
+      provider: config.provider,
+      apiKey: typeof config.apiKey === "string" ? config.apiKey : undefined,
+      model: config.model,
+      enabled: config.enabled !== false,
+    };
+    byokConfig = buildStoredBYOKConfig(
+      input,
+      parseStoredBYOKConfig(existingProfile?.byok_config),
+    );
+  } catch (validationError) {
+    return Response.json(
+      {
+        error:
+          validationError instanceof Error
+            ? validationError.message
+            : "Invalid BYOK config",
+      },
+      { status: 400 },
+    );
+  }
+
   const { data, error } = await admin
     .from("profiles")
     .update({ byok_config: byokConfig })
@@ -81,7 +142,11 @@ export async function PUT(request: NextRequest) {
     return Response.json({ error: "Profile not found" }, { status: 404 });
   }
 
-  return Response.json({ success: true, synced: true });
+  return Response.json({
+    success: true,
+    synced: true,
+    byok_config: toPublicBYOKConfig(byokConfig),
+  });
 }
 
 export async function DELETE() {

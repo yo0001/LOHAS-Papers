@@ -1,5 +1,9 @@
--- Add byok_config JSONB column to profiles table
+-- Add encrypted BYOK config JSONB column to profiles table
 -- Run this via Supabase Dashboard SQL Editor
+--
+-- Application requirement:
+--   Set BYOK_ENCRYPTION_KEY in the server environment before enabling cloud sync.
+--   The application stores provider/model/enabled plus encryptedApiKey, not plaintext.
 
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS byok_config JSONB DEFAULT NULL;
 

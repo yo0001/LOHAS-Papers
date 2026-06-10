@@ -12,12 +12,13 @@ import { TOPICS, CATEGORY_LABELS } from "@/data/topics";
 
 function WelcomeBanner() {
   const { locale } = useLanguage();
-  const [show, setShow] = useState(false);
   const searchParams = useSearchParams();
+  const [show, setShow] = useState(
+    () => searchParams.get("welcome") === "1",
+  );
 
   useEffect(() => {
     if (searchParams.get("welcome") === "1") {
-      setShow(true);
       window.history.replaceState({}, "", "/");
     }
   }, [searchParams]);
@@ -45,11 +46,7 @@ function WelcomeBanner() {
 function AuthenticatedHome() {
   const router = useRouter();
   const { locale } = useLanguage();
-  const [history, setHistory] = useState<string[]>([]);
-
-  useEffect(() => {
-    setHistory(getSearchHistory());
-  }, []);
+  const [history, setHistory] = useState<string[]>(() => getSearchHistory());
 
   const handleSearch = (query: string) => {
     router.push(`/results?q=${encodeURIComponent(query)}&lang=${locale}`);
@@ -109,9 +106,22 @@ function LandingPage() {
   const { locale } = useLanguage();
   const { signInWithGoogle } = useAuth();
   const router = useRouter();
+  const maintenanceMode = Boolean(process.env.NEXT_PUBLIC_MAINTENANCE_MODE);
 
   const handleTrialSearch = (query: string) => {
+    if (maintenanceMode) {
+      router.push("/settings");
+      return;
+    }
     router.push(`/results?q=${encodeURIComponent(query)}&lang=${locale}`);
+  };
+
+  const handlePrimaryCta = () => {
+    if (maintenanceMode) {
+      router.push("/settings");
+      return;
+    }
+    signInWithGoogle("/");
   };
 
   // Show first 12 topics for the landing page
@@ -136,22 +146,45 @@ function LandingPage() {
           {/* Trial search bar */}
           <div className="mt-12 max-w-2xl mx-auto">
             <SearchBar onSearch={handleTrialSearch} large />
-            <p className="mt-3 text-sm text-gray-400">
-              {t(locale, "trialSearchHint")}
-            </p>
+            {!maintenanceMode && (
+              <p className="mt-3 text-sm text-gray-400">
+                {t(locale, "trialSearchHint")}
+              </p>
+            )}
           </div>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => signInWithGoogle("/")}
+              onClick={handlePrimaryCta}
               className="btn-3d px-8 py-3.5 text-white font-bold rounded-full"
             >
-              {t(locale, "heroCta")}
+              {maintenanceMode
+                ? locale === "ja"
+                  ? "APIキーを設定する"
+                  : "Set API key"
+                : t(locale, "heroCta")}
             </button>
           </div>
-          <p className="mt-3 text-sm text-gray-400 font-medium">
-            {t(locale, "heroBonus")}
-          </p>
+          {!maintenanceMode && (
+            <p className="mt-3 text-sm text-gray-400 font-medium">
+              {t(locale, "heroBonus")}
+            </p>
+          )}
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
+            <Link
+              href="/paper-search-ai"
+              className="font-semibold text-navy-500 hover:text-navy-700 transition-colors"
+            >
+              論文検索AIでできること
+            </Link>
+            <span className="hidden sm:inline text-gray-300">/</span>
+            <Link
+              href="/supervisor"
+              className="font-semibold text-gray-500 hover:text-navy-700 transition-colors"
+            >
+              医師監修とAI要約の方針
+            </Link>
+          </div>
         </div>
         {/* Bottom edge shadow for depth */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-navy-200/50 to-transparent" />

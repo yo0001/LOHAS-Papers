@@ -1,16 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { getDueCount } from "@/lib/vocabulary-storage";
 
 export default function DueReviewBanner() {
-  const [dueCount, setDueCount] = useState(0);
+  const [dueCount] = useState(() => getDueCount());
   const [dismissed, setDismissed] = useState(false);
-
-  useEffect(() => {
-    setDueCount(getDueCount());
-  }, []);
 
   if (dueCount === 0 || dismissed) return null;
 

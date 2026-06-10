@@ -1,6 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function hasBYOKHeaders(request: NextRequest): boolean {
+  const provider = request.headers.get("x-byok-provider");
+  const key = request.headers.get("x-byok-key");
+  const model = request.headers.get("x-byok-model");
+
+  return (
+    Boolean(key && model) &&
+    (provider === "anthropic" || provider === "openai" || provider === "google")
+  );
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -32,7 +43,7 @@ export async function updateSession(request: NextRequest) {
   // Protect AI API routes — require authentication
   // Exception: /api/ai/search allows unauthenticated trial access (controlled in route handler)
   if (request.nextUrl.pathname.startsWith("/api/ai/") && !user) {
-    if (request.nextUrl.pathname === "/api/ai/search") {
+    if (request.nextUrl.pathname === "/api/ai/search" || hasBYOKHeaders(request)) {
       return supabaseResponse; // route handler controls trial access
     }
     return NextResponse.json(

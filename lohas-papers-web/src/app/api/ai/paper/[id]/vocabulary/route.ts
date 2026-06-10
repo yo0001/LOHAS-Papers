@@ -34,20 +34,7 @@ export async function POST(
     "x-byok-model": headerStore.get("x-byok-model") ?? "",
   }));
 
-  // Encode body hints into a query param for the backend path
-  const searchParams = new URLSearchParams();
-  if (bodyText) {
-    try {
-      const body = JSON.parse(bodyText);
-      if (body.abstract) searchParams.set("abstract", body.abstract);
-      if (body.pdf_url) searchParams.set("pdf_url", body.pdf_url);
-    } catch {
-      // ignore invalid JSON
-    }
-  }
-
-  const qs = searchParams.toString();
-  const backendPath = `/paper/${encodeURIComponent(id)}/vocabulary${qs ? `?${qs}` : ""}`;
+  const backendPath = `/paper/${encodeURIComponent(id)}/vocabulary`;
 
   return authenticatedProxy(
     "vocabulary",

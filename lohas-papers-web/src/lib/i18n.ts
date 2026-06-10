@@ -124,9 +124,9 @@ const translations: Record<Locale, Record<string, string>> = {
     transactionHistory: "取引履歴",
     noTransactions: "取引履歴はありません",
     // Landing Page
-    heroTitle: "英語論文、もう一人で読まなくていい",
+    heroTitle: "英語論文を、論文検索AIで日本語要約",
     heroDescription:
-      "PubMed・Semantic Scholarの最新エビデンスを、AIが日本語で、明日の外来で使える形に要約。医師が作った、医師のための論文検索AI。",
+      "PubMed・Semantic Scholarの医学論文を横断検索し、AIが日本語で、明日の外来で使える形に要約。医師が作った、医師のための論文検索AI。",
     heroCta: "無料で試してみる",
     heroBonus: "登録30秒・無料クレジット付き",
     howItWorksTitle: "30秒で使い始められる",
@@ -136,14 +136,14 @@ const translations: Record<Locale, Record<string, string>> = {
     step2Desc: "「2型糖尿病 SGLT2阻害薬 最新」など日本語でOK",
     step3Title: "AIが日本語で要約",
     step3Desc: "明日の外来で使えるレベルで理解",
-    featuresTitle: "なぜ医師に選ばれるのか",
+    featuresTitle: "論文検索AIとして選ばれる理由",
     feature1Title: "英語論文を日本語で読める",
     feature1Desc:
       "PubMed・Semantic Scholarの英語論文を、臨床で使える日本語に即座に翻訳・要約",
     feature2Title: "臨床に直結する要約",
     feature2Desc:
       "「結局、明日の外来で何が変わるのか」を軸にAIが要約。専門家・一般・入門の3レベル",
-    feature3Title: "3,600万件を一括検索",
+    feature3Title: "PubMed・Semantic ScholarをAI検索",
     feature3Desc:
       "PubMedとSemantic Scholarを同時に横断検索。漏れのない文献レビューを数秒で",
     feature4Title: "複数論文の統合回答",
@@ -169,7 +169,7 @@ const translations: Record<Locale, Record<string, string>> = {
     welcomeCredits:
       "1クレジットをプレゼントしました。さっそく論文を検索してみましょう！",
     maintenanceBanner:
-      "現在クレジットによるAI検索を一時停止しております。ご自身のAPIキーをお持ちの方は設定画面よりご利用いただけます。",
+      "APIキー設定でAI論文検索・日本語要約をご利用いただけます。クレジット検索は再開準備中です。",
     supervisedBadge: "医師監修",
     supervisedName: "LOHAS Inc. 医療監修チーム",
     supervisedAffiliation: "医師",

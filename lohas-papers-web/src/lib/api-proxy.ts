@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getUserBYOKConfig } from "@/lib/byok-server";
 import { CREDIT_COSTS, type CreditOperation } from "@/lib/credit-costs";
 import {
   handleSearch,
@@ -57,6 +58,16 @@ export async function authenticatedProxy(
 
   if (authError || !user) {
     return Response.json({ error: "Authentication required" }, { status: 401 });
+  }
+
+  const savedBYOKConfig = await getUserBYOKConfig(user.id);
+  if (savedBYOKConfig) {
+    return executeBYOKRequest(
+      operation,
+      backendPath,
+      fetchOptions,
+      savedBYOKConfig,
+    );
   }
 
   // 2. Deduct credits (atomic)

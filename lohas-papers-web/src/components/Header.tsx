@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/lib/i18n";
@@ -10,11 +10,7 @@ import ModelSelector from "./ModelSelector";
 import { getDueCount } from "@/lib/vocabulary-storage";
 
 function VocabularyNavLink() {
-  const [dueCount, setDueCount] = useState(0);
-
-  useEffect(() => {
-    setDueCount(getDueCount());
-  }, []);
+  const [dueCount] = useState(() => getDueCount());
 
   return (
     <>

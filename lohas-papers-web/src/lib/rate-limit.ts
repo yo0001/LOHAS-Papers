@@ -1,46 +1,40 @@
-/**
- * TODO: This in-memory rate limiter does NOT work across multiple serverless
- * instances (e.g. Vercel). Each instance has its own Map, so limits are
- * effectively per-instance, not global. For production, migrate to:
- *   - Vercel KV (https://vercel.com/docs/storage/vercel-kv)
- *   - Upstash Redis (https://upstash.com/)
- * This is acceptable for now as a defense-in-depth layer, but should not be
- * relied upon as the sole rate-limiting mechanism in a scaled deployment.
- */
+import { createAdminClient } from "@/lib/supabase/admin";
 
-/**
- * In-memory rate limiter for credit master / card testing attack prevention.
- * Tracks attempts by key (user ID, IP address) with sliding window.
- */
+export interface RateLimitResult {
+  allowed: boolean;
+  remaining: number;
+  retryAfterMs: number;
+}
 
 interface RateLimitEntry {
   timestamps: number[];
 }
 
-const store = new Map<string, RateLimitEntry>();
+interface PersistentRateLimitRow {
+  allowed: boolean;
+  remaining: number;
+  retry_after_ms: number;
+}
 
-// Cleanup stale entries every 10 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store) {
-    entry.timestamps = entry.timestamps.filter((t) => now - t < 3600_000);
-    if (entry.timestamps.length === 0) store.delete(key);
-  }
-}, 600_000);
+const memoryStore = new Map<string, RateLimitEntry>();
 
-/**
- * Check if a key has exceeded the rate limit.
- * @returns { allowed: boolean, remaining: number, retryAfterMs: number }
- */
-export function checkRateLimit(
+function hasPersistentRateLimitConfig(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://placeholder.supabase.co" &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY !== "placeholder",
+  );
+}
+
+function memoryRateLimit(
   key: string,
   maxAttempts: number,
   windowMs: number,
-): { allowed: boolean; remaining: number; retryAfterMs: number } {
+): RateLimitResult {
   const now = Date.now();
-  const entry = store.get(key) || { timestamps: [] };
+  const entry = memoryStore.get(key) || { timestamps: [] };
 
-  // Remove timestamps outside the window
   entry.timestamps = entry.timestamps.filter((t) => now - t < windowMs);
 
   if (entry.timestamps.length >= maxAttempts) {
@@ -48,16 +42,59 @@ export function checkRateLimit(
     return {
       allowed: false,
       remaining: 0,
-      retryAfterMs: windowMs - (now - oldest),
+      retryAfterMs: Math.max(0, windowMs - (now - oldest)),
     };
   }
 
   entry.timestamps.push(now);
-  store.set(key, entry);
+  memoryStore.set(key, entry);
 
   return {
     allowed: true,
     remaining: maxAttempts - entry.timestamps.length,
     retryAfterMs: 0,
   };
+}
+
+export async function checkRateLimit(
+  key: string,
+  maxAttempts: number,
+  windowMs: number,
+): Promise<RateLimitResult> {
+  if (!hasPersistentRateLimitConfig()) {
+    return memoryRateLimit(key, maxAttempts, windowMs);
+  }
+
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .rpc("check_rate_limit", {
+        p_limit_key: key,
+        p_max_attempts: maxAttempts,
+        p_window_ms: windowMs,
+      })
+      .single<PersistentRateLimitRow>();
+
+    if (error || !data) {
+      throw error ?? new Error("Missing rate limit result");
+    }
+
+    return {
+      allowed: data.allowed,
+      remaining: data.remaining,
+      retryAfterMs: data.retry_after_ms,
+    };
+  } catch (error) {
+    console.error("Persistent rate limit failed:", error);
+
+    if (process.env.NODE_ENV === "production") {
+      return {
+        allowed: false,
+        remaining: 0,
+        retryAfterMs: windowMs,
+      };
+    }
+
+    return memoryRateLimit(key, maxAttempts, windowMs);
+  }
 }

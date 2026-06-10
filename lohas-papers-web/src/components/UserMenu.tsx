@@ -11,7 +11,6 @@ export default function UserMenu() {
   const { user, loading, signInWithGoogle, signOut } = useAuth();
   const { locale } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,15 +49,12 @@ export default function UserMenu() {
           onClick={() => setOpen(!open)}
           className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden border-2 border-gray-200 hover:border-navy-400 transition-colors bg-gray-100"
         >
-          {avatarUrl && !imgError ? (
-            <img
-              src={avatarUrl}
-              alt={displayName}
-              width={32}
-              height={32}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-              onError={() => setImgError(true)}
+          {avatarUrl ? (
+            <span
+              aria-label={displayName}
+              role="img"
+              className="w-full h-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${avatarUrl})` }}
             />
           ) : (
             <span className="text-sm font-bold text-gray-600">

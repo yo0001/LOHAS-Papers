@@ -32,13 +32,9 @@ export default function FlashcardView({
   const [isFlipped, setIsFlipped] = useState(false);
   const [results, setResults] = useState<SessionResult[]>([]);
   const [isComplete, setIsComplete] = useState(false);
-  const [studyWords, setStudyWords] = useState<VocabularyWord[]>(words);
-
-  // Shuffle on mount
-  useEffect(() => {
-    const shuffled = [...words].sort(() => Math.random() - 0.5);
-    setStudyWords(shuffled);
-  }, [words]);
+  const [studyWords, setStudyWords] = useState<VocabularyWord[]>(() =>
+    [...words].sort(() => Math.random() - 0.5),
+  );
 
   const currentWord = studyWords[currentIndex];
   const total = studyWords.length;

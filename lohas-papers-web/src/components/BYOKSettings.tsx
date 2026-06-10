@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useBYOK, type BYOKConfig } from "@/hooks/useBYOK";
 import {
@@ -30,7 +30,8 @@ const BYOK_LABELS: Record<string, Record<string, string>> = {
     inputPrice: "入力",
     outputPrice: "出力",
     perMTok: "/MTok",
-    securityNote: "🔒 ログイン中はキーが安全にクラウド同期され、どのデバイスからでも利用できます。未ログインの場合はブラウザにのみ保存されます",
+    securityNote: "ログイン中はキーをサーバー側で暗号化して同期します。未ログインの場合はこのブラウザにのみ保存されます。",
+    saveFailed: "設定を保存できませんでした",
   },
   en: {
     title: "BYOK Settings (Bring Your Own Key)",
@@ -49,7 +50,8 @@ const BYOK_LABELS: Record<string, Record<string, string>> = {
     inputPrice: "Input",
     outputPrice: "Output",
     perMTok: "/MTok",
-    securityNote: "🔒 When logged in, keys are securely synced to the cloud and available on all your devices. When not logged in, keys are stored only in your browser",
+    securityNote: "When logged in, keys are encrypted server-side before sync. When not logged in, keys are stored only in this browser.",
+    saveFailed: "Failed to save settings",
   },
 };
 
@@ -63,59 +65,88 @@ function maskKey(key: string): string {
 }
 
 export default function BYOKSettings() {
-  const { locale } = useLanguage();
-  const labels = getLabels(locale);
   const { byokConfig, setBYOKConfig, clearBYOK, loaded } = useBYOK();
 
-  const [provider, setProvider] = useState<BYOKProvider>("anthropic");
+  if (!loaded) return null;
+
+  const configKey = byokConfig
+    ? `${byokConfig.provider}:${byokConfig.model}:${byokConfig.maskedApiKey ?? ""}`
+    : "empty";
+
+  return (
+    <BYOKSettingsForm
+      key={configKey}
+      byokConfig={byokConfig}
+      setBYOKConfig={setBYOKConfig}
+      clearBYOK={clearBYOK}
+    />
+  );
+}
+
+function BYOKSettingsForm({
+  byokConfig,
+  setBYOKConfig,
+  clearBYOK,
+}: {
+  byokConfig: BYOKConfig | null;
+  setBYOKConfig: (config: BYOKConfig) => Promise<boolean>;
+  clearBYOK: () => void;
+}) {
+  const { locale } = useLanguage();
+  const labels = getLabels(locale);
+
+  const initialProvider = byokConfig?.provider ?? "anthropic";
+  const [provider, setProvider] = useState<BYOKProvider>(initialProvider);
   const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState("");
+  const [model, setModel] = useState(
+    byokConfig?.model ?? getDefaultModel(initialProvider).id,
+  );
   const [showKey, setShowKey] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Initialize from saved config
-  useEffect(() => {
-    if (loaded && byokConfig) {
-      setProvider(byokConfig.provider);
-      setApiKey(byokConfig.apiKey);
-      setModel(byokConfig.model);
-    }
-  }, [loaded, byokConfig]);
-
-  // When provider changes, update default model
-  useEffect(() => {
-    if (!byokConfig || byokConfig.provider !== provider) {
-      const defaultModel = getDefaultModel(provider);
-      if (defaultModel) setModel(defaultModel.id);
-    }
-  }, [provider, byokConfig]);
-
   const models = getModelsForProvider(provider);
   const providerInfo = BYOK_PROVIDERS.find((p) => p.id === provider);
 
-  const handleSave = () => {
+  const handleProviderChange = (nextProvider: BYOKProvider) => {
+    setProvider(nextProvider);
+    setModel(getDefaultModel(nextProvider).id);
+    setApiKey("");
+    setError("");
+  };
+
+  const handleSave = async () => {
     setError("");
     setSuccess("");
 
-    if (!apiKey.trim()) {
+    const trimmedKey = apiKey.trim();
+    const providerChanged = byokConfig?.provider !== provider;
+    const canReuseSavedKey =
+      Boolean(byokConfig?.hasApiKey) && !providerChanged;
+
+    if (!trimmedKey && !canReuseSavedKey) {
       setError(labels.invalidKey);
       return;
     }
 
-    if (!validateKeyFormat(provider, apiKey.trim())) {
+    if (trimmedKey && !validateKeyFormat(provider, trimmedKey)) {
       setError(`${labels.invalidKey} (${providerInfo?.keyHint})`);
       return;
     }
 
     const config: BYOKConfig = {
       provider,
-      apiKey: apiKey.trim(),
+      apiKey: trimmedKey || undefined,
       model,
       enabled: true,
     };
-    setBYOKConfig(config);
+    const saved = await setBYOKConfig(config);
+    if (!saved) {
+      setError(labels.saveFailed);
+      return;
+    }
     setSuccess(labels.saved);
+    setApiKey("");
     setShowKey(false);
     setTimeout(() => setSuccess(""), 3000);
   };
@@ -130,8 +161,6 @@ export default function BYOKSettings() {
     setSuccess(labels.deleted);
     setTimeout(() => setSuccess(""), 3000);
   };
-
-  if (!loaded) return null;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
@@ -151,7 +180,7 @@ export default function BYOKSettings() {
           {BYOK_PROVIDERS.map((p) => (
             <button
               key={p.id}
-              onClick={() => setProvider(p.id)}
+              onClick={() => handleProviderChange(p.id)}
               className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
                 provider === p.id
                   ? "border-navy-600 bg-navy-50 text-navy-700"
@@ -190,9 +219,9 @@ export default function BYOKSettings() {
             {showKey ? "Hide" : "Show"}
           </button>
         </div>
-        {byokConfig && !showKey && byokConfig.apiKey && (
+        {byokConfig && !showKey && (byokConfig.apiKey || byokConfig.maskedApiKey) && (
           <p className="text-xs text-gray-400 mt-1 font-mono">
-            {maskKey(byokConfig.apiKey)}
+            {byokConfig.maskedApiKey ?? maskKey(byokConfig.apiKey ?? "")}
           </p>
         )}
         <p className="text-xs text-gray-400 mt-1">{labels.securityNote}</p>

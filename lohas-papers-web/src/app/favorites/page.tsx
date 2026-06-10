@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/lib/i18n";
@@ -8,11 +8,7 @@ import { getFavorites, removeFavorite, type FavoritePaper } from "@/lib/favorite
 
 export default function FavoritesPage() {
   const { locale } = useLanguage();
-  const [favorites, setFavorites] = useState<FavoritePaper[]>([]);
-
-  useEffect(() => {
-    setFavorites(getFavorites());
-  }, []);
+  const [favorites, setFavorites] = useState<FavoritePaper[]>(() => getFavorites());
 
   const handleRemove = (id: string) => {
     removeFavorite(id);
