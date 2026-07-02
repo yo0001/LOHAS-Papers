@@ -15,6 +15,12 @@ export interface BYOKConfig {
   maskedApiKey?: string;
 }
 
+export interface BYOKSaveResult {
+  success: boolean;
+  config?: BYOKConfig;
+  error?: string;
+}
+
 function loadConfigFromLocalStorage(): BYOKConfig | null {
   if (typeof window === "undefined") return null;
   try {
@@ -67,23 +73,28 @@ async function fetchConfigFromSupabase(): Promise<BYOKConfig | null> {
   }
 }
 
-async function saveConfigToSupabase(config: BYOKConfig): Promise<BYOKConfig | null> {
+async function saveConfigToSupabase(config: BYOKConfig): Promise<BYOKSaveResult> {
   try {
     const res = await fetch("/api/byok", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(config),
     });
-    if (!res.ok) return null;
     const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return {
+        success: false,
+        error: typeof data.error === "string" ? data.error : "Failed to save BYOK config",
+      };
+    }
     const remoteConfig = data.byok_config as BYOKConfig | undefined;
     if (remoteConfig) {
       saveConfigToLocalStorage(remoteConfig, false);
-      return remoteConfig;
+      return { success: true, config: remoteConfig };
     }
-    return null;
+    return { success: false, error: "Missing saved BYOK config" };
   } catch {
-    return null;
+    return { success: false, error: "Network error while saving BYOK config" };
   }
 }
 
@@ -118,8 +129,8 @@ export function useBYOK() {
         // No remote config — push local config to Supabase if it exists
         const localConfig = loadConfigFromLocalStorage();
         if (localConfig) {
-          saveConfigToSupabase(localConfig).then((savedConfig) => {
-            if (savedConfig) setConfigState(savedConfig);
+          saveConfigToSupabase(localConfig).then((result) => {
+            if (result.config) setConfigState(result.config);
           });
         }
       }
@@ -140,16 +151,16 @@ export function useBYOK() {
   const setBYOKConfig = useCallback(
     async (newConfig: BYOKConfig) => {
       if (user) {
-        const savedConfig = await saveConfigToSupabase(newConfig);
-        if (!savedConfig) return false;
-        setConfigState(savedConfig);
-        saveConfigToLocalStorage(savedConfig, false);
-        return true;
+        const result = await saveConfigToSupabase(newConfig);
+        if (!result.config) return result;
+        setConfigState(result.config);
+        saveConfigToLocalStorage(result.config, false);
+        return result;
       }
 
       setConfigState(newConfig);
       saveConfigToLocalStorage(newConfig, true);
-      return true;
+      return { success: true, config: newConfig };
     },
     [user],
   );
@@ -169,8 +180,8 @@ export function useBYOK() {
       setConfigState(updated);
       saveConfigToLocalStorage(updated, !user && Boolean(updated.apiKey));
       if (user) {
-        saveConfigToSupabase(updated).then((savedConfig) => {
-          if (savedConfig) setConfigState(savedConfig);
+        saveConfigToSupabase(updated).then((result) => {
+          if (result.config) setConfigState(result.config);
         });
       }
     },
@@ -184,8 +195,8 @@ export function useBYOK() {
       setConfigState(updated);
       saveConfigToLocalStorage(updated, !user && Boolean(updated.apiKey));
       if (user) {
-        saveConfigToSupabase(updated).then((savedConfig) => {
-          if (savedConfig) setConfigState(savedConfig);
+        saveConfigToSupabase(updated).then((result) => {
+          if (result.config) setConfigState(result.config);
         });
       }
     },

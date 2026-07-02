@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useBYOK, type BYOKConfig } from "@/hooks/useBYOK";
+import { useBYOK, type BYOKConfig, type BYOKSaveResult } from "@/hooks/useBYOK";
 import {
   BYOK_PROVIDERS,
   getModelsForProvider,
@@ -98,7 +98,7 @@ function BYOKSettingsForm({
   clearBYOK,
 }: {
   byokConfig: BYOKConfig | null;
-  setBYOKConfig: (config: BYOKConfig) => Promise<boolean>;
+  setBYOKConfig: (config: BYOKConfig) => Promise<BYOKSaveResult>;
   clearBYOK: () => void;
 }) {
   const { locale } = useLanguage();
@@ -149,9 +149,9 @@ function BYOKSettingsForm({
       model,
       enabled: true,
     };
-    const saved = await setBYOKConfig(config);
-    if (!saved) {
-      setError(labels.saveFailed);
+    const result = await setBYOKConfig(config);
+    if (!result.success) {
+      setError(result.error ?? labels.saveFailed);
       return;
     }
     setSuccess(labels.saved);
