@@ -20,10 +20,10 @@ import type {
 } from "./types";
 
 // Timeout per individual AI post-processing task (milliseconds)
-const SUMMARY_TIMEOUT_MS = 5_000;
-const TITLE_TRANSLATION_TIMEOUT_MS = 4_000;
-const AI_OVERVIEW_TIMEOUT_MS = 4_000;
-const SUMMARY_PAPER_LIMIT = 0;
+const SUMMARY_TIMEOUT_MS = 8_000;
+const TITLE_TRANSLATION_TIMEOUT_MS = 20_000;
+const AI_OVERVIEW_TIMEOUT_MS = 8_000;
+const SUMMARY_PAPER_LIMIT = 3;
 
 function normalizeStudyType(studyType?: string | null): string {
   if (!studyType) return "";
@@ -133,33 +133,13 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
     };
   }
 
-  // 4. Run ranking + title translation in parallel
-  const [rankingResult, translationResult] = await Promise.allSettled([
+  // 4. Run ranking before pagination
+  const [rankingResult] = await Promise.allSettled([
     relevanceRanker.rankPapers(query, transformResult.interpreted_intent, allPapers, config),
-    withTimeout(
-      summarizer.translateTitlesBatch(
-        allPapers.map((p) => p.title),
-        language,
-        config,
-      ),
-      TITLE_TRANSLATION_TIMEOUT_MS,
-    ),
   ]);
 
   const rankings: RankedPaper[] =
     rankingResult.status === "fulfilled" ? rankingResult.value : [];
-  const allTranslatedTitles: string[] =
-    translationResult.status === "fulfilled" && Array.isArray(translationResult.value)
-      ? translationResult.value
-      : allPapers.map((p) => p.title);
-
-  // Build title translation lookup
-  const titleTranslationMap = new Map<string, string>();
-  for (let i = 0; i < allPapers.length; i++) {
-    if (i < allTranslatedTitles.length && allTranslatedTitles[i] !== allPapers[i].title) {
-      titleTranslationMap.set(allPapers[i].id, allTranslatedTitles[i]);
-    }
-  }
 
   // 5. Build ranked paper lookup
   const rankingMap = new Map<string, RankedPaper>();
@@ -190,25 +170,41 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
   );
 
   const papersContext = buildPapersContext(pagePapers.slice(0, 5));
+  const titleTranslationTask = withTimeout(
+    summarizer.translateTitlesBatch(
+      pagePapers.map((p) => p.title),
+      language,
+      config,
+    ),
+    TITLE_TRANSLATION_TIMEOUT_MS,
+  );
   const aiOverviewTask = withTimeout(
     summarizer.generateAiOverview(query, language, papersContext, config),
     AI_OVERVIEW_TIMEOUT_MS,
   );
 
   // Run all in parallel
-  const allTasks = [aiOverviewTask, ...summaryTasks];
+  const allTasks = [titleTranslationTask, aiOverviewTask, ...summaryTasks];
   const results = await Promise.allSettled(allTasks);
 
+  const translatedPageTitles: string[] =
+    results[0].status === "fulfilled" && Array.isArray(results[0].value)
+      ? results[0].value
+      : pagePapers.map((p) => p.title);
   const aiOverviewText =
-    results[0].status === "fulfilled" ? results[0].value : "";
-  const paperSummaries = results.slice(1);
+    results[1].status === "fulfilled" && typeof results[1].value === "string"
+      ? results[1].value
+      : "";
+  const paperSummaries = results.slice(2);
 
   // 8. Build response
   const paperResults: PaperResult[] = pagePapers.map((paper, i) => {
     const rankInfo = rankingMap.get(paper.id);
     const summaryResult = paperSummaries[i];
     const summaryText =
-      summaryResult.status === "fulfilled" ? summaryResult.value : "";
+      summaryResult.status === "fulfilled" && typeof summaryResult.value === "string"
+        ? summaryResult.value
+        : "";
 
     const summaryMap: PaperSummaryMap = {};
     if (summaryText) {
@@ -225,7 +221,10 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
     return {
       id: paper.id,
       title: paper.title,
-      title_translated: titleTranslationMap.get(paper.id) ?? null,
+      title_translated:
+        translatedPageTitles[i] && translatedPageTitles[i] !== paper.title
+          ? translatedPageTitles[i]
+          : null,
       authors: paper.authors,
       journal: paper.journal ?? null,
       year: paper.year ?? null,

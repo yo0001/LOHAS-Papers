@@ -13,7 +13,11 @@ interface PaperCardProps {
 export default function PaperCard({ paper }: PaperCardProps) {
   const { locale } = useLanguage();
   const summary = getSummaryForLocale(paper.summary, locale);
-  const displayTitle = paper.title_translated || paper.title;
+  const isJapanese = locale === "ja";
+  const displayTitle =
+    paper.title_translated ||
+    (isJapanese ? "日本語タイトルを取得できませんでした" : paper.title);
+  const authorSuffix = isJapanese ? " ほか" : " et al.";
 
   return (
     <Link
@@ -24,13 +28,13 @@ export default function PaperCard({ paper }: PaperCardProps) {
         <h3 className="font-medium text-gray-900 leading-snug">
           {displayTitle}
         </h3>
-        {paper.title_translated && (
+        {paper.title_translated && !isJapanese && (
           <p className="text-xs text-gray-400 line-clamp-1">{paper.title}</p>
         )}
 
         <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
           {paper.authors.length > 0 && (
-            <span>{paper.authors.slice(0, 3).join(", ")}{paper.authors.length > 3 ? " et al." : ""}</span>
+            <span>{paper.authors.slice(0, 3).join(", ")}{paper.authors.length > 3 ? authorSuffix : ""}</span>
           )}
           {paper.journal && <span className="text-gray-400">|</span>}
           {paper.journal && <span>{paper.journal}</span>}
