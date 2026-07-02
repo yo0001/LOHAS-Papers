@@ -63,7 +63,7 @@ export function clearSearchHistory(): void {
 }
 
 // Search result cache (per user, 7-day expiry, max 50 entries)
-const CACHE_KEY = "lohas_search_cache";
+const CACHE_KEY = "lohas_search_cache_v2";
 const CACHE_MAX = 50;
 const CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
 

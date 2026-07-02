@@ -80,6 +80,7 @@ function ResultsInner() {
   const { refreshCredits, signInWithGoogle } = useAuth();
 
   const query = searchParams.get("q") || "";
+  const retryToken = searchParams.get("t") || "";
   const [result, setResult] = useState<SearchResponse | null>(null);
   const [isTrial, setIsTrial] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -101,12 +102,14 @@ function ResultsInner() {
   useEffect(() => {
     if (!query) return;
 
-    const searchKey = `${query}_${locale}`;
+    const searchKey = `${query}_${locale}_${retryToken}`;
     if (lastSearchRef.current === searchKey) return;
     lastSearchRef.current = searchKey;
 
     // Check cache first
-    const cached = getCachedResult(query, locale) as SearchResponse | null;
+    const cached = retryToken
+      ? null
+      : getCachedResult(query, locale) as SearchResponse | null;
     if (cached) {
       setResult(cached);
       setError(null);
@@ -127,8 +130,10 @@ function ResultsInner() {
         const res = await searchWithAI(query, locale);
         if (!cancelled) {
           setResult(res);
-          setCachedResult(query, locale, res);
           const paperCount = res.papers?.length ?? 0;
+          if (paperCount > 0) {
+            setCachedResult(query, locale, res);
+          }
           trackEvent("search_completed", {
             query,
             locale,
@@ -165,7 +170,7 @@ function ResultsInner() {
     return () => {
       cancelled = true;
     };
-  }, [query, locale]);
+  }, [query, locale, retryToken]);
 
   const handleSearch = (newQuery: string) => {
     lastSearchRef.current = "";

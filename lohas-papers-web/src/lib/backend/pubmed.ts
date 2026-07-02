@@ -3,6 +3,9 @@ import type { UnifiedPaper } from "./types";
 const ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi";
 const EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
 const TIMEOUT_MS = 10_000;
+const TOOL_NAME = "lohas-papers";
+
+let nextPubMedRequestAt = 0;
 
 export async function searchPapers(
   query: string,
@@ -14,6 +17,7 @@ export async function searchPapers(
 ): Promise<UnifiedPaper[]> {
   const { limit = 20, yearFrom, yearTo } = options ?? {};
   const pubmedApiKey = process.env.PUBMED_API_KEY || "";
+  const pubmedEmail = process.env.PUBMED_EMAIL || "";
 
   // Add date filter to query if specified
   let dateFilter = "";
@@ -26,62 +30,47 @@ export async function searchPapers(
     retmax: String(limit),
     sort: "relevance",
     retmode: "json",
+    tool: TOOL_NAME,
   });
   if (pubmedApiKey) searchParams.set("api_key", pubmedApiKey);
+  if (pubmedEmail) searchParams.set("email", pubmedEmail);
 
-  let xmlText: string | null = null;
-  const maxRetries = 3;
+  // Step 1: ESearch to get PMIDs
+  const searchResp = await fetchPubMedWithRetries(
+    `${ESEARCH_URL}?${searchParams}`,
+    query,
+    "PubMed ESearch",
+    Boolean(pubmedApiKey),
+  );
+  if (!searchResp) return [];
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      // Step 1: ESearch to get PMIDs
-      const searchResp = await fetch(`${ESEARCH_URL}?${searchParams}`, {
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-      });
-      if (!searchResp.ok) {
-        if (searchResp.status === 429 && attempt < maxRetries - 1) {
-          const wait = 2 ** attempt + 1;
-          console.info(`PubMed 429, retrying in ${wait}s: ${query}`);
-          await sleep(wait * 1000);
-          continue;
-        }
-        console.warn(`PubMed HTTP error ${searchResp.status}: ${query}`);
-        return [];
-      }
+  const searchData = await searchResp.json();
+  const idList: string[] = searchData?.esearchresult?.idlist ?? [];
+  if (idList.length === 0) return [];
 
-      const searchData = await searchResp.json();
-      const idList: string[] = searchData?.esearchresult?.idlist ?? [];
-      if (idList.length === 0) return [];
+  // Step 2: EFetch to get full records
+  const fetchParams = new URLSearchParams({
+    db: "pubmed",
+    id: idList.join(","),
+    retmode: "xml",
+    tool: TOOL_NAME,
+  });
+  if (pubmedApiKey) fetchParams.set("api_key", pubmedApiKey);
+  if (pubmedEmail) fetchParams.set("email", pubmedEmail);
 
-      // Step 2: EFetch to get full records
-      const fetchParams = new URLSearchParams({
-        db: "pubmed",
-        id: idList.join(","),
-        retmode: "xml",
-      });
-      if (pubmedApiKey) fetchParams.set("api_key", pubmedApiKey);
+  const fetchResp = await fetchPubMedWithRetries(
+    `${EFETCH_URL}?${fetchParams}`,
+    query,
+    "PubMed EFetch",
+    Boolean(pubmedApiKey),
+  );
+  if (!fetchResp) return [];
 
-      const fetchResp = await fetch(`${EFETCH_URL}?${fetchParams}`, {
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-      });
-      if (!fetchResp.ok) {
-        console.warn(`PubMed EFetch HTTP error ${fetchResp.status}: ${query}`);
-        return [];
-      }
-
-      xmlText = await fetchResp.text();
-      break;
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "TimeoutError") {
-        console.warn(`PubMed timeout for query: ${query}`);
-        return [];
-      }
-      console.error(`PubMed unexpected error for query: ${query}`, err);
-      return [];
-    }
+  const xmlText = await fetchResp.text();
+  if (!xmlText) {
+    return [];
   }
 
-  if (!xmlText) return [];
   return parsePubmedXml(xmlText);
 }
 
@@ -181,6 +170,73 @@ function extractTag(xml: string, tag: string): string | null {
 
 function stripTags(html: string): string {
   return html.replace(/<[^>]*>/g, "");
+}
+
+async function fetchPubMedWithRetries(
+  url: string,
+  query: string,
+  label: string,
+  hasApiKey: boolean,
+): Promise<Response | null> {
+  const maxRetries = 3;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      await waitForPubMedSlot(hasApiKey);
+      const resp = await fetch(url, {
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+
+      if (resp.ok) return resp;
+
+      if (resp.status === 429 && attempt < maxRetries - 1) {
+        const waitMs = getRetryDelayMs(resp.headers.get("retry-after"), attempt);
+        console.info(
+          `${label} 429, retrying in ${Math.round(waitMs / 1000)}s: ${query}`,
+        );
+        await sleep(waitMs);
+        continue;
+      }
+
+      console.warn(`${label} HTTP error ${resp.status}: ${query}`);
+      return null;
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "TimeoutError") {
+        console.warn(`${label} timeout for query: ${query}`);
+        return null;
+      }
+      console.error(`${label} unexpected error for query: ${query}`, err);
+      return null;
+    }
+  }
+
+  return null;
+}
+
+async function waitForPubMedSlot(hasApiKey: boolean): Promise<void> {
+  const minIntervalMs = hasApiKey ? 120 : 450;
+  const now = Date.now();
+  const waitMs = Math.max(0, nextPubMedRequestAt - now);
+  nextPubMedRequestAt = Math.max(now, nextPubMedRequestAt) + minIntervalMs;
+  if (waitMs > 0) {
+    await sleep(waitMs);
+  }
+}
+
+function getRetryDelayMs(retryAfter: string | null, attempt: number): number {
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    if (Number.isFinite(seconds) && seconds > 0) {
+      return seconds * 1000;
+    }
+
+    const retryAt = Date.parse(retryAfter);
+    if (Number.isFinite(retryAt)) {
+      return Math.max(1000, retryAt - Date.now());
+    }
+  }
+
+  return (attempt + 2) * 1500;
 }
 
 function sleep(ms: number): Promise<void> {

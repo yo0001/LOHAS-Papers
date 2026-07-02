@@ -12,36 +12,55 @@ export async function searchAllSources(
   },
 ): Promise<UnifiedPaper[]> {
   const { yearFrom, yearTo, limitPerQuery = 20 } = options ?? {};
-  const queries = transformResult.academic_queries;
+  const queries = getUniqueQueries(transformResult.academic_queries);
+  const allPapers: UnifiedPaper[] = [];
 
-  // Fire all queries to both sources in parallel
-  const tasks: Promise<UnifiedPaper[]>[] = [];
   for (const query of queries) {
-    tasks.push(
-      semanticScholar.searchPapers(query, {
+    try {
+      const papers = await pubmed.searchPapers(query, {
         limit: limitPerQuery,
         yearFrom,
         yearTo,
-      }),
-    );
-    tasks.push(
-      pubmed.searchPapers(query, {
-        limit: limitPerQuery,
-        yearFrom,
-        yearTo,
-      }),
+      });
+      allPapers.push(...papers);
+    } catch (err) {
+      console.warn(`PubMed search failed: ${query}`, err);
+    }
+  }
+
+  const hasSemanticScholarKey = Boolean(process.env.SEMANTIC_SCHOLAR_API_KEY);
+  if (hasSemanticScholarKey) {
+    for (const query of queries) {
+      try {
+        const papers = await semanticScholar.searchPapers(query, {
+          limit: limitPerQuery,
+          yearFrom,
+          yearTo,
+        });
+        allPapers.push(...papers);
+      } catch (err) {
+        console.warn(`Semantic Scholar search failed: ${query}`, err);
+      }
+    }
+  } else {
+    console.info(
+      "Semantic Scholar search skipped: SEMANTIC_SCHOLAR_API_KEY is not configured",
     );
   }
 
-  const results = await Promise.allSettled(tasks);
-
-  const allPapers: UnifiedPaper[] = [];
-  for (let i = 0; i < results.length; i++) {
-    const result = results[i];
-    if (result.status === "fulfilled") {
-      allPapers.push(...result.value);
-    } else {
-      console.warn(`Search task ${i} failed:`, result.reason);
+  if (allPapers.length === 0) {
+    const fallbackQuery = transformResult.original_query || queries[0];
+    if (fallbackQuery && !queries.includes(fallbackQuery)) {
+      try {
+        const papers = await pubmed.searchPapers(fallbackQuery, {
+          limit: limitPerQuery,
+          yearFrom,
+          yearTo,
+        });
+        allPapers.push(...papers);
+      } catch (err) {
+        console.warn(`PubMed fallback search failed: ${fallbackQuery}`, err);
+      }
     }
   }
 
@@ -52,4 +71,14 @@ export async function searchAllSources(
   console.info(`Total papers after dedup: ${uniquePapers.length}`);
 
   return uniquePapers;
+}
+
+function getUniqueQueries(queries: string[]): string[] {
+  return Array.from(
+    new Set(
+      queries
+        .map((query) => query.trim())
+        .filter((query) => query.length > 0),
+    ),
+  );
 }

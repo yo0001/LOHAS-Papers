@@ -82,7 +82,7 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
     query,
     language = "ja",
     page = 1,
-    per_page = 50,
+    per_page = 20,
     sort_by = "relevance",
     filters = {},
   } = request;
@@ -108,6 +108,7 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
   let allPapers = await paperSearcher.searchAllSources(transformResult, {
     yearFrom: filters.year_from ?? null,
     yearTo: filters.year_to ?? null,
+    limitPerQuery: Math.max(5, Math.min(10, Math.ceil(per_page / 2))),
   });
 
   // Apply open-access filter before ranking

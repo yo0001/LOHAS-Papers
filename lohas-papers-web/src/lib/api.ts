@@ -172,7 +172,7 @@ export async function search(
   query: string,
   language: string,
   page: number = 1,
-  perPage: number = 50,
+  perPage: number = 20,
   sortBy: string = "relevance",
   filters?: SearchFilters,
 ): Promise<SearchResponse> {
@@ -294,7 +294,7 @@ export async function searchWithAI(
   query: string,
   language: string,
   page: number = 1,
-  perPage: number = 50,
+  perPage: number = 20,
   sortBy: string = "relevance",
   filters?: SearchFilters,
 ): Promise<SearchResponse & { credits_remaining?: number }> {
