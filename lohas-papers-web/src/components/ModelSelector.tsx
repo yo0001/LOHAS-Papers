@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useBYOK } from "@/hooks/useBYOK";
 import {
   getModelsForProvider,
+  getDefaultModel,
   formatPrice,
   BYOK_PROVIDERS,
   type BYOKModel,
@@ -29,6 +30,7 @@ export default function ModelSelector() {
 
   const models = getModelsForProvider(byokConfig.provider);
   const currentModel = models.find((m) => m.id === byokConfig.model);
+  const displayModel = currentModel ?? getDefaultModel(byokConfig.provider);
   const providerInfo = BYOK_PROVIDERS.find((p) => p.id === byokConfig.provider);
 
   return (
@@ -40,7 +42,7 @@ export default function ModelSelector() {
       >
         <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
         <span className="max-w-[120px] truncate">
-          {currentModel?.name ?? byokConfig.model}
+          {displayModel.name}
         </span>
         <svg className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -56,7 +58,7 @@ export default function ModelSelector() {
             <ModelOption
               key={m.id}
               model={m}
-              selected={m.id === byokConfig.model}
+              selected={m.id === displayModel.id}
               onSelect={() => {
                 updateModel(m.id);
                 setOpen(false);

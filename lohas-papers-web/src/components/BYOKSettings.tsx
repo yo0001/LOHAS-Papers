@@ -64,6 +64,15 @@ function maskKey(key: string): string {
   return key.slice(0, 7) + "•••" + key.slice(-4);
 }
 
+function resolveModelForProvider(
+  provider: BYOKProvider,
+  model?: string,
+): string {
+  const models = getModelsForProvider(provider);
+  if (model && models.some((m) => m.id === model)) return model;
+  return getDefaultModel(provider).id;
+}
+
 export default function BYOKSettings() {
   const { byokConfig, setBYOKConfig, clearBYOK, loaded } = useBYOK();
 
@@ -98,8 +107,8 @@ function BYOKSettingsForm({
   const initialProvider = byokConfig?.provider ?? "anthropic";
   const [provider, setProvider] = useState<BYOKProvider>(initialProvider);
   const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState(
-    byokConfig?.model ?? getDefaultModel(initialProvider).id,
+  const [model, setModel] = useState(() =>
+    resolveModelForProvider(initialProvider, byokConfig?.model),
   );
   const [showKey, setShowKey] = useState(false);
   const [error, setError] = useState("");
