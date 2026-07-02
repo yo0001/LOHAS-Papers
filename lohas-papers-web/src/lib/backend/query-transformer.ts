@@ -3,6 +3,7 @@ import type { QueryTransformResult } from "./types";
 
 // ── Query sanitization ──
 const MAX_QUERY_LENGTH = 500;
+const QUERY_TRANSFORM_TIMEOUT_MS = 8_000;
 
 function sanitizeQuery(query: string): string {
   // Truncate to max length
@@ -79,7 +80,10 @@ export async function transformQuery(
   const userMessage = `入力言語: ${language}\n検索クエリ: ${sanitized}`;
 
   try {
-    const data = await llmChatJson(SYSTEM_PROMPT, userMessage, { retries: 1 }, config);
+    const data = await withTimeout(
+      llmChatJson(SYSTEM_PROMPT, userMessage, { retries: 1 }, config),
+      QUERY_TRANSFORM_TIMEOUT_MS,
+    );
     const result: QueryTransformResult = {
       original_query: (data.original_query as string) || sanitized,
       interpreted_intent: (data.interpreted_intent as string) || "",
@@ -217,4 +221,13 @@ function jaToEnFallback(query: string): string {
   result = result.replace(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\uff00-\uffef]/g, " ");
   result = result.replace(/\s+/g, " ").trim();
   return result || query; // Return original if nothing translatable
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(`Timed out after ${timeoutMs}ms`)), timeoutMs);
+    }),
+  ]);
 }

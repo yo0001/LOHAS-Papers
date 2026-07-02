@@ -20,9 +20,10 @@ import type {
 } from "./types";
 
 // Timeout per individual AI post-processing task (milliseconds)
-const SUMMARY_TIMEOUT_MS = 8_000;
-const TITLE_TRANSLATION_TIMEOUT_MS = 8_000;
-const SUMMARY_PAPER_LIMIT = 5;
+const SUMMARY_TIMEOUT_MS = 5_000;
+const TITLE_TRANSLATION_TIMEOUT_MS = 4_000;
+const AI_OVERVIEW_TIMEOUT_MS = 4_000;
+const SUMMARY_PAPER_LIMIT = 0;
 
 function normalizeStudyType(studyType?: string | null): string {
   if (!studyType) return "";
@@ -191,7 +192,7 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
   const papersContext = buildPapersContext(pagePapers.slice(0, 5));
   const aiOverviewTask = withTimeout(
     summarizer.generateAiOverview(query, language, papersContext, config),
-    SUMMARY_TIMEOUT_MS,
+    AI_OVERVIEW_TIMEOUT_MS,
   );
 
   // Run all in parallel

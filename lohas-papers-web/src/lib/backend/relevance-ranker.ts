@@ -51,7 +51,7 @@ const STOPWORDS = new Set([
   "patients",
   "patient",
 ]);
-const RANKING_LLM_TIMEOUT_MS = 10_000;
+const RANKING_LLM_TIMEOUT_MS = 6_000;
 
 function tokenize(text: string): Set<string> {
   const tokens = (text.toLowerCase().match(WORD_RE) ?? []).filter(
