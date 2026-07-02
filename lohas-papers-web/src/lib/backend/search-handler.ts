@@ -275,15 +275,23 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
 // ── Helpers ──
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T | string> {
-  return Promise.race([
-    promise,
-    new Promise<string>((resolve) => {
-      setTimeout(() => {
-        console.warn(`Task timed out after ${timeoutMs}ms`);
-        resolve("");
-      }, timeoutMs);
-    }),
-  ]);
+  return new Promise<T | string>((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      console.warn(`Task timed out after ${timeoutMs}ms`);
+      resolve("");
+    }, timeoutMs);
+
+    promise.then(
+      (value) => {
+        clearTimeout(timeout);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timeout);
+        reject(error);
+      },
+    );
+  });
 }
 
 async function getOrTransformQuery(
