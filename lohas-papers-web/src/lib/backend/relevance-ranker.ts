@@ -51,6 +51,7 @@ const STOPWORDS = new Set([
   "patients",
   "patient",
 ]);
+const RANKING_LLM_TIMEOUT_MS = 10_000;
 
 function tokenize(text: string): Set<string> {
   const tokens = (text.toLowerCase().match(WORD_RE) ?? []).filter(
@@ -136,10 +137,13 @@ export async function rankPapers(
     `論文リスト:\n${paperListText}`;
 
   try {
-    const data = await llmChatJson(SYSTEM_PROMPT, userMessage, {
-      maxTokens: 4096,
-      retries: 1,
-    }, config);
+    const data = await withTimeout(
+      llmChatJson(SYSTEM_PROMPT, userMessage, {
+        maxTokens: 4096,
+        retries: 1,
+      }, config),
+      RANKING_LLM_TIMEOUT_MS,
+    );
     const rankings = (data.rankings ?? []) as RankedPaper[];
     return rankings;
   } catch (err) {
@@ -176,4 +180,13 @@ function fallbackRanking(
 
   rankings.sort((a, b) => b.relevance_score - a.relevance_score);
   return rankings;
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(`Timed out after ${timeoutMs}ms`)), timeoutMs);
+    }),
+  ]);
 }

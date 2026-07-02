@@ -19,8 +19,10 @@ import type {
   UnifiedPaper,
 } from "./types";
 
-// Timeout per individual summary/overview task (milliseconds)
-const SUMMARY_TIMEOUT_MS = 15_000;
+// Timeout per individual AI post-processing task (milliseconds)
+const SUMMARY_TIMEOUT_MS = 8_000;
+const TITLE_TRANSLATION_TIMEOUT_MS = 8_000;
+const SUMMARY_PAPER_LIMIT = 5;
 
 function normalizeStudyType(studyType?: string | null): string {
   if (!studyType) return "";
@@ -133,17 +135,20 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
   // 4. Run ranking + title translation in parallel
   const [rankingResult, translationResult] = await Promise.allSettled([
     relevanceRanker.rankPapers(query, transformResult.interpreted_intent, allPapers, config),
-    summarizer.translateTitlesBatch(
-      allPapers.map((p) => p.title),
-      language,
-      config,
+    withTimeout(
+      summarizer.translateTitlesBatch(
+        allPapers.map((p) => p.title),
+        language,
+        config,
+      ),
+      TITLE_TRANSLATION_TIMEOUT_MS,
     ),
   ]);
 
   const rankings: RankedPaper[] =
     rankingResult.status === "fulfilled" ? rankingResult.value : [];
   const allTranslatedTitles: string[] =
-    translationResult.status === "fulfilled"
+    translationResult.status === "fulfilled" && Array.isArray(translationResult.value)
       ? translationResult.value
       : allPapers.map((p) => p.title);
 
@@ -174,8 +179,8 @@ export async function handleSearch(request: SearchRequest, config?: LLMConfig): 
   const pagePapers = sortedPapers.slice(start, end);
 
   // 7. Generate summaries + AI overview in parallel (with per-task timeout)
-  const summaryTasks = pagePapers.map((paper) =>
-    paper.abstract
+  const summaryTasks = pagePapers.map((paper, index) =>
+    index < SUMMARY_PAPER_LIMIT && paper.abstract
       ? withTimeout(
           getOrGenerateSummary(paper.id, paper.abstract, language, paper.title, config),
           SUMMARY_TIMEOUT_MS,
